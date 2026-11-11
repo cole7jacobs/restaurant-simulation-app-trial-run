@@ -1,0 +1,94 @@
+import { Link } from 'react-router-dom'
+import { Card } from '../../components/ui/Card'
+import { Badge } from '../../components/ui/Badge'
+import { PageHeader } from '../../components/ui/PageHeader'
+import { MetricCard } from '../../components/ui/MetricCard'
+import { Button } from '../../components/ui/Button'
+import { useDevPreview } from '../../context/DevPreviewContext'
+
+const DECISION_SECTIONS = [
+  { label: 'Menu', to: '/student/decisions' },
+  { label: 'Staffing', to: '/student/decisions' },
+  { label: 'Amenities & Upkeep', to: '/student/decisions' },
+  { label: 'Management & Finance', to: '/student/decisions' },
+] as const
+
+/**
+ * Student home page — displays current round info, team name, decision status,
+ * and quick links to Decisions and Results.
+ *
+ * Uses DevPreview context for teamName and roundNumber (Phase 2: auth session).
+ */
+export function StudentHomePage() {
+  const { teamName, roundNumber } = useDevPreview()
+
+  return (
+    <div className="space-y-6">
+      {/* Page header */}
+      <PageHeader
+        title="Welcome back"
+        subtitle={`${teamName} · Round ${roundNumber}`}
+      />
+
+      {/* Stat cards row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <MetricCard
+          label="Current Round"
+          value={String(roundNumber)}
+          subtext="decisions due"
+        />
+        <Card>
+          <p className="font-body text-sm text-slate-600 dark:text-slate-400">Team</p>
+          <p className="mt-1 font-heading text-3xl font-bold text-primary">{teamName}</p>
+          <p className="mt-1 font-body text-xs text-slate-500 dark:text-slate-500">Firm #—</p>
+        </Card>
+      </div>
+
+      {/* Decision status card */}
+      <Card>
+        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+          Decision Status
+        </h2>
+        <div className="divide-y divide-deep-green/10 dark:divide-card/10">
+          {DECISION_SECTIONS.map(({ label, to }) => (
+            <div
+              key={label}
+              className="flex items-center justify-between py-3 gap-3"
+            >
+              <span className="font-body text-sm text-deep-green dark:text-card flex-1">
+                {label}
+              </span>
+              <Badge variant="draft">Draft</Badge>
+              <Link
+                to={to}
+                className="font-body text-sm text-primary hover:underline whitespace-nowrap"
+              >
+                → Go to Decisions
+              </Link>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Quick links */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Card className="flex flex-col items-start gap-4">
+          <h3 className="font-heading text-base font-semibold text-deep-green dark:text-card">
+            Enter Decisions
+          </h3>
+          <Link to="/student/decisions">
+            <Button variant="primary">Enter Decisions</Button>
+          </Link>
+        </Card>
+        <Card className="flex flex-col items-start gap-4">
+          <h3 className="font-heading text-base font-semibold text-deep-green dark:text-card">
+            View Results
+          </h3>
+          <Link to="/student/results">
+            <Button variant="outlined">View Results</Button>
+          </Link>
+        </Card>
+      </div>
+    </div>
+  )
+}

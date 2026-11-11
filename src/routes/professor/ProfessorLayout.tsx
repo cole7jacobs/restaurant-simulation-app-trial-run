@@ -1,0 +1,93 @@
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { DarkModeToggle } from '../../components/ui/DarkModeToggle'
+import { Button } from '../../components/ui/Button'
+import { DevPreviewBanner } from '../../components/ui/DevPreviewBanner'
+import { useDevPreview } from '../../context/DevPreviewContext'
+
+const NAV_TABS = [
+  { label: 'Home', to: '/professor/home' },
+  { label: 'Submissions', to: '/professor/submissions' },
+  { label: 'RFI Generation', to: '/professor/rfi' },
+  { label: 'FR.LST Import', to: '/professor/import' },
+] as const
+
+/**
+ * Professor layout shell — rendered for all /professor/* routes.
+ *
+ * Contains:
+ *   - DevPreviewBanner (above main content)
+ *   - Top navigation tabs (Home, Submissions)
+ *   - User name placeholder (Phase 2: populated from auth session)
+ *   - Sign out button (Phase 2: calls auth logout)
+ *   - Dark mode toggle
+ *   - <Outlet /> where child routes render their page content
+ *
+ * Professor tools added in Phase 4:
+ *   - Submission monitor (/professor/round/:id/teams)
+ *   - Team decision review (/professor/round/:id/team/:tid)
+ *   - RFI generation (/professor/round/:id/rfi)
+ *   - FR.LST import (/professor/round/:id/import)
+ */
+export function ProfessorLayout() {
+  const { exitPreview } = useDevPreview()
+  const navigate = useNavigate()
+
+  return (
+    <div className="min-h-screen bg-white dark:bg-dark-bg flex flex-col">
+      {/* Top navigation bar */}
+      <header className="border-b border-deep-green/10 dark:border-card/10 px-4">
+        <nav
+          className="max-w-5xl mx-auto flex items-center gap-1 py-2"
+          aria-label="Professor navigation"
+        >
+          {/* Nav tabs */}
+          <div className="flex items-center gap-1 flex-1">
+            {NAV_TABS.map(({ label, to }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  [
+                    'px-4 py-2 rounded-full font-body text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-deep-green text-white dark:bg-primary dark:text-deep-green'
+                      : 'text-deep-green dark:text-card hover:bg-deep-green/5 dark:hover:bg-card/10',
+                  ].join(' ')
+                }
+              >
+                {label}
+              </NavLink>
+            ))}
+          </div>
+
+          {/* Right-side controls */}
+          <div className="flex items-center gap-3">
+            {/* Phase 2: replace with actual user name from auth session */}
+            <span className="font-body text-sm text-deep-green dark:text-card hidden sm:block">
+              Professor
+            </span>
+            <Button
+              variant="outlined"
+              className="py-1.5 px-4 text-sm"
+              onClick={() => {
+                exitPreview()
+                navigate('/login')
+              }}
+            >
+              Sign out
+            </Button>
+            <DarkModeToggle />
+          </div>
+        </nav>
+      </header>
+
+      {/* Dev preview banner — hidden when not in preview mode */}
+      <DevPreviewBanner />
+
+      {/* Page content */}
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6">
+        <Outlet />
+      </main>
+    </div>
+  )
+}

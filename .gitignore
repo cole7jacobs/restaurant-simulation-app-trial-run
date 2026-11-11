@@ -147,3 +147,17 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Vite build output — served by Cloudflare Workers Static Assets
+dist/
+
+# Wrangler local dev cache and state
+.wrangler/
+
+# Environment variables and secrets — NEVER commit these
+.env
+.env.local
+.env.production
+
+# macOS metadata
+.DS_Store

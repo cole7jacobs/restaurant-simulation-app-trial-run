@@ -1,0 +1,75 @@
+/*
+ * Restaurant Simulation App — Global Styles
+ *
+ * Tailwind CSS v4 uses a CSS-first configuration model.
+ * Design tokens are declared in @theme and become Tailwind utility classes:
+ *   --color-primary  →  bg-primary, text-primary, border-primary, ring-primary, etc.
+ *   --color-deep-green  →  bg-deep-green, text-deep-green, ...
+ *   --font-heading  →  font-heading
+ *   --font-body     →  font-body
+ *
+ * Design system source: ISDS 4125 Project — Architectural Diagram and Design System (v1)
+ */
+
+@import "tailwindcss";
+
+/*
+ * Dark mode variant — applies dark: utilities when any ancestor has class="dark".
+ * The <html> element receives this class via the synchronous init script in index.html.
+ */
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* ── Colors ──────────────────────────────────────────────────────────── */
+
+  /* Gold: main action buttons (Save and continue, Submit), chart bars */
+  --color-primary: #E0A94F;
+
+  /* Deep green: body text, outlines, selected tabs, navigation active state */
+  --color-deep-green: #1F3A2A;
+
+  /* Light orange: card and panel backgrounds */
+  --color-card: #FCEDE4;
+
+  /* Soft orange: warnings, error messages, friendly nudges */
+  --color-alert: #D98B62;
+
+  /* Dark mode surfaces */
+  --color-dark-bg: #161616;
+  --color-dark-card: #242424;
+
+  /* ── Typography ──────────────────────────────────────────────────────── */
+
+  /* Bricolage Grotesque — screen titles and key numbers (24 px bold) */
+  --font-heading: "Bricolage Grotesque", Arial, sans-serif;
+
+  /* Hanken Grotesk — button labels, form text, tables, labels (16 px / 14 px medium) */
+  --font-body: "Hanken Grotesk", Arial, sans-serif;
+}
+
+/*
+ * Base styles
+ * Apply sensible defaults that match the design system.
+ */
+@layer base {
+  html {
+    font-family: var(--font-body);
+    color: #1F3A2A;           /* deep-green text on white */
+    background-color: #FFFFFF;
+  }
+
+  html.dark {
+    color: #FCEDE4;           /* light orange text in dark mode (design spec) */
+    background-color: #161616;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-heading);
+  }
+
+  /* Ensure focus rings use the primary gold color across interactive elements */
+  :focus-visible {
+    outline: 2px solid #E0A94F;
+    outline-offset: 2px;
+  }
+}

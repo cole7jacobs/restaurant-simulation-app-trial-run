@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant Simulation App</title>
+
+    <!-- Favicon placeholder — replace with actual asset in a later milestone -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Google Fonts: Bricolage Grotesque (headings) + Hanken Grotesk (body) -->
+    <!-- Both fonts are free and defined in the project design system -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700&family=Hanken+Grotesk:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!--
+      Dark mode initialization script.
+      Runs synchronously before the page renders to prevent a flash of the wrong theme.
+      Sets the `dark` class on <html> if the user's saved preference is "dark".
+    -->
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark')
+          }
+        } catch (_) {
+          // localStorage is unavailable in some private/restricted contexts; fail silently
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

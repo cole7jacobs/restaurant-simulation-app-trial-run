@@ -1,0 +1,16 @@
+{
+  // Worker TypeScript configuration — used by Wrangler's bundler and `tsc -p tsconfig.worker.json`
+  // Important: does NOT include DOM types (Workers run in a different runtime).
+  // @cloudflare/workers-types provides types for Fetcher, D1Database, R2Bucket, etc.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "types": ["@cloudflare/workers-types/2023-07-01"]
+  },
+  "include": ["worker"]
+}
