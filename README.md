@@ -1,347 +1,231 @@
 # Restaurant Simulation App
 
-**ISDS 4125: Analysis and Design of Information Systems — LSU**
-**Team:** Tahj Foster, Cole Jacobs, Kalynn Loftis, Sarah Reid, Kylie LaCaze
+**LSU ISDS 4125 · Team:** Kylie LaCaze, Sarah Reid, Kalynn Loftis, Tahj Foster, and Cole Jacobs
 
-A web interface for the restaurant management simulation used in ISDS 4125. Students enter restaurant decisions each round; the application generates the legacy RFI input files for the FORTRAN simulation, imports the resulting FR.LST output, and presents results through a dashboard.
+A web application for teams participating in the restaurant management simulation. Students enter decisions for their restaurant, and a professor downloads formatted RFI files for an **external** FORTRAN simulation. After the simulation is run outside this application, the professor imports its `FR.LST` listing to store reported results. The web app does not run FORTRAN or calculate simulation outcomes.
 
-> **Status:** Authentication, student decisions, RFI generation, and FR.LST import are implemented. The student results dashboard remains pending.
+Authentication, student decisions, RFI export, and FR.LST import are implemented. The authenticated student results dashboard remains to be built. The available historical files are examples for the implemented format, not a guarantee that every possible simulation variant is supported.
 
----
+## Contents
 
-## Technology Stack
+- [Architecture and stack](#architecture-and-stack)
+- [Installation and local development](#installation-and-local-development)
+- [Local D1 database](#local-d1-database)
+- [Local accounts and sign-in](#local-accounts-and-sign-in)
+- [Application workflows](#application-workflows)
+- [API and data model](#api-and-data-model)
+- [Code map](#code-map)
+- [Testing and checks](#testing-and-checks)
+- [Staging](#staging)
+- [Remaining work and ownership](#remaining-work-and-ownership)
+- [Known limitations and open questions](#known-limitations-and-open-questions)
+- [Guidelines for AI coding assistants](#guidelines-for-ai-coding-assistants)
+- [GitHub collaboration](#github-collaboration)
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 18 + Vite + TypeScript |
-| Routing | React Router (library mode) |
-| Backend API | Hono on Cloudflare Workers |
-| Database | Cloudflare D1 (SQLite) — Phase 2 |
-| Styling | Tailwind CSS v4 |
-| Testing | Vitest + Testing Library |
+## Architecture and stack
 
----
+- **Frontend:** React 18, TypeScript, Vite, React Router, and Tailwind CSS 4. Shared components and design tokens support the existing visual design and dark mode.
+- **Backend:** Hono on Cloudflare Workers, with role and team authorization in the Worker and parameterized D1 queries.
+- **Database:** Cloudflare D1 (SQLite), accessed through the `DB` binding. Versioned migrations define the current schema. Local Wrangler state is independent of staging.
+- **Hosting:** Workers Static Assets serves the built Vite frontend and the Worker handles the API on the same host. Vite proxies `/api` to the local Worker during development.
+- **Tests:** Vitest, Testing Library, and Miniflare. GitHub Actions runs checks for pull requests targeting `main`.
 
-## Prerequisites
+The flow is **student decisions → professor RFI download → external simulation → professor FR.LST preview and import → stored results**. Imported results can be read by the assigned student through an API; the signed-in results page currently displays a placeholder.
 
-- **Node.js** 20 or later ([nodejs.org](https://nodejs.org))
-- **npm** 10 or later (included with Node.js)
-- **Wrangler** is installed as a project dependency — no global install needed
+## Installation and local development
 
-Verify your versions:
-```bash
-node --version   # should be v20.x or later
-npm --version    # should be 10.x or later
-```
-
----
-
-## Installation
+Use Node.js 20 or later and npm 10 or later. Wrangler is a project dependency; no global install is required.
 
 ```bash
-# Clone the repository (if not already done)
 git clone https://github.com/cole7jacobs/restaurant-simulation-app-trial-run.git
 cd restaurant-simulation-app-trial-run
-
-# Install all dependencies
-npm install
+npm ci
+npm run db:init
+npm run build
 ```
 
----
+`db:init` applies local migrations and loads fictional development fixtures. The build also ensures that the static asset directory exists for Wrangler on a fresh checkout. Each teammate gets a separate local D1 database; no shared database or Cloudflare login is needed for local development.
 
-## Local Development
+Start the backend and frontend in separate terminals:
 
-The application has two separate processes during development:
-
-**Terminal 1 — Frontend (React + Vite, with hot module replacement)**
 ```bash
-npm run dev
-# → Vite dev server on http://localhost:5173
-# → /api/* requests are automatically proxied to the Worker on :8787
-```
-
-**Terminal 2 — Backend API (Hono Worker via Wrangler)**
-```bash
+# Terminal 1: local Worker, http://localhost:8787
 npm run dev:api
-# → Worker dev server on http://localhost:8787
 ```
-
-Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-> **Note:** Both terminals must be running to use API endpoints during frontend development. If you only need to work on the UI, `npm run dev` alone is sufficient — API calls will fail gracefully since the Worker is not running.
-
----
-
-## Full Preview (Worker + Built Frontend)
-
-To test the complete application as it will behave in production — the Worker serving both the API and the static frontend:
 
 ```bash
-npm run preview
-# Runs: vite build && wrangler dev
-# → Full app on http://localhost:8787
+# Terminal 2: Vite, http://localhost:5173
+npm run dev
 ```
 
----
+Open [http://localhost:5173](http://localhost:5173). Both processes are needed for API-backed features. Alternatively, `npm run preview` builds the frontend and starts a local Worker serving both frontend and API at port 8787. Use the same hostname throughout a local login.
 
 ## Local D1 database
 
-The Hono Worker reads Cloudflare D1 through its `DB` binding. The schema
-contains `User`, `Team`, `TeamDecision`, `MenuItem`, `MenuItemDecision`, and
-`TeamMetrics`. Decisions and metrics use team and round keys, while menu
-decisions also reference a catalog item. See the [project plan](project-plan.md)
-for the relationship map, SQLite type mappings, and unresolved schema questions.
-
-Initialize the local database before starting the API Worker.
-
 ```bash
-npm run db:init
-npm run dev:api
+npm run db:migrate  # apply pending migrations only
+npm run db:seed     # add fictional development fixtures
+npm run db:init     # run both commands
 ```
 
-With the Worker running, check its database readiness endpoint.
+Migrations are in `db/migrations/`; `db/schema.sql` is the original schema reference, not the initialization path. The seed is repeatable and supplies five fictional teams and example decisions and results; these are **not** FORTRAN output and include no user credentials. Local state is stored under ignored `.wrangler/`. The default database ID in `wrangler.jsonc` is a local placeholder.
+
+With the Worker running, check connectivity and local data:
 
 ```bash
+curl -f http://localhost:8787/api/health
 curl -f http://localhost:8787/api/health/db
-```
-
-Expect `{"status":"ok"}` after the migration creates all six tables. The endpoint
-returns HTTP 503 if the binding or schema is unavailable. `/api/health` checks
-Worker liveness independently. If Wrangler needs the static asset directory on
-a fresh checkout, run `npm run build` once before starting the Worker.
-
-To inspect the local fixtures and foreign keys:
-
-```bash
 npx wrangler d1 execute DB --local --command "SELECT TeamID, TeamName, FirmNumber FROM Team ORDER BY FirmNumber"
 npx wrangler d1 execute DB --local --command "PRAGMA foreign_key_check"
 ```
 
-The first command lists five demo teams on a fresh seeded database. An empty
-result from the second means there are no foreign key violations. Wrangler keeps
-local data in the ignored `.wrangler/` directory.
-
-- `npm run db:migrate` applies pending schema migrations from `db/migrations/`.
-  Use this command alone for an empty local schema.
-- `npm run db:seed` loads development fixtures separately. Running it again
-  preserves existing rows. Conflicting IDs, firm numbers, and menu names are
-  skipped. The seed includes no user accounts. Its results are fictional and its
-  menu list is a sample pending OQ-4.
-- The initial migration targets an empty database. If you manually loaded the
-  original `db/schema.sql`, use a fresh local persistence directory with
-  `--persist-to` on the Wrangler migration, seed, and dev commands.
-- The database ID in `wrangler.jsonc` is a local placeholder. A Cloudflare-hosted
-  database needs its own binding and migrations before deployment.
+Both health endpoints should return `status: ok`; an empty foreign-key check indicates no violations. The database health check verifies the six core tables, not every migration or feature. For an isolated local state directory, use `--persist-to` consistently for Wrangler migration, seed, and development commands; `LOCAL_D1_STATE` selects that directory for the local account script.
 
 ## Local accounts and sign-in
 
-Run `npm run db:init` first. This applies the authentication migration and
-loads sample teams. To find a team ID, run:
+After `npm run db:init`, create accounts from a trusted Bash or Zsh terminal. Choose a different password of at least 15 characters for each; these prompts do not echo the password. The example student uses seeded Demo Bistro, team `-1`.
 
-```sh
-npx wrangler d1 execute DB --local --command "SELECT TeamID, TeamName FROM Team ORDER BY TeamID"
-```
-
-Provision accounts from a trusted terminal with access to the local database.
-Use a different password of at least 15 characters for each account. In Bash
-or Zsh, each block prompts for a password without echoing it or adding it to
-shell history. The example student belongs to seed team `-1`. Replace the
-example email addresses and team ID as needed.
-
-```sh
+```bash
 printf 'Student password: '
 read -rs account_password
 printf '\n'
-printf '%s\n' "$account_password" | npm run account:create -- student student@example.invalid "Local Student" -1
+printf '%s\n' "$account_password" | npm run account:create -- student student@example.invalid 'Local Student' -1
 unset account_password
 
 printf 'Professor password: '
 read -rs account_password
 printf '\n'
-printf '%s\n' "$account_password" | npm run account:create -- professor professor@example.invalid "Local Professor"
+printf '%s\n' "$account_password" | npm run account:create -- professor professor@example.invalid 'Local Professor'
 unset account_password
 ```
 
-Run `npm run dev:api` and `npm run dev` in separate terminals. Open
-[the local sign-in page](http://localhost:5173/login). A student sees their
-assigned team. A professor sees all teams and their per-round submission
-statuses. Use **Sign out** before testing the second account. If port 8787 is
-already occupied by this project's Worker, use that running instance.
+Sign in at [http://localhost:5173/login](http://localhost:5173/login); sign out before switching accounts. The operator assigns roles and teams; there is no public registration. Account creation inserts an account once and requires an existing team for students. The same script supports an explicit `--staging` option for authorized operators; see [staging instructions](docs/cloudflare-staging.md), and never use it without permission.
 
-The provisioning command is local-only. It inserts accounts once and requires
-an existing team for students. An optional `LOCAL_D1_STATE` directory lets an
-operator target a separate local Wrangler persistence directory. Use the same
-directory with `--persist-to` when migrating, seeding, and starting that Worker.
-Keep assigned passwords outside Git and deliver them through a secure channel.
+Passwords are salted scrypt hashes. Sessions are stored as token hashes in D1, expire after eight hours, and are revoked on logout. Cookies are HTTP-only and SameSite=Lax; HTTPS uses Secure and the `__Host-` prefix. The API checks request origin for POSTs, applies login rate limits, and enforces roles and team ownership. The `/dev` UI preview exists only in development builds, uses demo data, and does not grant API access.
 
-### Authentication design
+## Application workflows
 
-- The existing `User.PasswordHash` stores a salted scrypt hash created with
-  Workers' native `node:crypto`. Better Auth was evaluated. Its credential
-  account model would require a separate password record and additional
-  schema integration for this project.
-- Migration `0002_authentication.sql` adds a case-insensitive unique email
-  index, `AuthSession`, and `LoginRateLimit`. If an existing database has
-  email addresses that differ only by case, resolve those duplicates before
-  retrying the migration. The six core tables keep their existing columns.
-- Sessions expire after eight hours. D1 stores the hash of the random session
-  token. Sign-out revokes that session. Cookies are HTTP-only and SameSite=Lax,
-  with Secure and the `__Host-` prefix on HTTPS. Loopback HTTP uses a separate
-  development cookie. Use the same host throughout a local login.
-- Login and logout require a matching request origin. Login uses generic
-  credential errors and five-minute limits per IP and per email/IP pair.
-  Review those limits for shared classroom networks before any deployment.
-- Development preview uses local demo data and grants no API permissions.
-  Account creation requires operator access. Password reset, MFA, and
-  production provisioning are outside this milestone.
+### Student
 
-## Download a submitted team's RFI
+1. Sign in to view the assigned team on Student Home.
+2. Open **Decisions**, choose Q2–Q7, and enter menu selections, operations, finance, and report choices. Save a draft and use **Review** to inspect saved decisions.
+3. Submit a complete round. Submission locks it against further edits. Q1 is the baseline; a submitted decision needs at least one and at most ten menu selections.
+4. The signed-in **Results** page is currently a placeholder. Imported results are available from the protected results API for the future dashboard.
 
-1. Run the local Worker and frontend. Sign in as a student, open
-   **Decisions**, select Q2–Q7, and fill in the menu, operations, finance, and
-   reports. Set Product report to **No** for export.
-2. Save the draft, open **Review saved decisions**, and submit the round.
-3. Sign out, sign in as a professor, and open **RFI Generation**.
-4. Select the same round and click **Generate RFI** on the submitted team's
-   row. Firm 1 downloads as `RFI1ME.TXT`. Each export requires an assigned
-   firm number from 1 to 5.
+### Professor
 
-The [RFI specification](docs/rfi-specification.md) defines the export format.
-Keep the optional `input-output/` reference archive in the repository root
-for full-file comparisons in the test suite. Git ignores this local archive.
+1. Sign in to view teams and their draft/submitted statuses. The existing team-review page shows the filtered submission status, not a full decision-detail editor.
+2. Open **RFI Generation**, select Q2–Q7, and download an RFI for each submitted team with firm number 1–5. Product report must be set to **No** for the current export mapping. The approved Finance record has eight numeric fields; see the [RFI specification](docs/rfi-specification.md).
+3. Run the FORTRAN simulation separately using the appropriate external process. The app makes no claim that generated files are accepted by an untested executable.
+4. Open **FR.LST Import**, select Q1–Q7, upload the matching `.LST` file, inspect the preview and warnings, and confirm. Different results for an already imported round require explicit replacement. The [FR.LST specification](docs/fr-lst-specification.md) describes firm mapping, validation, and stored fields.
 
-## Import FR.LST results
+## API and data model
 
-1. Run `npm run db:migrate` and start the local Worker and frontend. Assign
-   firms 1–5 to teams or run `npm run db:seed` for five local demo teams.
-2. Sign in as a professor and open **FR.LST Import**. Select the round and
-   choose the `.LST` file. Its printed period must match the round you select.
-3. Click **Preview results**. Expand a firm to check its metrics and menu
-   results, then review any warnings.
-4. Click **Confirm import**. If results already exist and the file differs,
-   select the replacement checkbox before confirming.
+All paths below are relative to the application origin. Student and professor endpoints require a valid session and the corresponding role; student team data is scoped on the server. POST requests require a matching `Origin`. See the Worker source for request bodies, validation, errors, and response types before integrating a feature.
 
-See the [FR.LST specification](docs/fr-lst-specification.md) for validation,
-result storage, and replacement rules. Keeping the local `input-output/`
-archive enables automated comparisons against all six raw listings.
+| Method and path | Purpose |
+| --- | --- |
+| `GET /api/health`, `GET /api/health/db` | Worker liveness and core-table readiness |
+| `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/session` | Sign-in, sign-out, and session state |
+| `GET /api/student/team/:teamId?` | Assigned team; another team's ID is forbidden |
+| `GET /api/student/decisions/:round`, `POST /api/student/decisions/:round` | Read or save/submit the assigned team's Q2–Q7 decisions |
+| `GET /api/student/results/:round` | Read the assigned team's imported Q1–Q7 metrics and menu results when available |
+| `GET /api/professor/submissions` | Teams and per-round submission status |
+| `GET /api/professor/rfi/:round`, `GET /api/professor/rfi/:round/:teamId` | RFI roster and individual download |
+| `POST /api/professor/import/:round/preview`, `POST /api/professor/import/:round/confirm` | Preview and confirm an FR.LST upload |
 
-## Running Tests
+Current migrations create these application tables:
 
-```bash
-# Run tests once (CI mode)
-npm run test:run
+| Table | Purpose |
+| --- | --- |
+| `User`, `Team` | Accounts, roles, team membership, and optional firm assignments |
+| `TeamDecision` | Team/round decisions, revision, and submission state |
+| `MenuItem`, `MenuItemDecision` | Catalog and ordered menu selections for a team and round |
+| `TeamMetrics` | Team/round aggregate results |
+| `AuthSession`, `LoginRateLimit` | Hashed sessions and login throttling state |
+| `SimulationResultImport`, `MenuItemResult` | Import provenance and reported menu-level results |
 
-# Run tests in watch mode (development)
-npm run test
-```
+Read all four files in `db/migrations/` for current keys, constraints, and relationships; later migrations change the initial schema. For example, menu decisions use ordered slots after migration 0003. Do not assume the older six-table summary in `project-plan.md` describes every current key.
 
-The database integration suite starts Miniflare on loopback with an isolated,
-in-memory D1 database. It applies the checked-in SQL and leaves your local
-development data intact. Run it on its own with
-`npm run test:run -- test/worker/database.test.ts`.
+## Code map
 
-Tests are located in `test/` and cover:
-- **`test/lib/design-tokens.test.ts`** — guards design token hex values against drift
-- **`test/components/Button.test.tsx`** — Button component rendering, behavior, accessibility
-- **`test/worker/health.test.ts`** — Worker liveness and database readiness responses
-- **`test/worker/database.test.ts`** — D1 migrations, reads and writes, constraints, and repeatable development seeding
-- **`test/worker/auth.test.ts`** — account roles, session cookies, expiry, logout, throttling, and protected data
-- **`test/components/Login.test.tsx`** — role redirects, sign-out, and session expiry feedback
+| Location | Start here for |
+| --- | --- |
+| `src/App.tsx`, `src/context/AuthContext.tsx` | Route tree, role gates, sessions, and protected data requests |
+| `src/routes/student/StudentDecisionForm.tsx` | Authenticated decision and review forms |
+| `src/routes/AccountPages.tsx`, `src/routes/student/ResultsPage.tsx` | Authenticated home/status pages and the development-preview results page |
+| `src/routes/professor/RFIPage.tsx`, `src/routes/professor/ProfessorImportPage.tsx` | Authenticated RFI and import interfaces |
+| `src/components/ui/`, `src/styles/index.css`, `src/lib/design-tokens.ts` | Reusable components, styling, and design tokens |
+| `worker/index.ts`, `worker/auth.ts`, `worker/password.mjs` | Worker entry, health, authentication, authorization, and hashing |
+| `worker/student-decisions.ts`, `shared/decisions.ts` | Decision API, shared fields, catalog/preparation rules |
+| `worker/professor-rfi.ts`, `worker/rfi.ts`, `worker/rfi-finance.ts` | RFI API and formatting |
+| `worker/professor-import.ts`, `worker/fr-lst.ts`, `shared/results.ts` | Import API, listing parser, result types |
+| `db/migrations/`, `db/seed.dev.sql` | Current database migrations and fictional fixtures |
+| `test/`, `test/fixtures/` | Worker, database, component, and format tests |
+| `wrangler.jsonc`, `wrangler.staging.jsonc` | Local/default Worker configuration and isolated staging configuration |
+| `docs/rfi-specification.md`, `docs/fr-lst-specification.md` | Supported legacy formats and validation |
 
----
+## Testing and checks
 
-## Type Checking
+Before submitting work, run:
 
 ```bash
-npm run type-check
-# Type-checks both the frontend (tsconfig.json) and Worker (tsconfig.worker.json)
+npm run type-check  # frontend and Worker TypeScript
+npm run test:run    # complete automated suite, once
+npm run build       # production frontend build
 ```
 
----
+`npm test` starts Vitest in watch mode. The database and authentication integration tests use isolated Miniflare D1 state and loopback networking; they do not use your local development database. Tests cover migration and data integrity, authentication and role isolation, decision forms, RFI formatting, and FR.LST parsing/import.
 
-## Project Structure
+The optional `input-output/` archive contains private original reference files and must remain local and unmodified. When it is absent, the archive-dependent comparisons are skipped; committed compact fixtures and synthetic cases still run. CI works without the archive. Do not add these original files to Git or deployment assets.
 
+## Staging
+
+The isolated staging application is at [restaurant-simulation-app-staging.restaurant-sim-cole.workers.dev](https://restaurant-simulation-app-staging.restaurant-sim-cole.workers.dev/login). It uses a separate D1 database and fictional test data. Do not change shared staging data, accounts, configuration, or deployments without authorization. See [Cloudflare staging](docs/cloudflare-staging.md) for operator-only account setup and manual deployment procedures. Do not use `npm run deploy` as a staging shortcut.
+
+## Remaining work and ownership
+
+These assignments are suggested ownership, not restrictions. Coordinate changes that cross feature boundaries.
+
+| Teammate | Focus | Useful starting points |
+| --- | --- | --- |
+| **Kylie** | Student Results Dashboard: connect the signed-in page to imported team results and handle loading, empty, and error states. | `src/App.tsx`, `src/routes/student/ResultsPage.tsx`, `worker/auth.ts`, `shared/results.ts` |
+| **Sarah** | UI and responsiveness: improve existing pages and shared components across screen sizes while preserving workflows and accessibility. | `src/components/ui/`, `src/routes/`, `src/styles/index.css` |
+| **Kalynn** | Database integrity and validation: review constraints, migrations, data relationships, and validation with tests. | `db/migrations/`, `worker/student-decisions.ts`, `test/worker/database.test.ts` |
+| **Tahj** | Professor tools: improve submission review, RFI, and import workflows within confirmed requirements. | `src/routes/AccountPages.tsx`, `src/routes/professor/`, `worker/professor-rfi.ts`, `worker/professor-import.ts` |
+| **Cole** | Integration, testing, GitHub collaboration, and deployment readiness. | `test/`, `.github/workflows/ci.yml`, `CONTRIBUTING.md`, `docs/cloudflare-staging.md` |
+
+## Known limitations and open questions
+
+- Signed-in student results are not yet rendered in a dashboard. The development-preview results page is not evidence of a live dashboard.
+- Professor team review currently shows submission status rather than complete decision details. Additional professor management tools remain future work.
+- The RFI generator uses the approved Q5–Q7 eight-field Finance layout, market ME, and requires Product report **No**. The five reserved Finance values have no documented business meanings. Do not silently add the older ten-field format.
+- The importer targets the known five-firm listing layout and known catalog/preparation labels; historical raw examples cover Q1–Q5 and Q7, not Q6. It does not import every printed report field. Review the specifications before extending either format.
+- Confirm course-specific requirements such as the complete catalog and menu minimum, round scheduling, carry-forward, results release, and desired additional metrics. [Open questions](docs/open-questions.md) contains historical notes, including requests for samples now available locally; check the newer specifications and implementation before treating those notes as current blockers.
+- There is no public registration or self-service password reset. Local/staging accounts are operator-provisioned. Review production provisioning, session policies, and rate limits for classroom use before production release.
+- Further hosted browser/end-to-end testing, accessibility and responsive review, and production readiness remain necessary. Development fixtures are not authentic simulation results.
+
+## Guidelines for AI coding assistants
+
+1. Inspect the existing implementation, migrations, tests, and relevant specifications before changing a feature. Treat this README as a starting map and verify details in code.
+2. Preserve working behavior and reuse the current architecture, shared components, APIs, and schema. Avoid unrelated changes; use versioned migrations when an approved schema change is actually needed.
+3. Do not invent FORTRAN rules or modify validated RFI/FR.LST formats. Resolve unclear requirements with the team and use the documented reference examples and tests.
+4. Never commit secrets, credentials, the private `input-output/` archive, or local database files. Do not modify original reference files.
+5. Do not modify the shared Cloudflare staging environment without authorization. Work locally with fictional data.
+6. Add or update meaningful tests for behavioral changes. Run TypeScript checks, the automated suite, and the production build before submitting; report any skipped or failing checks.
+
+## GitHub collaboration
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full setup, suggested branch assignments, and review guidance. In brief:
+
+```bash
+git switch main
+git pull --ff-only
+git switch -c kylie/results-dashboard  # substitute your assigned feature branch
+# Make and review your changes, then run the checks above.
+git add <intended-files>
+git commit -m "Describe the change"
+git push -u origin <your-branch>
 ```
-restaurant-simulation-app-trial-run/
-├── index.html                    # HTML entry (Google Fonts, dark mode init)
-├── package.json                  # Dependencies and npm scripts
-├── vite.config.ts                # Vite + Tailwind plugin + /api proxy
-├── vitest.config.ts              # Test configuration
-├── wrangler.jsonc                # Cloudflare Worker configuration
-├── tsconfig.json                 # Frontend TypeScript config
-├── tsconfig.worker.json          # Worker TypeScript config
-│
-├── src/                          # React frontend
-│   ├── main.tsx                  # Entry point (BrowserRouter)
-│   ├── App.tsx                   # Route tree
-│   ├── styles/index.css          # Tailwind + design tokens
-│   ├── lib/design-tokens.ts      # Color/font constants (also used by Recharts)
-│   ├── hooks/useDarkMode.ts      # Dark mode with localStorage
-│   ├── routes/                   # Page components
-│   └── components/ui/            # Shared UI components
-│
-├── worker/                       # Cloudflare Worker (Hono)
-│   └── index.ts                  # API routes + static asset fallback
-│
-├── db/
-│   ├── migrations/               # Versioned D1 schema
-│   ├── schema.sql                # Original six-table reference
-│   └── seed.dev.sql              # Local development fixtures
-│
-├── test/                         # Test files (mirrors src/ structure)
-│
-└── docs/
-    └── open-questions.md         # Unresolved requirements (OQ-1 through OQ-10)
-```
 
----
-
-## Design System
-
-Colors, typography, and components follow the team's design system document.
-
-| Token | Hex | Usage |
-|---|---|---|
-| `primary` | `#E0A94F` | Gold — main buttons, chart bars |
-| `deep-green` | `#1F3A2A` | Text, outlines, selected tabs |
-| `card` | `#FCEDE4` | Light orange — card backgrounds |
-| `alert` | `#D98B62` | Soft orange — warnings, errors |
-| `dark-bg` | `#161616` | Dark mode background |
-| `dark-card` | `#242424` | Dark mode card background |
-
-**Fonts:** Bricolage Grotesque (headings, 24 px bold) · Hanken Grotesk (body, 16 px / 14 px medium)
-
-Dark mode is toggled via the moon/sun button in the navigation bar and persists in `localStorage`.
-
----
-
-## Implementation Phases
-
-| Phase | Description | Status |
-|---|---|---|
-| 1 | Application foundation, design system, navigation shells | Complete |
-| 2 | Database, authentication, role-based access | In progress |
-| 3 | Student decision forms | ⏳ Planned |
-| 4 | Professor tools, RFI file generation | ⏳ Planned |
-| 5 | FR.LST import and parsing | ⏳ Planned |
-| 6 | Results dashboard | ⏳ Planned |
-| 7 | Integration, testing, Cloudflare deployment | ⏳ Planned |
-
----
-
-## Open Questions
-
-Five requirements are unresolved and block specific implementation phases. See [`docs/open-questions.md`](docs/open-questions.md) for details.
-
-The most critical: **obtain sample RFI input and FR.LST output files** from the professor before Phase 4 begins.
-
----
-
-## Security Notes
-
-- Never commit `.env` files, API keys, or database credentials to this repository.
-- The `.gitignore` excludes `.env`, `.env.local`, and `.env.production`.
-- Passwords are stored as hashes (Phase 2). The `PasswordHash` field never contains plaintext.
-## Collaboration and staging
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for independent local setup, branch assignments, reviews, and CI. See [Cloudflare staging](docs/cloudflare-staging.md) for the isolated deployment, safe update procedure, and staging account provisioning. The student results dashboard remains pending.
+Open a pull request targeting `main`, request review, address feedback, and wait for the required checks. After an approved PR is merged, update local `main` with `git switch main` and `git pull --ff-only`, then branch from it for the next task. Never commit credentials or private reference files, and do not merge or deploy on someone else's behalf without permission.
