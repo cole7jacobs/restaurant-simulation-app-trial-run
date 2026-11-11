@@ -27,3 +27,13 @@ unset account_password
 ```
 
 Never copy local password hashes, sessions, tokens, or real student data to staging. Sign in over HTTPS and test each role. Staging has no separate access gate; anyone knowing its URL can reach its login. Monitor usage and account plan limits; paid-plan overages may incur charges. Wrangler 3 currently warns that it is outdated; evaluate an upgrade separately.
+
+To set a new password on an existing staging account, run the following from the project directory with Cloudflare access. This revokes that account's existing sessions. Enter a new unique password of at least 15 characters at the hidden prompt; nothing is echoed or stored in shell history. The operator must verify the email exists: a nonexistent email changes no account.
+
+```sh
+printf 'New staging password: '; read -rs account_password; printf '\n'
+printf '%s\n' "$account_password" | node scripts/reset-staging-password.mjs student-staging@example.invalid
+unset account_password
+```
+
+Repeat with `professor-staging@example.invalid` for the professor. Provisioning inserts only and duplicate emails are rejected; use this reset command to change an existing password.
