@@ -166,3 +166,12 @@ dist/
 
 # Local legacy reference archive
 /input-output/
+
+# Local environment variants, database files, and private key material
+.env.*
+!.env.example
+*.sqlite
+*.sqlite3
+*.db
+*.pem
+*.key

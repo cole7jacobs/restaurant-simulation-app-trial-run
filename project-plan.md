@@ -92,3 +92,7 @@ milestone. See the [FR.LST specification](docs/fr-lst-specification.md).
 1. Connect the results dashboard to imported data and verify the release
    workflow.
 2. Perform end-to-end testing and prepare Cloudflare deployment.
+
+## Staging and collaboration
+
+The isolated staging Worker and D1 configuration are described in [Cloudflare staging](docs/cloudflare-staging.md). Pull requests to main run the checks in `.github/workflows/ci.yml`; deployment remains manual. The student results dashboard, interface polish, and further end-to-end integration work remain open.

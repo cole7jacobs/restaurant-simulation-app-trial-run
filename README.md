@@ -5,7 +5,7 @@
 
 A web interface for the restaurant management simulation used in ISDS 4125. Students enter restaurant decisions each round; the application generates the legacy RFI input files for the FORTRAN simulation, imports the resulting FR.LST output, and presents results through a dashboard.
 
-> **Status:** Phase 1 complete. Milestone 2.2 adds account provisioning, sign-in, sessions, and role-based access.
+> **Status:** Authentication, student decisions, RFI generation, and FR.LST import are implemented. The student results dashboard remains pending.
 
 ---
 
@@ -40,7 +40,7 @@ npm --version    # should be 10.x or later
 
 ```bash
 # Clone the repository (if not already done)
-git clone https://github.com/colejacobs67/restaurant-simulation-app-trial-run.git
+git clone https://github.com/cole7jacobs/restaurant-simulation-app-trial-run.git
 cd restaurant-simulation-app-trial-run
 
 # Install all dependencies
@@ -342,3 +342,6 @@ The most critical: **obtain sample RFI input and FR.LST output files** from the 
 - Never commit `.env` files, API keys, or database credentials to this repository.
 - The `.gitignore` excludes `.env`, `.env.local`, and `.env.production`.
 - Passwords are stored as hashes (Phase 2). The `PasswordHash` field never contains plaintext.
+## Collaboration and staging
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for independent local setup, branch assignments, reviews, and CI. See [Cloudflare staging](docs/cloudflare-staging.md) for the isolated deployment, safe update procedure, and staging account provisioning. The student results dashboard remains pending.
