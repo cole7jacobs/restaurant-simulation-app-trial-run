@@ -195,6 +195,21 @@ Keep assigned passwords outside Git and deliver them through a secure channel.
   Account creation requires operator access. Password reset, MFA, and
   production provisioning are outside this milestone.
 
+## Download a submitted team's RFI
+
+1. Run the local Worker and frontend. Sign in as a student, open
+   **Decisions**, select Q2–Q7, and fill in the menu, operations, finance, and
+   reports. Set Product report to **No** for export.
+2. Save the draft, open **Review saved decisions**, and submit the round.
+3. Sign out, sign in as a professor, and open **RFI Generation**.
+4. Select the same round and click **Generate RFI** on the submitted team's
+   row. Firm 1 downloads as `RFI1ME.TXT`. Each export requires an assigned
+   firm number from 1 to 5.
+
+The [RFI specification](docs/rfi-specification.md) defines the export format.
+Keep the optional `input-output/` reference archive in the repository root
+for full-file comparisons in the test suite. Git ignores this local archive.
+
 ## Running Tests
 
 ```bash

@@ -137,13 +137,21 @@ describe('Worker authentication with local D1', () => {
     expect(await response.json()).toEqual({ error: 'Session expired or invalid. Sign in again.' })
   })
 
-  it('saves ordered selections for the signed-in team, rejects stale saves, and locks a submission', async () => {
+  it('submits student decisions and downloads the saved RFI as a professor', async () => {
     const path = '/student/decisions/3'
+    const exportPath = '/professor/rfi/3/1'
+    await db.prepare('UPDATE Team SET FirmNumber = TeamID WHERE TeamID IN (1, 2)').run()
+    expect((await request(exportPath)).status).toBe(401)
     expect((await request(path)).status).toBe(401)
     const professorCookie = cookie(await login(professor))
     expect((await request(path, { headers: { Cookie: professorCookie } })).status).toBe(403)
+    expect((await request(exportPath, { headers: { Cookie: professorCookie } })).status).toBe(409)
+    expect((await request('/professor/rfi/2/2', { headers: { Cookie: professorCookie } })).status).toBe(422)
+    expect((await request('/professor/rfi/8/1', { headers: { Cookie: professorCookie } })).status).toBe(400)
+    expect((await request('/professor/rfi/3/999', { headers: { Cookie: professorCookie } })).status).toBe(404)
     const session = cookie(await login(student))
     const headers = { Cookie: session, Origin: origin, 'Content-Type': 'application/json' }
+    expect((await request(exportPath, { headers })).status).toBe(403)
     const initial: DecisionResponse = await (await request(path, { headers })).json()
     const steak = initial.catalog.find((item) => item.ItemName === 'STEAK')!
     const menu = [2, 1].map((PrepLevel) => ({
@@ -166,6 +174,23 @@ describe('Worker authentication with local D1', () => {
     const submitted = await (await request(path, { headers })).json()
     expect(submitted.submittedAt).toEqual(expect.any(String))
     expect((await write(submitted.revision, false)).status).toBe(409)
+    expect((await request('/auth/logout', { method: 'POST', headers })).status).toBe(204)
+    const exportHeaders = { Cookie: cookie(await login(professor)) }
+    const roster = await request('/professor/rfi/3', { headers: exportHeaders })
+    expect(await roster.json()).toMatchObject({ teams: [
+      { TeamID: 1, SubmittedAt: submitted.submittedAt }, { TeamID: 2, SubmittedAt: null },
+    ] })
+    const download = await request(exportPath, { headers: exportHeaders })
+    expect(download.status).toBe(200)
+    expect(download.headers.get('Content-Disposition')).toBe('attachment; filename="RFI1ME.TXT"')
+    expect(download.headers.get('Cache-Control')).toBe('no-store')
+    const file = await download.text()
+    const records = file.split('\r\n')
+    expect(records.slice(4, 6).map((record) => record.slice(32, 43).trim())).toEqual(['Sirloin', 'Burger'])
+    expect(records[19].length).toBe(123)
+    expect(file.endsWith('\r\n\r\n')).toBe(true)
+    expect((await db.prepare('SELECT Revision FROM TeamDecision WHERE TeamID = 1 AND RoundNumber = 3').first())?.Revision)
+      .toBe(submitted.revision)
   })
 
   it('rate limits repeated attempts before password verification', async () => {

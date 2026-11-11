@@ -163,3 +163,6 @@ dist/
 
 # macOS metadata
 .DS_Store
+
+# Local legacy reference archive
+/input-output/

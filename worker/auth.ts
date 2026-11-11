@@ -1,3 +1,4 @@
+import { professorRfi } from './professor-rfi'
 import type { D1Database } from '@cloudflare/workers-types'
 import { Hono, type MiddlewareHandler } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
@@ -166,6 +167,7 @@ authRoutes.get('/student/team/:teamId?', async (c) => {
 })
 
 authRoutes.use('/professor/*', requireSession, requireRole('professor'))
+authRoutes.route('/professor', professorRfi)
 authRoutes.get('/professor/submissions', async (c) => {
   const { results } = await c.env.DB.prepare(`
     SELECT t.TeamID, t.TeamName, t.FirmNumber, d.RoundNumber, d.SubmittedAt

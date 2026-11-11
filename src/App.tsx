@@ -13,7 +13,7 @@ import { ProfessorLayout } from './routes/professor/ProfessorLayout'
 import { ProfessorHomePage } from './routes/professor/ProfessorHomePage'
 import { SubmissionsPage } from './routes/professor/SubmissionsPage'
 import { TeamReviewPage } from './routes/professor/TeamReviewPage'
-import { RFIPage } from './routes/professor/RFIPage'
+import { ProfessorRFIPage, RFIPage } from './routes/professor/RFIPage'
 import { ImportPage } from './routes/professor/ImportPage'
 import { DevPreviewSelector } from './routes/DevPreviewSelector'
 import { AuthProvider, useAuth } from './context/AuthContext'
@@ -73,7 +73,7 @@ function AppRoutes() {
         <Route path="home" element={<RolePage preview={<ProfessorHomePage />} signedIn={<ProfessorAccountPage title="Professor Dashboard" />} />} />
         <Route path="submissions" element={<RolePage preview={<SubmissionsPage />} signedIn={<ProfessorAccountPage title="Team Submissions" />} />} />
         <Route path="team-review/:teamId" element={<RolePage preview={<TeamReviewPage />} signedIn={<ProfessorAccountPage title="Team Decision Review" teamOnly />} />} />
-        <Route path="rfi" element={<RolePage preview={<RFIPage />} signedIn={<PendingAccountPage title="RFI File Generation" description="File generation will be available in a later milestone." />} />} />
+        <Route path="rfi" element={<RolePage preview={<RFIPage />} signedIn={<ProfessorRFIPage />} />} />
         <Route path="import" element={<RolePage preview={<ImportPage />} signedIn={<PendingAccountPage title="Import Simulation Results" description="Results import will be available in a later milestone." />} />} />
       </Route>
 

@@ -71,11 +71,17 @@ The serializer validates field widths, emits `+0` for newly generated zeroes,
 and writes a 123-character line followed by CRLF. See the
 [RFI specification](docs/rfi-specification.md).
 
+## Milestone 4.1 professor RFI export
+
+Professors can select Q2–Q7, see the team submission statuses, and download
+one RFI file per submitted team. The Worker validates the complete submission
+and uses the Q5–Q7 archive profile for market ME. The enabled Product report
+mapping remains open, so an export requires Product set to No. See the
+[RFI specification](docs/rfi-specification.md).
+
 ## Later phases
 
-1. Implement detailed professor submission review and full RFI export using
-   the approved Finance record and the archived layout for the other records.
-2. Import FR.LST results once the output format is confirmed.
-3. Connect the results dashboard to imported data and verify the release
+1. Import FR.LST results once the output format is confirmed.
+2. Connect the results dashboard to imported data and verify the release
    workflow.
-4. Perform end-to-end testing and prepare Cloudflare deployment.
+3. Perform end-to-end testing and prepare Cloudflare deployment.
