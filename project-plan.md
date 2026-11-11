@@ -79,9 +79,16 @@ and uses the Q5–Q7 archive profile for market ME. The enabled Product report
 mapping remains open, so an export requires Product set to No. See the
 [RFI specification](docs/rfi-specification.md).
 
+## Milestone 5.1 professor FR.LST import
+
+Professors select Q1–Q7, upload a listing, review the detected results, and
+confirm import. The Worker checks the printed period and firm mappings before
+writing aggregates and menu performance in one D1 batch. Students can retrieve
+their team's imported data through a protected API for the next dashboard
+milestone. See the [FR.LST specification](docs/fr-lst-specification.md).
+
 ## Later phases
 
-1. Import FR.LST results once the output format is confirmed.
-2. Connect the results dashboard to imported data and verify the release
+1. Connect the results dashboard to imported data and verify the release
    workflow.
-3. Perform end-to-end testing and prepare Cloudflare deployment.
+2. Perform end-to-end testing and prepare Cloudflare deployment.

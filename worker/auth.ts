@@ -1,3 +1,5 @@
+import { professorImport } from './professor-import'
+import { importRounds } from '../shared/results'
 import { professorRfi } from './professor-rfi'
 import type { D1Database } from '@cloudflare/workers-types'
 import { Hono, type MiddlewareHandler } from 'hono'
@@ -166,8 +168,25 @@ authRoutes.get('/student/team/:teamId?', async (c) => {
   return team ? c.json({ team }) : c.json({ error: 'Team unavailable.' }, 404)
 })
 
+authRoutes.get('/student/results/:round', async (c) => {
+  const round = Number(c.req.param('round'))
+  if (!importRounds.includes(round)) return c.json({ error: 'Choose a round from Q1 through Q7.' }, 400)
+  const teamId = c.get('account').teamId
+  const db = c.env.DB
+  const [metrics, menu] = await db.batch([
+    db.prepare(`SELECT m.* FROM TeamMetrics m JOIN SimulationResultImport USING (RoundNumber)
+      WHERE m.TeamID = ? AND m.RoundNumber = ?
+      AND EXISTS (SELECT 1 FROM json_each(TeamMapping) WHERE json_extract(value, '$[1]') = m.TeamID)`).bind(teamId, round),
+    db.prepare(`SELECT r.*, i.ItemName FROM MenuItemResult r JOIN MenuItem i USING (MenuItemID)
+      WHERE r.TeamID = ? AND r.RoundNumber = ? ORDER BY r.ResultSlot`).bind(teamId, round),
+  ])
+  if (!metrics.results.length) return c.json({ error: 'No imported results for this round.' }, 404)
+  return c.json({ round, metrics: metrics.results[0], menu: menu.results })
+})
+
 authRoutes.use('/professor/*', requireSession, requireRole('professor'))
 authRoutes.route('/professor', professorRfi)
+authRoutes.route('/professor', professorImport)
 authRoutes.get('/professor/submissions', async (c) => {
   const { results } = await c.env.DB.prepare(`
     SELECT t.TeamID, t.TeamName, t.FirmNumber, d.RoundNumber, d.SubmittedAt

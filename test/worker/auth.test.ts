@@ -193,6 +193,105 @@ describe('Worker authentication with local D1', () => {
       .toBe(submitted.revision)
   })
 
+  it('previews and atomically imports an archived round, with authorization and explicit replacement', async () => {
+    const archives = import.meta.glob<string>(
+      '../../input-output/04_Q5-decisions/output-of-simulation/FR.LST',
+      { eager: true, query: '?raw', import: 'default' },
+    )
+    const archive = Object.values(archives)[0]
+    // Compact synthetic listing keeps the API test runnable without the local archive.
+    const synthetic = [
+      "Administrator's Summary; Example Period 5",
+      ...[1, 2, 3, 4, 5].flatMap((firm) => [
+        `Firm ${firm} Example Period 5`, 'SALES * ASSETS',
+        'Food Sales 786013. 78.62', 'Beverage Sales 213763. 21.38',
+        'Food Cost 232756. 29.61', 'Beverage cost 44493. 20.81',
+        'OPERATING PROFIT 141579. 14.16', 'NET INCOME or LOSS 25932. 2.59',
+        'per Day & Training/Hr. per Order Orders per Order per Order Customer Count',
+        '27.0 16.50 1.50 36100. 21.77 5.92 407.',
+        'Selection Sales Purchase Order Internal Cost per Cost of Orders Total',
+        'Price & Prep. Size Promotion unit of purchase Goods Sold Sold Sales',
+        '     STEAK            24.95    Filet      170.0 Gm.        1750.       20.09 Kg.         28.7 %      5291.    132010.',
+        '',
+      ]),
+      'Market Area   Affiliation', ...[1, 2, 3, 4, 5].map((firm) => `Firm ${firm} ME Example B1`),
+    ].join('\r\n')
+    const source = archive ?? synthetic
+
+    const studentCookie = cookie(await login(student))
+    const professorCookie = cookie(await login(professor))
+    const upload = (action: string, options: {
+      token?: string; replace?: boolean; text?: string; name?: string; round?: number; session?: string
+    } = {}) => {
+      const form = new FormData()
+      form.set('file', new Blob([options.text ?? source]), options.name ?? 'FR.LST')
+      if (options.token) form.set('token', options.token)
+      if (options.replace) form.set('replace', 'yes')
+      return request(`/professor/import/${options.round ?? 5}/${action}`, {
+        method: 'POST', headers: { Origin: origin, Cookie: options.session ?? professorCookie }, body: form,
+      })
+    }
+    expect((await upload('preview', { session: '' })).status).toBe(401)
+    expect((await upload('preview', { session: studentCookie })).status).toBe(403)
+    expect((await upload('preview', { round: 4 })).status).toBe(422)
+    expect((await upload('preview', { name: 'FR.txt' })).status).toBe(400)
+    expect((await upload('preview', { text: 'x'.repeat(256 * 1024 + 1) })).status).toBe(413)
+    expect((await upload('preview')).status).toBe(422)
+
+    await db.batch([
+      db.prepare("UPDATE Team SET FirmNumber = TeamID WHERE TeamID IN (1, 2)"),
+      db.prepare("INSERT INTO Team (TeamID, TeamName, FirmNumber) VALUES (3, 'Third', 3), (4, 'Fourth', 4), (5, 'Fifth', 5)"),
+      db.prepare("INSERT INTO TeamDecision (TeamID, RoundNumber, SubmittedAt) VALUES (1, 5, 'submitted')"),
+      db.prepare(`INSERT INTO MenuItemDecision (TeamID, RoundNumber, SlotNumber, MenuItemID,
+        PrepLevel, OrderSize, InternalPromotion, SalesPrice)
+        SELECT 1, 5, 2, MenuItemID, 3, 170, 1750, 24.95 FROM MenuItem WHERE ItemName = 'STEAK'`),
+      db.prepare('INSERT INTO TeamMetrics VALUES (1, 4, 101, 0, 0, 0, 0, 0, 0, 0)'),
+    ])
+    const previewResponse = await upload('preview')
+    expect(previewResponse.status).toBe(200)
+    const preview = await previewResponse.json()
+    expect(preview.teams).toHaveLength(5)
+    expect(preview.teams[0].menu[0].DecisionSlot).toBe(2)
+    expect(preview.teams[1].menu[0].DecisionSlot).toBeNull()
+    expect((await db.prepare('SELECT COUNT(*) AS count FROM TeamMetrics WHERE RoundNumber = 5').first())?.count).toBe(0)
+
+    await db.prepare(`CREATE TRIGGER test_import_failure BEFORE INSERT ON TeamMetrics
+      WHEN NEW.TeamID = 5 AND NEW.RoundNumber = 5
+      BEGIN SELECT RAISE(ABORT, 'test import failure'); END`).run()
+    const failed = await upload('confirm', { token: preview.token })
+    expect(failed.status).toBe(503)
+    expect((await db.prepare('SELECT COUNT(*) AS count FROM SimulationResultImport').first())?.count).toBe(0)
+    expect((await db.prepare('SELECT COUNT(*) AS count FROM TeamMetrics WHERE RoundNumber = 5').first())?.count).toBe(0)
+    expect((await db.prepare('SELECT COUNT(*) AS count FROM MenuItemResult').first())?.count).toBe(0)
+    await db.prepare('DROP TRIGGER test_import_failure').run()
+
+    expect((await upload('confirm', { token: preview.token })).status).toBe(201)
+    expect((await db.prepare('SELECT COUNT(*) AS count FROM TeamMetrics WHERE RoundNumber = 5').first())?.count).toBe(5)
+    expect((await db.prepare('SELECT COUNT(*) AS count FROM MenuItemResult WHERE RoundNumber = 5').first())?.count)
+      .toBe(preview.teams.reduce((total: number, team: { menu: unknown[] }) => total + team.menu.length, 0))
+    expect((await upload('confirm', { token: preview.token })).status).toBe(409)
+    const repeat = await (await upload('preview')).json()
+    expect(repeat.alreadyImported).toBe(true)
+    expect((await upload('confirm', { token: repeat.token })).status).toBe(200)
+
+    const replacement = source.replace('786013.', '786014.')
+    // Change a primary statement even when the first occurrence is in the administrator summary.
+    const changed = replacement.replace(/(Food Sales +)786013\./, '$1786014.')
+    const replacePreview = await (await upload('preview', { text: changed })).json()
+    expect(replacePreview.replacesResults).toBe(true)
+    expect((await upload('confirm', { token: replacePreview.token, text: changed })).status).toBe(409)
+    expect((await upload('confirm', { token: replacePreview.token, text: changed, replace: true })).status).toBe(201)
+
+    const studentResults = await request('/student/results/5?teamId=2', { headers: { Cookie: studentCookie } })
+    expect(await studentResults.json()).toMatchObject({
+      metrics: { TeamID: 1, RoundNumber: 5, FoodSales: 786014 },
+      menu: expect.arrayContaining([expect.objectContaining({ ItemName: 'STEAK', PrepLevel: 3, OrdersSold: 5291 })]),
+    })
+    expect((await db.prepare('SELECT FoodSales FROM TeamMetrics WHERE TeamID = 1 AND RoundNumber = 4').first())?.FoodSales).toBe(101)
+    expect((await db.prepare('SELECT SalesPrice, OrdersSold FROM MenuItemDecision WHERE TeamID = 1 AND RoundNumber = 5').first()))
+      .toEqual({ SalesPrice: 24.95, OrdersSold: null })
+  })
+
   it('rate limits repeated attempts before password verification', async () => {
     await db.prepare('UPDATE LoginRateLimit SET Attempts = 8').run()
     const response = await login(student)

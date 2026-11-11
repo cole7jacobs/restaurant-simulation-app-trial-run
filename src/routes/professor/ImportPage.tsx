@@ -19,8 +19,7 @@ export function ImportPage() {
 
       {/* Not-yet-implemented notice */}
       <div className="rounded-2xl border border-amber-300 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-700 p-4 text-amber-800 dark:text-amber-200 font-body text-sm">
-        ⚠ Not yet implemented — FR.LST import will be available in Phase 5 once the output format
-        is confirmed (OQ-2).
+        Sign in as a professor to preview and import FR.LST results.
       </div>
 
       {/* Upload area */}
@@ -42,7 +41,7 @@ export function ImportPage() {
         </div>
 
         <p className="font-body text-xs text-slate-500 dark:text-slate-400 mt-3">
-          File upload is not functional yet. This is a UI placeholder for Phase 5.
+          File upload requires a professor account.
         </p>
       </Card>
 
@@ -74,7 +73,7 @@ export function ImportPage() {
           </table>
         </div>
         <p className="font-body text-xs text-slate-500 dark:text-slate-400 mt-3">
-          Import history will be populated after Phase 5.
+          Example import history.
         </p>
       </Card>
     </div>

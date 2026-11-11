@@ -210,6 +210,21 @@ The [RFI specification](docs/rfi-specification.md) defines the export format.
 Keep the optional `input-output/` reference archive in the repository root
 for full-file comparisons in the test suite. Git ignores this local archive.
 
+## Import FR.LST results
+
+1. Run `npm run db:migrate` and start the local Worker and frontend. Assign
+   firms 1–5 to teams or run `npm run db:seed` for five local demo teams.
+2. Sign in as a professor and open **FR.LST Import**. Select the round and
+   choose the `.LST` file. Its printed period must match the round you select.
+3. Click **Preview results**. Expand a firm to check its metrics and menu
+   results, then review any warnings.
+4. Click **Confirm import**. If results already exist and the file differs,
+   select the replacement checkbox before confirming.
+
+See the [FR.LST specification](docs/fr-lst-specification.md) for validation,
+result storage, and replacement rules. Keeping the local `input-output/`
+archive enables automated comparisons against all six raw listings.
+
 ## Running Tests
 
 ```bash

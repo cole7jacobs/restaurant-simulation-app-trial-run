@@ -1,3 +1,4 @@
+import { ProfessorImportPage } from './routes/professor/ProfessorImportPage'
 import { StudentDecisionForm } from './routes/student/StudentDecisionForm'
 import type { ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
@@ -74,7 +75,7 @@ function AppRoutes() {
         <Route path="submissions" element={<RolePage preview={<SubmissionsPage />} signedIn={<ProfessorAccountPage title="Team Submissions" />} />} />
         <Route path="team-review/:teamId" element={<RolePage preview={<TeamReviewPage />} signedIn={<ProfessorAccountPage title="Team Decision Review" teamOnly />} />} />
         <Route path="rfi" element={<RolePage preview={<RFIPage />} signedIn={<ProfessorRFIPage />} />} />
-        <Route path="import" element={<RolePage preview={<ImportPage />} signedIn={<PendingAccountPage title="Import Simulation Results" description="Results import will be available in a later milestone." />} />} />
+        <Route path="import" element={<RolePage preview={<ImportPage />} signedIn={<ProfessorImportPage />} />} />
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />
