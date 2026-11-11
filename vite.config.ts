@@ -17,7 +17,7 @@ export default defineConfig({
       // running via `wrangler dev --port 8787` (npm run dev:api)
       '/api': {
         target: 'http://localhost:8787',
-        changeOrigin: true,
+        changeOrigin: false,
       },
     },
   },

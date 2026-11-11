@@ -9,6 +9,7 @@
     "dev:api": "wrangler dev --local --port 8787",
     "db:migrate": "wrangler d1 migrations apply DB --local",
     "db:seed": "wrangler d1 execute DB --local --file db/seed.dev.sql",
+    "account:create": "node scripts/create-local-account.mjs",
     "db:init": "npm run db:migrate && npm run db:seed",
     "build": "vite build",
     "preview": "npm run build && wrangler dev",

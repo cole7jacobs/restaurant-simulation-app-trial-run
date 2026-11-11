@@ -158,6 +158,8 @@ dist/
 .env
 .env.local
 .env.production
+.dev.vars
+.dev.vars.*
 
 # macOS metadata
 .DS_Store

@@ -1,8 +1,8 @@
-import { Link, Outlet, useLocation, useMatch, useNavigate } from 'react-router-dom'
+import { Link, Outlet, useLocation, useMatch } from 'react-router-dom'
 import { DarkModeToggle } from '../../components/ui/DarkModeToggle'
-import { Button } from '../../components/ui/Button'
+import { SessionControls } from '../../components/ui/SessionControls'
+import { useAuth } from '../../context/AuthContext'
 import { DevPreviewBanner } from '../../components/ui/DevPreviewBanner'
-import { useDevPreview } from '../../context/DevPreviewContext'
 
 const NAV_TABS = [
   { label: 'Home', to: '/professor/home' },
@@ -12,8 +12,7 @@ const NAV_TABS = [
 ] as const
 
 export function ProfessorLayout() {
-  const { exitPreview } = useDevPreview()
-  const navigate = useNavigate()
+  const { session } = useAuth()
   const { pathname } = useLocation()
   const teamReview = useMatch('/professor/team-review/:teamId')
 
@@ -53,25 +52,16 @@ export function ProfessorLayout() {
           <div className="ml-auto flex items-center gap-3">
             {/* Phase 2: replace with actual user name from auth session */}
             <span className="font-body text-sm text-deep-green dark:text-card hidden sm:block">
-              Professor
+              {session?.account.name ?? 'Professor'}
             </span>
-            <Button
-              variant="outlined"
-              className="py-1.5 px-4 text-sm"
-              onClick={() => {
-                exitPreview()
-                navigate('/login')
-              }}
-            >
-              Exit preview
-            </Button>
+            <SessionControls />
             <DarkModeToggle />
           </div>
         </nav>
       </header>
 
       {/* Dev preview banner — hidden when not in preview mode */}
-      <DevPreviewBanner />
+      {!session && <DevPreviewBanner />}
 
       {/* Page content */}
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6">

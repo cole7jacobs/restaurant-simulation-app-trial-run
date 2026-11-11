@@ -1,6 +1,7 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 import { DarkModeToggle } from '../../components/ui/DarkModeToggle'
-import { Button } from '../../components/ui/Button'
+import { SessionControls } from '../../components/ui/SessionControls'
+import { useAuth } from '../../context/AuthContext'
 import { DevPreviewBanner } from '../../components/ui/DevPreviewBanner'
 import { useDevPreview } from '../../context/DevPreviewContext'
 
@@ -11,22 +12,9 @@ const NAV_TABS = [
   { label: 'Results', to: '/student/results' },
 ] as const
 
-/**
- * Student layout shell — rendered for all /student/* routes.
- *
- * Contains:
- *   - Top navigation tabs (Home, Decisions, Review, Results)
- *   - Team name and round number from DevPreview context (Phase 2: populated from auth session)
- *   - Sign out button (Phase 2: calls auth logout)
- *   - Dark mode toggle
- *   - DevPreviewBanner (dev-preview mode indicator)
- *   - <Outlet /> where child routes render their page content
- *
- * Matches the navigation bar shown in the design system mockup.
- */
 export function StudentLayout() {
-  const { teamName, roundNumber, exitPreview } = useDevPreview()
-  const navigate = useNavigate()
+  const { teamName, roundNumber } = useDevPreview()
+  const { session } = useAuth()
 
   return (
     <div className="min-h-screen bg-white dark:bg-dark-bg flex flex-col">
@@ -60,25 +48,16 @@ export function StudentLayout() {
           <div className="ml-auto flex items-center gap-3">
             {/* Team name and round number from DevPreview context */}
             <span className="font-body text-sm text-deep-green dark:text-card hidden sm:block">
-              {teamName} · Round {roundNumber}
+              {session ? session.account.teamName : `${teamName} · Round ${roundNumber}`}
             </span>
-            <Button
-              variant="outlined"
-              className="py-1.5 px-4 text-sm"
-              onClick={() => {
-                exitPreview()
-                navigate('/login')
-              }}
-            >
-              Exit preview
-            </Button>
+            <SessionControls />
             <DarkModeToggle />
           </div>
         </nav>
       </header>
 
       {/* DevPreviewBanner — shown between header and main when dev preview is active */}
-      <DevPreviewBanner />
+      {!session && <DevPreviewBanner />}
 
       {/* Page content */}
       <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6">

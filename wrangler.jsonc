@@ -9,6 +9,7 @@
 
   // Minimum compatibility date — set to a stable date that supports Static Assets
   "compatibility_date": "2025-04-01",
+  "compatibility_flags": ["nodejs_compat"],
 
   // TypeScript config for the Worker (uses Cloudflare Workers types, not DOM)
   "tsconfig": "tsconfig.worker.json",

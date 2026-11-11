@@ -45,10 +45,15 @@ in-memory Miniflare database.
 
 ### Milestone 2.2 authentication and role-based access
 
-Pending review of Milestone 2.1. Confirm professor account provisioning
-(OQ-9) and student team assignment before implementing password hashing,
-sessions, and server-side access checks. Verify both role boundaries and
-student team isolation before wiring protected UI flows to the Worker.
+Implemented for local review. An operator provisions accounts with a fixed role
+and assigns an existing team to each student. The Worker validates D1 sessions
+and authorizes protected reads by role and team. Students can read their own
+team profile. Professors can read all teams and submission statuses. See the
+[local account setup](README.md#local-accounts-and-sign-in).
+
+Migration 0002 adds a case-insensitive email index, session storage, and
+login rate-limit state. The legacy simulation workflow and production account
+provisioning remain scheduled separately.
 
 ## Later phases
 

@@ -5,7 +5,7 @@
 
 A web interface for the restaurant management simulation used in ISDS 4125. Students enter restaurant decisions each round; the application generates the legacy RFI input files for the FORTRAN simulation, imports the resulting FR.LST output, and presents results through a dashboard.
 
-> **Status:** Phase 1 complete. Milestone 2.1 adds the local D1 database and development fixtures.
+> **Status:** Phase 1 complete. Milestone 2.2 adds account provisioning, sign-in, sessions, and role-based access.
 
 ---
 
@@ -133,6 +133,68 @@ local data in the ignored `.wrangler/` directory.
 - The database ID in `wrangler.jsonc` is a local placeholder. A Cloudflare-hosted
   database needs its own binding and migrations before deployment.
 
+## Local accounts and sign-in
+
+Run `npm run db:init` first. This applies the authentication migration and
+loads sample teams. To find a team ID, run:
+
+```sh
+npx wrangler d1 execute DB --local --command "SELECT TeamID, TeamName FROM Team ORDER BY TeamID"
+```
+
+Provision accounts from a trusted terminal with access to the local database.
+Use a different password of at least 15 characters for each account. In Bash
+or Zsh, each block prompts for a password without echoing it or adding it to
+shell history. The example student belongs to seed team `-1`. Replace the
+example email addresses and team ID as needed.
+
+```sh
+printf 'Student password: '
+read -rs account_password
+printf '\n'
+printf '%s\n' "$account_password" | npm run account:create -- student student@example.invalid "Local Student" -1
+unset account_password
+
+printf 'Professor password: '
+read -rs account_password
+printf '\n'
+printf '%s\n' "$account_password" | npm run account:create -- professor professor@example.invalid "Local Professor"
+unset account_password
+```
+
+Run `npm run dev:api` and `npm run dev` in separate terminals. Open
+[the local sign-in page](http://localhost:5173/login). A student sees their
+assigned team. A professor sees all teams and their per-round submission
+statuses. Use **Sign out** before testing the second account. If port 8787 is
+already occupied by this project's Worker, use that running instance.
+
+The provisioning command is local-only. It inserts accounts once and requires
+an existing team for students. An optional `LOCAL_D1_STATE` directory lets an
+operator target a separate local Wrangler persistence directory. Use the same
+directory with `--persist-to` when migrating, seeding, and starting that Worker.
+Keep assigned passwords outside Git and deliver them through a secure channel.
+
+### Authentication design
+
+- The existing `User.PasswordHash` stores a salted scrypt hash created with
+  Workers' native `node:crypto`. Better Auth was evaluated. Its credential
+  account model would require a separate password record and additional
+  schema integration for this project.
+- Migration `0002_authentication.sql` adds a case-insensitive unique email
+  index, `AuthSession`, and `LoginRateLimit`. If an existing database has
+  email addresses that differ only by case, resolve those duplicates before
+  retrying the migration. The six core tables keep their existing columns.
+- Sessions expire after eight hours. D1 stores the hash of the random session
+  token. Sign-out revokes that session. Cookies are HTTP-only and SameSite=Lax,
+  with Secure and the `__Host-` prefix on HTTPS. Loopback HTTP uses a separate
+  development cookie. Use the same host throughout a local login.
+- Login and logout require a matching request origin. Login uses generic
+  credential errors and five-minute limits per IP and per email/IP pair.
+  Review those limits for shared classroom networks before any deployment.
+- Development preview uses local demo data and grants no API permissions.
+  Account creation requires operator access. Password reset, MFA, and
+  production provisioning are outside this milestone.
+
 ## Running Tests
 
 ```bash
@@ -153,6 +215,8 @@ Tests are located in `test/` and cover:
 - **`test/components/Button.test.tsx`** — Button component rendering, behavior, accessibility
 - **`test/worker/health.test.ts`** — Worker liveness and database readiness responses
 - **`test/worker/database.test.ts`** — D1 migrations, reads and writes, constraints, and repeatable development seeding
+- **`test/worker/auth.test.ts`** — account roles, session cookies, expiry, logout, throttling, and protected data
+- **`test/components/Login.test.tsx`** — role redirects, sign-out, and session expiry feedback
 
 ---
 

@@ -7,7 +7,6 @@ import {
   type ReactNode,
 } from 'react'
 import {
-  clearDevPreview,
   getDevPreview,
   setDevPreview,
   type DevPreviewState,
@@ -29,8 +28,9 @@ export function DevPreviewProvider({ children }: { children: ReactNode }) {
 
   // Sync state whenever another tab or the same page changes localStorage.
   useEffect(() => {
+    if (!import.meta.env.DEV) return
     function handleStorage(e: StorageEvent) {
-      if (e.key === 'dev-preview-role') {
+      if (e.key === 'dev-preview-role' || e.key === null) {
         setState(getDevPreview())
       }
     }
@@ -40,13 +40,10 @@ export function DevPreviewProvider({ children }: { children: ReactNode }) {
 
   const setRole = useCallback((role: DevRole) => {
     setDevPreview(role)
-    setState(getDevPreview())
+    setState((previous) => ({ ...previous, role }))
   }, [])
 
-  const exitPreview = useCallback(() => {
-    clearDevPreview()
-    setState(getDevPreview())
-  }, [])
+  const exitPreview = useCallback(() => setRole(null), [setRole])
 
   return (
     <DevPreviewContext.Provider value={{ ...state, setRole, exitPreview }}>

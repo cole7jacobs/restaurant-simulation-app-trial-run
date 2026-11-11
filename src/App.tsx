@@ -15,60 +15,78 @@ import { TeamReviewPage } from './routes/professor/TeamReviewPage'
 import { RFIPage } from './routes/professor/RFIPage'
 import { ImportPage } from './routes/professor/ImportPage'
 import { DevPreviewSelector } from './routes/DevPreviewSelector'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import { PendingAccountPage, ProfessorAccountPage, StudentAccountHome } from './routes/AccountPages'
+import { Button } from './components/ui/Button'
 
-function PreviewLayout({ role, children }: { role: 'student' | 'professor'; children: ReactElement }) {
-  const { role: activeRole } = useDevPreview()
-
-  if (activeRole === role) return children
-  return <Navigate to={activeRole ? `/${activeRole}/home` : '/dev'} replace />
+function RoleLayout({ role, children }: { role: 'student' | 'professor'; children: ReactElement }) {
+  const { session, ready, expired, unavailable, refresh } = useAuth()
+  const { role: previewRole } = useDevPreview()
+  if (!ready) return <p role="status" className="p-6">Checking session…</p>
+  if (session) {
+    if (unavailable) return <SessionUnavailable retry={refresh} />
+    return session.account.role === role ? children : <Navigate to={`/${session.account.role}/home`} replace />
+  }
+  if (import.meta.env.DEV && !expired && previewRole) {
+    return previewRole === role ? children : <Navigate to={`/${previewRole}/home`} replace />
+  }
+  return <Navigate to="/login" replace />
 }
 
-function PreviewHome() {
+function SessionUnavailable({ retry }: { retry: () => Promise<void> }) {
+  return <main className="p-6 space-y-4">
+    <p role="alert">Unable to check your session.</p>
+    <Button onClick={() => void retry()}>Try again</Button>
+  </main>
+}
+
+function RolePage({ preview, signedIn }: { preview: ReactElement; signedIn: ReactElement }) {
+  return useAuth().session ? signedIn : preview
+}
+
+function HomeRedirect() {
+  const { session, ready, expired } = useAuth()
   const { role } = useDevPreview()
-  return <Navigate to={role ? `/${role}/home` : '/login'} replace />
+  if (!ready) return <p role="status" className="p-6">Checking session…</p>
+  const active = session?.account.role ?? (import.meta.env.DEV && !expired ? role : null)
+  return <Navigate to={active ? `/${active}/home` : '/login'} replace />
 }
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={import.meta.env.DEV ? <PreviewHome /> : <Navigate to="/login" replace />} />
+      <Route path="/" element={<HomeRedirect />} />
       <Route path="/login" element={<LoginPage />} />
+      {import.meta.env.DEV && <Route path="/dev" element={<DevPreviewSelector />} />}
 
-      {import.meta.env.DEV && (
-        <>
-          <Route path="/dev" element={<DevPreviewSelector />} />
+      <Route path="/student" element={<RoleLayout role="student"><StudentLayout /></RoleLayout>}>
+        <Route index element={<Navigate to="home" replace />} />
+        <Route path="home" element={<RolePage preview={<StudentHomePage />} signedIn={<StudentAccountHome />} />} />
+        <Route path="decisions" element={<RolePage preview={<DecisionsPage />} signedIn={<PendingAccountPage title="Enter Decisions" description="Decision entry will be available in a later milestone." />} />} />
+        <Route path="review" element={<RolePage preview={<ReviewPage />} signedIn={<PendingAccountPage title="Review Decisions" description="Decision review will be available in a later milestone." />} />} />
+        <Route path="results" element={<RolePage preview={<ResultsPage />} signedIn={<PendingAccountPage title="Results" description="Simulation results will be available in a later milestone." />} />} />
+      </Route>
 
-          <Route path="/student" element={<PreviewLayout role="student"><StudentLayout /></PreviewLayout>}>
-            <Route index element={<Navigate to="home" replace />} />
-            <Route path="home" element={<StudentHomePage />} />
-            <Route path="decisions" element={<DecisionsPage />} />
-            <Route path="review" element={<ReviewPage />} />
-            <Route path="results" element={<ResultsPage />} />
-          </Route>
+      <Route path="/professor" element={<RoleLayout role="professor"><ProfessorLayout /></RoleLayout>}>
+        <Route index element={<Navigate to="home" replace />} />
+        <Route path="home" element={<RolePage preview={<ProfessorHomePage />} signedIn={<ProfessorAccountPage title="Professor Dashboard" />} />} />
+        <Route path="submissions" element={<RolePage preview={<SubmissionsPage />} signedIn={<ProfessorAccountPage title="Team Submissions" />} />} />
+        <Route path="team-review/:teamId" element={<RolePage preview={<TeamReviewPage />} signedIn={<ProfessorAccountPage title="Team Decision Review" teamOnly />} />} />
+        <Route path="rfi" element={<RolePage preview={<RFIPage />} signedIn={<PendingAccountPage title="RFI File Generation" description="File generation will be available in a later milestone." />} />} />
+        <Route path="import" element={<RolePage preview={<ImportPage />} signedIn={<PendingAccountPage title="Import Simulation Results" description="Results import will be available in a later milestone." />} />} />
+      </Route>
 
-          <Route path="/professor" element={<PreviewLayout role="professor"><ProfessorLayout /></PreviewLayout>}>
-            <Route index element={<Navigate to="home" replace />} />
-            <Route path="home" element={<ProfessorHomePage />} />
-            <Route path="submissions" element={<SubmissionsPage />} />
-            <Route path="team-review/:teamId" element={<TeamReviewPage />} />
-            <Route path="rfi" element={<RFIPage />} />
-            <Route path="import" element={<ImportPage />} />
-          </Route>
-        </>
-      )}
-
-      {/* Catch-all 404 */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )
 }
 
 export function App() {
-  if (!import.meta.env.DEV) return <AppRoutes />
-
   return (
-    <DevPreviewProvider>
-      <AppRoutes />
-    </DevPreviewProvider>
+    <AuthProvider>
+      <DevPreviewProvider>
+        <AppRoutes />
+      </DevPreviewProvider>
+    </AuthProvider>
   )
 }

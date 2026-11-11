@@ -23,7 +23,14 @@ const STORAGE_KEY = 'dev-preview-role'
 
 /** Returns the current dev-preview state from localStorage. */
 export function getDevPreview(): DevPreviewState {
-  const raw = localStorage.getItem(STORAGE_KEY)
+  let raw: string | null = null
+  if (import.meta.env.DEV) {
+    try {
+      raw = window.localStorage?.getItem(STORAGE_KEY) ?? null
+    } catch {
+      // Preview still works for the current page when storage is disabled.
+    }
+  }
   const role: DevRole =
     raw === 'student' || raw === 'professor' ? raw : null
 
@@ -36,14 +43,11 @@ export function getDevPreview(): DevPreviewState {
 
 /** Persists the chosen role to localStorage. */
 export function setDevPreview(role: DevRole): void {
-  if (role === null) {
-    localStorage.removeItem(STORAGE_KEY)
-  } else {
-    localStorage.setItem(STORAGE_KEY, role)
+  if (!import.meta.env.DEV) return
+  try {
+    if (role === null) window.localStorage?.removeItem(STORAGE_KEY)
+    else window.localStorage?.setItem(STORAGE_KEY, role)
+  } catch {
+    // Persistence is optional for development preview.
   }
-}
-
-/** Removes all dev-preview state from localStorage. */
-export function clearDevPreview(): void {
-  localStorage.removeItem(STORAGE_KEY)
 }

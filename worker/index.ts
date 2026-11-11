@@ -1,6 +1,6 @@
 import type { D1Database } from '@cloudflare/workers-types'
 import { Hono } from 'hono'
-import { cors } from 'hono/cors'
+import { authRoutes } from './auth'
 
 /**
  * Minimal type for Cloudflare's Static Assets fetcher binding.
@@ -24,24 +24,6 @@ type Bindings = {
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
-
-// ── Middleware ────────────────────────────────────────────────────────────────
-
-/**
- * CORS — allows the Vite dev server (localhost:5173) to call the Worker
- * API (localhost:8787) during local development.
- * In production, the Worker serves both frontend and API from the same origin,
- * so CORS is not strictly required, but it is harmless.
- */
-app.use(
-  '/api/*',
-  cors({
-    origin: ['http://localhost:5173'],
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  }),
-)
 
 // ── API Routes ────────────────────────────────────────────────────────────────
 
@@ -75,17 +57,8 @@ app.get('/api/health/db', async (c) => {
   return c.json({ status: 'unavailable' }, 503)
 })
 
-// Phase 2 — Authentication routes:
-// import authRoutes from './routes/auth'
-// app.route('/api/auth', authRoutes)
-
-// Phase 3 — Student decision routes:
-// import studentRoutes from './routes/student'
-// app.route('/api/student', studentRoutes)
-
-// Phase 4 — Professor routes (submissions, RFI generation):
-// import professorRoutes from './routes/professor'
-// app.route('/api/professor', professorRoutes)
+app.route('/api', authRoutes)
+app.all('/api/*', (c) => c.json({ error: 'Not found.' }, 404))
 
 // ── Static Asset Fallback (SPA) ───────────────────────────────────────────────
 

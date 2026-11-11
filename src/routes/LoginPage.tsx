@@ -1,11 +1,34 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, type FormEvent } from 'react'
+import { Link, Navigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 
-type Role = 'student' | 'professor'
+import { useAuth } from '../context/AuthContext'
+import { useDevPreview } from '../context/DevPreviewContext'
 
 export function LoginPage() {
-  const [role, setRoleState] = useState<Role>('student')
+  const { session, login, expired } = useAuth()
+  const { exitPreview } = useDevPreview()
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+
+  if (session) return <Navigate to={`/${session.account.role}/home`} replace />
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const fields = new FormData(event.currentTarget)
+    setBusy(true)
+    setError('')
+    try {
+      await login(String(fields.get('email')), String(fields.get('password')))
+      exitPreview()
+    } catch (failure) {
+      setError(failure instanceof Error && !(failure instanceof TypeError)
+        ? failure.message : 'Sign-in is temporarily unavailable.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return (
     <main className="min-h-screen bg-white dark:bg-dark-bg flex items-start justify-center pt-16 px-4">
       <div className="w-full max-w-sm">
@@ -14,49 +37,18 @@ export function LoginPage() {
           Sign in
         </h1>
         <p className="font-body text-sm text-deep-green/70 dark:text-card/70 mb-6">
-          Sign-in will be available when authentication is implemented.
+          Use the email and password assigned to you.
         </p>
 
         {/* Sign-in card */}
         <div className="bg-card dark:bg-dark-card rounded-2xl p-6 space-y-5">
 
-          {/* Role toggle */}
-          <div>
-            <p className="font-body text-sm text-deep-green dark:text-card mb-2">I am a</p>
-            <div className="flex rounded-full border border-deep-green dark:border-card overflow-hidden">
-              <button
-                type="button"
-                onClick={() => setRoleState('student')}
-                className={`
-                  flex-1 py-2.5 font-body text-base font-medium transition-colors
-                  ${role === 'student'
-                    ? 'bg-deep-green text-white dark:bg-primary dark:text-deep-green'
-                    : 'bg-transparent text-deep-green dark:text-card hover:bg-deep-green/5 dark:hover:bg-card/10'
-                  }
-                `}
-                aria-pressed={role === 'student'}
-              >
-                Student
-              </button>
-              <button
-                type="button"
-                onClick={() => setRoleState('professor')}
-                className={`
-                  flex-1 py-2.5 font-body text-base font-medium transition-colors
-                  ${role === 'professor'
-                    ? 'bg-primary text-deep-green'
-                    : 'bg-transparent text-deep-green dark:text-card hover:bg-deep-green/5 dark:hover:bg-card/10'
-                  }
-                `}
-                aria-pressed={role === 'professor'}
-              >
-                Professor
-              </button>
-            </div>
-          </div>
-
-          {/* Sign-in form */}
-          <fieldset disabled className="space-y-4">
+          {(error || expired) && (
+            <p role="alert" className="text-sm font-medium text-deep-green dark:text-card">
+              {error || 'Your session expired. Sign in again.'}
+            </p>
+          )}
+          <form onSubmit={submit} className="space-y-4">
             <div className="space-y-1">
               <label
                 htmlFor="email"
@@ -68,7 +60,7 @@ export function LoginPage() {
                 id="email"
                 type="email"
                 autoComplete="email"
-                placeholder={role === 'student' ? 'student@lsu.edu' : 'professor@lsu.edu'}
+                name="email" required maxLength={100}
                 className="
                   w-full rounded-xl border border-deep-green dark:border-card
                   bg-white dark:bg-dark-bg
@@ -90,7 +82,7 @@ export function LoginPage() {
               <input
                 id="password"
                 type="password"
-                autoComplete="current-password"
+                autoComplete="current-password" name="password" required maxLength={256}
                 className="
                   w-full rounded-xl border border-deep-green dark:border-card
                   bg-white dark:bg-dark-bg
@@ -101,10 +93,10 @@ export function LoginPage() {
               />
             </div>
 
-            <Button disabled variant="primary" className="mt-2 w-full">
-              Sign in
+            <Button type="submit" disabled={busy} variant="primary" className="mt-2 w-full">
+              {busy ? 'Signing in…' : 'Sign in'}
             </Button>
-          </fieldset>
+          </form>
 
           {import.meta.env.DEV && (
             <div className="border-t border-deep-green/10 dark:border-card/10 pt-4 text-center space-y-1">
