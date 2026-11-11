@@ -4,16 +4,10 @@ import { Badge } from '../../components/ui/Badge'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
 
-const ROUND = 3
+import { DEV_PREVIEW_ROUND } from '../../lib/dev-preview'
+import { DEMO_TEAMS } from './demo-teams'
 
-const TEAMS = [
-  { name: 'Team Alpha', firm: 'Firm 1', status: 'submitted' as const },
-  { name: 'Team Beta',  firm: 'Firm 2', status: 'submitted' as const },
-  { name: 'Team Gamma', firm: 'Firm 3', status: 'draft'     as const },
-  { name: 'Team Delta', firm: 'Firm 4', status: 'pending'   as const },
-]
-
-const submittedCount = TEAMS.filter(t => t.status === 'submitted').length
+const submittedTeams = DEMO_TEAMS.filter((team) => team.status === 'submitted')
 
 /**
  * Professor home page — Milestone 1.2.
@@ -29,24 +23,24 @@ export function ProfessorHomePage() {
       {/* Page header */}
       <PageHeader
         title="Professor Dashboard"
-        subtitle={`Round ${ROUND} · Fall 2026`}
+        subtitle={`Round ${DEV_PREVIEW_ROUND} · Fall 2026`}
       />
 
       {/* Summary stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
           <p className="font-body text-sm text-slate-600 dark:text-slate-400">Active Round</p>
-          <p className="font-heading text-3xl font-bold text-primary mt-1">{ROUND}</p>
+          <p className="font-heading text-3xl font-bold text-primary mt-1">{DEV_PREVIEW_ROUND}</p>
         </Card>
         <Card>
           <p className="font-body text-sm text-slate-600 dark:text-slate-400">Teams</p>
-          <p className="font-heading text-3xl font-bold text-primary mt-1">{TEAMS.length}</p>
+          <p className="font-heading text-3xl font-bold text-primary mt-1">{DEMO_TEAMS.length}</p>
         </Card>
         <Card>
           <p className="font-body text-sm text-slate-600 dark:text-slate-400">Submitted</p>
-          <p className="font-heading text-3xl font-bold text-primary mt-1">{submittedCount}</p>
+          <p className="font-heading text-3xl font-bold text-primary mt-1">{submittedTeams.length}</p>
           <p className="font-body text-xs text-slate-500 dark:text-slate-400 mt-1">
-            {submittedCount} of {TEAMS.length} teams
+            {submittedTeams.length} of {DEMO_TEAMS.length} teams
           </p>
         </Card>
       </div>
@@ -54,7 +48,7 @@ export function ProfessorHomePage() {
       {/* Team submissions table */}
       <Card>
         <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
-          Team Submissions — Round {ROUND}
+          Team Submissions — Round {DEV_PREVIEW_ROUND}
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm font-body">
@@ -67,7 +61,7 @@ export function ProfessorHomePage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
-              {TEAMS.map((team, i) => (
+              {DEMO_TEAMS.map((team) => (
                 <tr key={team.name}>
                   <td className="py-3 pr-4 text-deep-green dark:text-card">{team.name}</td>
                   <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">{team.firm}</td>
@@ -77,13 +71,15 @@ export function ProfessorHomePage() {
                     </Badge>
                   </td>
                   <td className="py-3">
-                    <Button
-                      variant="outlined"
-                      size="sm"
-                      onClick={() => navigate(`/professor/team-review/${i + 1}`)}
-                    >
-                      View
-                    </Button>
+                    {team.decisions && (
+                      <Button
+                        variant="outlined"
+                        size="sm"
+                        onClick={() => navigate(`/professor/team-review/${team.id}`)}
+                      >
+                        View
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}

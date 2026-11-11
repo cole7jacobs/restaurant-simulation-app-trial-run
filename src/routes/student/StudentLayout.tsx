@@ -33,18 +33,18 @@ export function StudentLayout() {
       {/* Top navigation bar */}
       <header className="border-b border-deep-green/10 dark:border-card/10 px-4">
         <nav
-          className="max-w-5xl mx-auto flex items-center gap-1 py-2"
+          className="max-w-5xl mx-auto flex flex-wrap items-center gap-2 py-2"
           aria-label="Student navigation"
         >
           {/* Nav tabs */}
-          <div className="flex items-center gap-1 flex-1">
+          <div className="flex flex-wrap items-center gap-1 grow">
             {NAV_TABS.map(({ label, to }) => (
               <NavLink
                 key={to}
                 to={to}
                 className={({ isActive }) =>
                   [
-                    'px-4 py-2 rounded-full font-body text-sm font-medium transition-colors',
+                    'px-2 sm:px-4 py-2 rounded-full font-body text-sm font-medium transition-colors',
                     isActive
                       ? 'bg-deep-green text-white dark:bg-primary dark:text-deep-green'
                       : 'text-deep-green dark:text-card hover:bg-deep-green/5 dark:hover:bg-card/10',
@@ -57,7 +57,7 @@ export function StudentLayout() {
           </div>
 
           {/* Right-side controls */}
-          <div className="flex items-center gap-3">
+          <div className="ml-auto flex items-center gap-3">
             {/* Team name and round number from DevPreview context */}
             <span className="font-body text-sm text-deep-green dark:text-card hidden sm:block">
               {teamName} · Round {roundNumber}
@@ -70,7 +70,7 @@ export function StudentLayout() {
                 navigate('/login')
               }}
             >
-              Sign out
+              Exit preview
             </Button>
             <DarkModeToggle />
           </div>

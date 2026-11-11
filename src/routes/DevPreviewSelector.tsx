@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { useDevPreview } from '../context/DevPreviewContext'
-import { setDevPreview, clearDevPreview } from '../lib/dev-preview'
 
 /**
  * DevPreviewSelector — standalone page (no layout shell) that lets a developer
@@ -11,18 +10,17 @@ import { setDevPreview, clearDevPreview } from '../lib/dev-preview'
  */
 export function DevPreviewSelector() {
   const navigate = useNavigate()
-  const { role } = useDevPreview()
+  const { role, setRole, exitPreview } = useDevPreview()
 
   function pickRole(next: 'student' | 'professor') {
-    setDevPreview(next)
-    // Force a full re-render of context state by navigating immediately.
+    setRole(next)
     navigate(next === 'student' ? '/student/home' : '/professor/home', {
       replace: true,
     })
   }
 
-  function exitPreview() {
-    clearDevPreview()
+  function leavePreview() {
+    exitPreview()
     navigate('/login', { replace: true })
   }
 
@@ -84,7 +82,7 @@ export function DevPreviewSelector() {
               </p>
               <div className="flex justify-center">
                 <button
-                  onClick={exitPreview}
+                  onClick={leavePreview}
                   className="font-body text-sm text-deep-green/60 dark:text-card/60 underline underline-offset-2 hover:text-deep-green dark:hover:text-card transition-colors"
                 >
                   Exit preview

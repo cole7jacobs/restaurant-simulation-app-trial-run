@@ -249,9 +249,9 @@ export function DecisionsPage() {
         subtitle={`Round ${roundNumber} · ${teamName}`}
       />
 
-      <div className="flex gap-6 items-start">
+      <div className="flex flex-col gap-6 md:flex-row md:items-start">
         {/* Left sidebar */}
-        <aside className="w-56 shrink-0">
+        <aside className="w-full shrink-0 md:w-56">
           <SectionNav
             items={NAV_ITEMS as unknown as { id: string; label: string; complete: boolean; count?: string }[]}
             activeId={activeId}
@@ -260,7 +260,7 @@ export function DecisionsPage() {
         </aside>
 
         {/* Right panel */}
-        <div className="flex-1 min-w-0">
+        <div className="w-full min-w-0 flex-1">
           <Card>
             <h2 className="font-heading text-xl font-semibold text-deep-green dark:text-card mb-4">
               {SECTION_TITLES[activeId]}

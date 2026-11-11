@@ -25,11 +25,6 @@ export function DevPreviewBanner() {
     })
   }
 
-  function handleSignIn() {
-    setRole(null)
-    navigate('/login', { replace: true })
-  }
-
   return (
     <div
       className={[
@@ -48,7 +43,7 @@ export function DevPreviewBanner() {
       </span>
 
       {/* Middle — current role badge */}
-      <span className="flex items-center gap-2 flex-1 min-w-max">
+      <span className="flex items-center gap-2">
         <span>Viewing as:</span>
         <span
           className={[
@@ -82,13 +77,6 @@ export function DevPreviewBanner() {
             Switch to Professor
           </Button>
         )}
-        <Button
-          variant="outlined"
-          className="py-1.5 px-4 text-xs border-amber-600 text-amber-700 dark:border-amber-400 dark:text-amber-300 hover:bg-amber-100/50 dark:hover:bg-amber-900/30"
-          onClick={handleSignIn}
-        >
-          Sign in
-        </Button>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Link, Outlet, useLocation, useMatch, useNavigate } from 'react-router-dom'
 import { DarkModeToggle } from '../../components/ui/DarkModeToggle'
 import { Button } from '../../components/ui/Button'
 import { DevPreviewBanner } from '../../components/ui/DevPreviewBanner'
@@ -11,57 +11,46 @@ const NAV_TABS = [
   { label: 'FR.LST Import', to: '/professor/import' },
 ] as const
 
-/**
- * Professor layout shell — rendered for all /professor/* routes.
- *
- * Contains:
- *   - DevPreviewBanner (above main content)
- *   - Top navigation tabs (Home, Submissions)
- *   - User name placeholder (Phase 2: populated from auth session)
- *   - Sign out button (Phase 2: calls auth logout)
- *   - Dark mode toggle
- *   - <Outlet /> where child routes render their page content
- *
- * Professor tools added in Phase 4:
- *   - Submission monitor (/professor/round/:id/teams)
- *   - Team decision review (/professor/round/:id/team/:tid)
- *   - RFI generation (/professor/round/:id/rfi)
- *   - FR.LST import (/professor/round/:id/import)
- */
 export function ProfessorLayout() {
   const { exitPreview } = useDevPreview()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const teamReview = useMatch('/professor/team-review/:teamId')
 
   return (
     <div className="min-h-screen bg-white dark:bg-dark-bg flex flex-col">
       {/* Top navigation bar */}
       <header className="border-b border-deep-green/10 dark:border-card/10 px-4">
         <nav
-          className="max-w-5xl mx-auto flex items-center gap-1 py-2"
+          className="max-w-5xl mx-auto flex flex-wrap items-center gap-2 py-2"
           aria-label="Professor navigation"
         >
           {/* Nav tabs */}
-          <div className="flex items-center gap-1 flex-1">
-            {NAV_TABS.map(({ label, to }) => (
-              <NavLink
-                key={to}
-                to={to}
-                className={({ isActive }) =>
-                  [
-                    'px-4 py-2 rounded-full font-body text-sm font-medium transition-colors',
-                    isActive
+          <div className="flex flex-wrap items-center gap-1 grow">
+            {NAV_TABS.map(({ label, to }) => {
+              const isCurrent = pathname.toLowerCase().replace(/\/+$/, '') === to
+              const isSection = Boolean(teamReview) && label === 'Submissions'
+
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  aria-current={isCurrent ? 'page' : isSection ? 'location' : undefined}
+                  className={[
+                    'px-2 sm:px-4 py-2 rounded-full font-body text-sm font-medium transition-colors',
+                    isCurrent || isSection
                       ? 'bg-deep-green text-white dark:bg-primary dark:text-deep-green'
                       : 'text-deep-green dark:text-card hover:bg-deep-green/5 dark:hover:bg-card/10',
-                  ].join(' ')
-                }
-              >
-                {label}
-              </NavLink>
-            ))}
+                  ].join(' ')}
+                >
+                  {label}
+                </Link>
+              )
+            })}
           </div>
 
           {/* Right-side controls */}
-          <div className="flex items-center gap-3">
+          <div className="ml-auto flex items-center gap-3">
             {/* Phase 2: replace with actual user name from auth session */}
             <span className="font-body text-sm text-deep-green dark:text-card hidden sm:block">
               Professor
@@ -74,7 +63,7 @@ export function ProfessorLayout() {
                 navigate('/login')
               }}
             >
-              Sign out
+              Exit preview
             </Button>
             <DarkModeToggle />
           </div>

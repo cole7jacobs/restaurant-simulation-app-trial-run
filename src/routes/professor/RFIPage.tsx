@@ -2,12 +2,10 @@ import { Card } from '../../components/ui/Card'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
 
-const ROUND = 3
+import { DEV_PREVIEW_ROUND } from '../../lib/dev-preview'
+import { DEMO_TEAMS } from './demo-teams'
 
-const SUBMITTED_TEAMS = [
-  { name: 'Team Alpha', firm: 'Firm 1' },
-  { name: 'Team Beta',  firm: 'Firm 2' },
-]
+const submittedTeams = DEMO_TEAMS.filter((team) => team.status === 'submitted')
 
 /**
  * RFI File Generation page — Milestone 1.2.
@@ -19,7 +17,7 @@ export function RFIPage() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <PageHeader title="RFI File Generation" subtitle={`Round ${ROUND}`} />
+      <PageHeader title="RFI File Generation" subtitle={`Round ${DEV_PREVIEW_ROUND}`} />
 
       {/* Not-yet-implemented notice */}
       <div className="rounded-2xl border border-amber-300 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-700 p-4 text-amber-800 dark:text-amber-200 font-body text-sm">
@@ -43,7 +41,7 @@ export function RFIPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
-              {SUBMITTED_TEAMS.map((team) => (
+              {submittedTeams.map((team) => (
                 <tr key={team.name}>
                   <td className="py-3 pr-4 text-deep-green dark:text-card">{team.name}</td>
                   <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">{team.firm}</td>

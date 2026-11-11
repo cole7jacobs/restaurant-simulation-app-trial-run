@@ -1,6 +1,8 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Card } from '../../components/ui/Card'
-import { Badge } from '../../components/ui/Badge'
+import { EmptyState } from '../../components/ui/EmptyState'
+import { DEV_PREVIEW_ROUND } from '../../lib/dev-preview'
+import { DEMO_TEAMS } from './demo-teams'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
 
@@ -12,11 +14,28 @@ import { Button } from '../../components/ui/Button'
  */
 export function TeamReviewPage() {
   const navigate = useNavigate()
+  const { teamId } = useParams()
+  const team = DEMO_TEAMS.find(({ id }) => id === teamId)
+
+  if (!team?.decisions) {
+    return (
+      <EmptyState
+        title={team ? 'No submitted decisions' : 'Team not found'}
+        description={team ? `${team.name} has no submitted decisions for this round.` : 'Select a team from the submissions list.'}
+      >
+        <Button variant="outlined" onClick={() => navigate('/professor/submissions')}>
+          Back to Submissions
+        </Button>
+      </EmptyState>
+    )
+  }
+
+  const { item, prep, portion, price, staff } = team.decisions
 
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <PageHeader title="Team Decision Review" subtitle="Team Alpha · Round 3" />
+      <PageHeader title="Team Decision Review" subtitle={`${team.name} · Round ${DEV_PREVIEW_ROUND}`} />
 
       {/* Menu Decisions */}
       <Card>
@@ -36,11 +55,11 @@ export function TeamReviewPage() {
             </thead>
             <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
               <tr>
-                <td className="py-3 pr-4 text-deep-green dark:text-card">Steak/Filet</td>
-                <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">250</td>
-                <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">150</td>
+                <td className="py-3 pr-4 text-deep-green dark:text-card">{item}</td>
+                <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">{prep}</td>
+                <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">{portion}</td>
                 <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">—</td>
-                <td className="py-3 text-slate-600 dark:text-slate-400">$28</td>
+                <td className="py-3 text-slate-600 dark:text-slate-400">{price}</td>
               </tr>
             </tbody>
           </table>
@@ -55,7 +74,7 @@ export function TeamReviewPage() {
         <dl className="grid grid-cols-2 gap-4 text-sm font-body">
           <div>
             <dt className="text-slate-500 dark:text-slate-400">Staff Per Day</dt>
-            <dd className="font-semibold text-deep-green dark:text-card mt-0.5">12</dd>
+            <dd className="font-semibold text-deep-green dark:text-card mt-0.5">{staff}</dd>
           </div>
           <div>
             <dt className="text-slate-500 dark:text-slate-400">Hourly Compensation</dt>

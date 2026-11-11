@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { DevPreviewProvider, useDevPreview } from './context/DevPreviewContext'
 import { LoginPage } from './routes/LoginPage'
@@ -15,68 +16,46 @@ import { RFIPage } from './routes/professor/RFIPage'
 import { ImportPage } from './routes/professor/ImportPage'
 import { DevPreviewSelector } from './routes/DevPreviewSelector'
 
-/**
- * Application route tree — React Router library mode.
- *
- * Route structure:
- *   /                       → redirect to /student/home or /professor/home (dev preview)
- *                             or /login (default)
- *   /login                  → LoginPage
- *   /dev                    → DevPreviewSelector (choose role for dev preview)
- *   /student                → StudentLayout (renders child routes via <Outlet>)
- *     /student/home         → StudentHomePage
- *     /student/decisions/*  → Phase 3
- *     /student/review       → Phase 3
- *     /student/results/*    → Phase 6
- *   /professor              → ProfessorLayout
- *     /professor/home       → ProfessorHomePage
- *     /professor/rounds     → Phase 4
- *     /professor/round/:id  → Phase 4 sub-routes
- *   *                       → NotFoundPage
- *
- * Authentication guards (Phase 2):
- *   Students accessing /professor/* and vice versa will be redirected.
- *   For now, dev preview mode allows navigation without real auth.
- */
+function PreviewLayout({ role, children }: { role: 'student' | 'professor'; children: ReactElement }) {
+  const { role: activeRole } = useDevPreview()
 
-/** Root redirect — respects active dev-preview role. */
-function RootRedirect() {
+  if (activeRole === role) return children
+  return <Navigate to={activeRole ? `/${activeRole}/home` : '/dev'} replace />
+}
+
+function PreviewHome() {
   const { role } = useDevPreview()
-  if (role === 'student') return <Navigate to="/student/home" replace />
-  if (role === 'professor') return <Navigate to="/professor/home" replace />
-  return <Navigate to="/login" replace />
+  return <Navigate to={role ? `/${role}/home` : '/login'} replace />
 }
 
 function AppRoutes() {
   return (
     <Routes>
-      {/* Root redirect — dev-preview-aware */}
-      <Route path="/" element={<RootRedirect />} />
-
-      {/* Authentication */}
+      <Route path="/" element={import.meta.env.DEV ? <PreviewHome /> : <Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
 
-      {/* Development preview role selector */}
-      <Route path="/dev" element={<DevPreviewSelector />} />
+      {import.meta.env.DEV && (
+        <>
+          <Route path="/dev" element={<DevPreviewSelector />} />
 
-      {/* Student interface */}
-      <Route path="/student" element={<StudentLayout />}>
-        <Route index element={<Navigate to="home" replace />} />
-        <Route path="home" element={<StudentHomePage />} />
-        <Route path="decisions" element={<DecisionsPage />} />
-        <Route path="review" element={<ReviewPage />} />
-        <Route path="results" element={<ResultsPage />} />
-      </Route>
+          <Route path="/student" element={<PreviewLayout role="student"><StudentLayout /></PreviewLayout>}>
+            <Route index element={<Navigate to="home" replace />} />
+            <Route path="home" element={<StudentHomePage />} />
+            <Route path="decisions" element={<DecisionsPage />} />
+            <Route path="review" element={<ReviewPage />} />
+            <Route path="results" element={<ResultsPage />} />
+          </Route>
 
-      {/* Professor interface */}
-      <Route path="/professor" element={<ProfessorLayout />}>
-        <Route index element={<Navigate to="home" replace />} />
-        <Route path="home" element={<ProfessorHomePage />} />
-        <Route path="submissions" element={<SubmissionsPage />} />
-        <Route path="team-review/:teamId" element={<TeamReviewPage />} />
-        <Route path="rfi" element={<RFIPage />} />
-        <Route path="import" element={<ImportPage />} />
-      </Route>
+          <Route path="/professor" element={<PreviewLayout role="professor"><ProfessorLayout /></PreviewLayout>}>
+            <Route index element={<Navigate to="home" replace />} />
+            <Route path="home" element={<ProfessorHomePage />} />
+            <Route path="submissions" element={<SubmissionsPage />} />
+            <Route path="team-review/:teamId" element={<TeamReviewPage />} />
+            <Route path="rfi" element={<RFIPage />} />
+            <Route path="import" element={<ImportPage />} />
+          </Route>
+        </>
+      )}
 
       {/* Catch-all 404 */}
       <Route path="*" element={<NotFoundPage />} />
@@ -85,6 +64,8 @@ function AppRoutes() {
 }
 
 export function App() {
+  if (!import.meta.env.DEV) return <AppRoutes />
+
   return (
     <DevPreviewProvider>
       <AppRoutes />

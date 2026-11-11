@@ -1,37 +1,11 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
-import { useDevPreview } from '../context/DevPreviewContext'
 
 type Role = 'student' | 'professor'
 
-/**
- * Login page — matches the sign-in screen mockup from the design system.
- *
- * Layout:
- *   - "I am a" role toggle (Student / Professor pill selector)
- *   - Email field
- *   - Password field
- *   - "Sign in" primary button
- *
- * In Milestone 1.2 Development Preview, clicking "Sign in" activates
- * preview mode for the selected role so the user can immediately explore.
- * Authentication will be implemented in Phase 2.
- */
 export function LoginPage() {
   const [role, setRoleState] = useState<Role>('student')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const { setRole } = useDevPreview()
-  const navigate = useNavigate()
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    // In dev preview mode: activate preview role and navigate to interface
-    setRole(role)
-    navigate(role === 'student' ? '/student/home' : '/professor/home', { replace: true })
-  }
-
   return (
     <main className="min-h-screen bg-white dark:bg-dark-bg flex items-start justify-center pt-16 px-4">
       <div className="w-full max-w-sm">
@@ -40,7 +14,7 @@ export function LoginPage() {
           Sign in
         </h1>
         <p className="font-body text-sm text-deep-green/70 dark:text-card/70 mb-6">
-          Choose how you are using the app.
+          Sign-in will be available when authentication is implemented.
         </p>
 
         {/* Sign-in card */}
@@ -82,7 +56,7 @@ export function LoginPage() {
           </div>
 
           {/* Sign-in form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <fieldset disabled className="space-y-4">
             <div className="space-y-1">
               <label
                 htmlFor="email"
@@ -94,10 +68,7 @@ export function LoginPage() {
                 id="email"
                 type="email"
                 autoComplete="email"
-                required
                 placeholder={role === 'student' ? 'student@lsu.edu' : 'professor@lsu.edu'}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="
                   w-full rounded-xl border border-deep-green dark:border-card
                   bg-white dark:bg-dark-bg
@@ -120,9 +91,6 @@ export function LoginPage() {
                 id="password"
                 type="password"
                 autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 className="
                   w-full rounded-xl border border-deep-green dark:border-card
                   bg-white dark:bg-dark-bg
@@ -133,23 +101,24 @@ export function LoginPage() {
               />
             </div>
 
-            <Button type="submit" variant="primary" className="mt-2 w-full">
+            <Button disabled variant="primary" className="mt-2 w-full">
               Sign in
             </Button>
-          </form>
+          </fieldset>
 
-          {/* Dev preview quick-entry note */}
-          <div className="border-t border-deep-green/10 dark:border-card/10 pt-4 text-center space-y-1">
-            <p className="font-body text-xs text-deep-green/60 dark:text-card/60">
-              Milestone 1.2 — Development Preview Mode
-            </p>
-            <Link
-              to="/dev"
-              className="inline-block font-body text-xs font-semibold text-amber-700 dark:text-amber-400 hover:underline"
-            >
-              Open Role Selector (/dev) →
-            </Link>
-          </div>
+          {import.meta.env.DEV && (
+            <div className="border-t border-deep-green/10 dark:border-card/10 pt-4 text-center space-y-1">
+              <p className="font-body text-xs text-deep-green/60 dark:text-card/60">
+                Milestone 1.2 — Development Preview Mode
+              </p>
+              <Link
+                to="/dev"
+                className="inline-block font-body text-xs font-semibold text-amber-700 dark:text-amber-400 hover:underline"
+              >
+                Open Role Selector (/dev) →
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </main>

@@ -1,0 +1,38 @@
+export const DEMO_TEAMS = [
+  {
+    name: 'Team Alpha',
+    firm: 'Firm 1',
+    submittedAt: 'Nov 8, 2026 2:34 PM',
+    decisionCount: '4/4',
+    id: '1',
+    status: 'submitted',
+    decisions: { item: 'Steak/Filet', prep: 250, portion: 150, price: '$28', staff: 12 },
+  },
+  {
+    name: 'Team Beta',
+    firm: 'Firm 2',
+    submittedAt: 'Nov 9, 2026 10:15 AM',
+    decisionCount: '4/4',
+    id: '2',
+    status: 'submitted',
+    decisions: { item: 'Chicken/Game Hen', prep: 200, portion: 125, price: '$22', staff: 10 },
+  },
+  {
+    name: 'Team Gamma',
+    firm: 'Firm 3',
+    submittedAt: null,
+    decisionCount: '2/4',
+    id: '3',
+    status: 'draft',
+    decisions: null,
+  },
+  {
+    name: 'Team Delta',
+    firm: 'Firm 4',
+    submittedAt: null,
+    decisionCount: '0/4',
+    id: '4',
+    status: 'pending',
+    decisions: null,
+  },
+] as const
