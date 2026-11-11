@@ -1,3 +1,4 @@
+import { StudentDecisionForm } from './routes/student/StudentDecisionForm'
 import type { ReactElement } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { DevPreviewProvider, useDevPreview } from './context/DevPreviewContext'
@@ -62,8 +63,8 @@ function AppRoutes() {
       <Route path="/student" element={<RoleLayout role="student"><StudentLayout /></RoleLayout>}>
         <Route index element={<Navigate to="home" replace />} />
         <Route path="home" element={<RolePage preview={<StudentHomePage />} signedIn={<StudentAccountHome />} />} />
-        <Route path="decisions" element={<RolePage preview={<DecisionsPage />} signedIn={<PendingAccountPage title="Enter Decisions" description="Decision entry will be available in a later milestone." />} />} />
-        <Route path="review" element={<RolePage preview={<ReviewPage />} signedIn={<PendingAccountPage title="Review Decisions" description="Decision review will be available in a later milestone." />} />} />
+        <Route path="decisions" element={<RolePage preview={<DecisionsPage />} signedIn={<StudentDecisionForm />} />} />
+        <Route path="review" element={<RolePage preview={<ReviewPage />} signedIn={<StudentDecisionForm review />} />} />
         <Route path="results" element={<RolePage preview={<ResultsPage />} signedIn={<PendingAccountPage title="Results" description="Simulation results will be available in a later milestone." />} />} />
       </Route>
 

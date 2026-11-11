@@ -1,0 +1,62 @@
+[
+  {
+    "source": "input-output/04_Q5-decisions/required-by-legacy-simulation/RFI1ME.TXT",
+    "record": "Finance                                         +2500        +0     +2500         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/04_Q5-decisions/required-by-legacy-simulation/RFI2ME.TXT",
+    "record": "Finance                                            +0        +0        +0         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/04_Q5-decisions/required-by-legacy-simulation/RFI3ME.TXT",
+    "record": "Finance                                            +0        +0        +0         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/04_Q5-decisions/required-by-legacy-simulation/RFI4ME.TXT",
+    "record": "Finance                                        -37500        +0    -50000         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/04_Q5-decisions/required-by-legacy-simulation/RFI5ME.TXT",
+    "record": "Finance                                            +0        +0        +0         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/05_Q6-decisions/required-by-legacy-simulation/RFI1ME.TXT",
+    "record": "Finance                                            +0        +0        +0         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/05_Q6-decisions/required-by-legacy-simulation/RFI2ME.TXT",
+    "record": "Finance                                            +0        +0        +0         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/05_Q6-decisions/required-by-legacy-simulation/RFI3ME.TXT",
+    "record": "Finance                                            +0        +0        +0         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/05_Q6-decisions/required-by-legacy-simulation/RFI4ME.TXT",
+    "record": "Finance                                            -0        +0    -40000         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/05_Q6-decisions/required-by-legacy-simulation/RFI5ME.TXT",
+    "record": "Finance                                            +0        +0        +0         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/06_Q7-decisions/required-by-legacy-simulation/RFI1ME.TXT",
+    "record": "Finance                                            +0        +0        +0         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/06_Q7-decisions/required-by-legacy-simulation/RFI2ME.TXT",
+    "record": "Finance                                        -20000     -5000        +0         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/06_Q7-decisions/required-by-legacy-simulation/RFI3ME.TXT",
+    "record": "Finance                                            +0        +0        +0         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/06_Q7-decisions/required-by-legacy-simulation/RFI4ME.TXT",
+    "record": "Finance                                            -0        +0        -0         0         0         0         0         0\r\n"
+  },
+  {
+    "source": "input-output/06_Q7-decisions/required-by-legacy-simulation/RFI5ME.TXT",
+    "record": "Finance                                            +0        +0        +0         0         0         0         0         0\r\n"
+  }
+]

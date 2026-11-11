@@ -3,6 +3,7 @@ import { Miniflare } from 'miniflare'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { unstable_splitSqlQuery } from 'wrangler'
 import app from '../../worker/index'
+import { decisionFields, reportFields, type DecisionResponse } from '../../shared/decisions'
 import { hashPassword } from '../../worker/password.mjs'
 
 const migrations = import.meta.glob<string>('../../db/migrations/*.sql', {
@@ -134,6 +135,37 @@ describe('Worker authentication with local D1', () => {
     const response = await request('/auth/session', { headers: { Cookie: session } })
     expect(response.status).toBe(401)
     expect(await response.json()).toEqual({ error: 'Session expired or invalid. Sign in again.' })
+  })
+
+  it('saves ordered selections for the signed-in team, rejects stale saves, and locks a submission', async () => {
+    const path = '/student/decisions/3'
+    expect((await request(path)).status).toBe(401)
+    const professorCookie = cookie(await login(professor))
+    expect((await request(path, { headers: { Cookie: professorCookie } })).status).toBe(403)
+    const session = cookie(await login(student))
+    const headers = { Cookie: session, Origin: origin, 'Content-Type': 'application/json' }
+    const initial: DecisionResponse = await (await request(path, { headers })).json()
+    const steak = initial.catalog.find((item) => item.ItemName === 'STEAK')!
+    const menu = [2, 1].map((PrepLevel) => ({
+      MenuItemID: steak.MenuItemID, PrepLevel, OrderSize: 180, InternalPromotion: 25, SalesPrice: 12.5,
+    }))
+    const values = Object.fromEntries([...decisionFields, ...reportFields].map(({ key }) => [key, 0]))
+    const write = (revision: string | null, submit: boolean, overrides = {}) => request(path, {
+      method: 'POST', headers, body: JSON.stringify({ revision, submit, values, menu, teamId: 2, ...overrides }),
+    })
+    expect((await write(null, false, { values: { ...values, TimeDepositChange: 1.25 } })).status).toBe(400)
+    const saved = await write(null, false)
+    expect(saved.status).toBe(200)
+    const { revision } = await saved.json()
+    expect((await write(null, false, { menu: [] })).status).toBe(409)
+    const draft = await (await request(path, { headers })).json()
+    expect(draft).toMatchObject({ values, menu, revision, submittedAt: null })
+    expect((await db.prepare('SELECT TeamID FROM TeamDecision WHERE RoundNumber = 3').all()).results)
+      .toEqual([{ TeamID: 1 }])
+    expect((await write(revision, true)).status).toBe(200)
+    const submitted = await (await request(path, { headers })).json()
+    expect(submitted.submittedAt).toEqual(expect.any(String))
+    expect((await write(submitted.revision, false)).status).toBe(409)
   })
 
   it('rate limits repeated attempts before password verification', async () => {

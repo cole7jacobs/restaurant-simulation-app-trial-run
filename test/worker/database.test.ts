@@ -73,8 +73,8 @@ describe('local D1 migrations and relationships', () => {
       db.prepare('INSERT INTO MenuItem (MenuItemID, ItemName, OrderSizeUnit) VALUES (?, ?, ?)').bind(item, 'Test Item', 'Gm.'),
       db.prepare('INSERT INTO TeamDecision (TeamID, RoundNumber, StaffPerDay, NotePayableChange) VALUES (?, ?, ?, ?)').bind(team, round, 12.5, -200),
       db.prepare(`INSERT INTO MenuItemDecision
-        (TeamID, RoundNumber, MenuItemID, PrepLevel, OrderSize, InternalPromotion, SalesPrice)
-        VALUES (?, ?, ?, ?, ?, ?, ?)`).bind(team, round, item, 2, 180, 0, 24.95),
+        (TeamID, RoundNumber, SlotNumber, MenuItemID, PrepLevel, OrderSize, InternalPromotion, SalesPrice)
+        VALUES (?, ?, 1, ?, ?, ?, ?, ?)`).bind(team, round, item, 2, 180, 0, 24.95),
       db.prepare(`INSERT INTO TeamMetrics
         (TeamID, RoundNumber, FoodSales, BeverageSales, FoodCost, BeverageCost, OperatingProfit,
          NetIncome, FoodOrders, AvgDailyCustomerCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
@@ -101,18 +101,18 @@ describe('local D1 migrations and relationships', () => {
       db.prepare("INSERT INTO Team (TeamID, TeamName, FirmNumber) VALUES (200, 'Constraint Team', 6)"),
       db.prepare('INSERT INTO TeamDecision (TeamID, RoundNumber) VALUES (200, 1)'),
       db.prepare("INSERT INTO MenuItem (MenuItemID, ItemName, OrderSizeUnit) VALUES (200, 'Constraint Item', 'Cl.')"),
-      db.prepare('INSERT INTO MenuItemDecision VALUES (200, 1, 200, 2, 20, 0, 5, NULL, NULL, NULL)'),
+      db.prepare('INSERT INTO MenuItemDecision VALUES (200, 1, 1, 200, 2, 20, 0, 5, NULL, NULL, NULL)'),
     ])
 
     const rejected = [
       [`INSERT INTO User (Email, PasswordHash, Name, Role, TeamID)
         VALUES ('orphan@example.invalid', 'test-fixture-disabled', 'Orphan', 'student', 999)`, /FOREIGN KEY/],
       ['INSERT INTO TeamDecision (TeamID, RoundNumber) VALUES (999, 1)', /FOREIGN KEY/],
-      ['INSERT INTO MenuItemDecision VALUES (200, 2, 200, 2, 20, 0, 5, NULL, NULL, NULL)', /FOREIGN KEY/],
-      ['INSERT INTO MenuItemDecision VALUES (200, 1, 999, 2, 20, 0, 5, NULL, NULL, NULL)', /FOREIGN KEY/],
+      ['INSERT INTO MenuItemDecision VALUES (200, 2, 1, 200, 2, 20, 0, 5, NULL, NULL, NULL)', /FOREIGN KEY/],
+      ['INSERT INTO MenuItemDecision VALUES (200, 1, 2, 999, 2, 20, 0, 5, NULL, NULL, NULL)', /FOREIGN KEY/],
       ['INSERT INTO TeamMetrics VALUES (999, 1, 0, 0, 0, 0, 0, 0, 0, 0)', /FOREIGN KEY/],
       ['INSERT INTO TeamDecision (TeamID, RoundNumber) VALUES (200, 1)', /UNIQUE/],
-      ['INSERT INTO MenuItemDecision VALUES (200, 1, 200, 2, 20, 0, 5, NULL, NULL, NULL)', /UNIQUE/],
+      ['INSERT INTO MenuItemDecision VALUES (200, 1, 1, 200, 2, 20, 0, 5, NULL, NULL, NULL)', /UNIQUE/],
       ["INSERT INTO Team (TeamName, FirmNumber) VALUES ('Duplicate Firm', 6)", /UNIQUE/],
       ['INSERT INTO Team (FirmNumber) VALUES (7)', /NOT NULL/],
       ['UPDATE TeamDecision SET ReportFinancial = 2 WHERE TeamID = 200', /CHECK/],
@@ -138,7 +138,7 @@ describe('local D1 migrations and relationships', () => {
         (SELECT COUNT(*) FROM MenuItemDecision WHERE TeamID < 0) AS menuDecisions,
         (SELECT COUNT(*) FROM TeamMetrics WHERE TeamID < 0) AS results
     `).first()
-    expect(counts).toEqual({ teams: 5, menuItems: 8, decisions: 2, menuDecisions: 2, results: 1 })
+    expect(counts).toEqual({ teams: 5, menuItems: 13, decisions: 2, menuDecisions: 2, results: 1 })
     expect(await db.prepare('SELECT StaffPerDay FROM TeamDecision WHERE TeamID = ? AND RoundNumber = ?')
       .bind(-1, 2).first('StaffPerDay')).toBe(15)
   })

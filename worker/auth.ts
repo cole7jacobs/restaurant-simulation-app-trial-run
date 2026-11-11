@@ -2,6 +2,7 @@ import type { D1Database } from '@cloudflare/workers-types'
 import { Hono, type MiddlewareHandler } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
+import { studentDecisions } from './student-decisions'
 import { verifyPassword } from './password.mjs'
 
 export type Account = {
@@ -12,7 +13,7 @@ export type Account = {
   teamName: string | null
 }
 
-type AuthEnv = { Bindings: { DB: D1Database }; Variables: { account: Account; expiresAt: number } }
+export type AuthEnv = { Bindings: { DB: D1Database }; Variables: { account: Account; expiresAt: number } }
 
 const SESSION_AGE = 8 * 60 * 60
 const LOGIN_WINDOW = 300
@@ -152,6 +153,7 @@ authRoutes.post('/auth/logout', async (c) => {
 authRoutes.get('/auth/session', requireSession, (c) => c.json({ account: c.get('account'), expiresAt: c.get('expiresAt') }))
 
 authRoutes.use('/student/*', requireSession, requireRole('student'))
+authRoutes.route('/student', studentDecisions)
 authRoutes.get('/student/team/:teamId?', async (c) => {
   const { teamId } = c.get('account')
   const requested = c.req.param('teamId')

@@ -8,13 +8,6 @@ INSERT INTO Team (TeamID, TeamName, FirmNumber) VALUES
   (-5, 'Demo Tavern', 5)
 ON CONFLICT DO NOTHING;
 
--- Sample catalog from project references. Confirm the full catalog under OQ-4.
-INSERT INTO MenuItem (ItemName, OrderSizeUnit) VALUES
-  ('STEAK', 'Gm.'), ('SALAD BOWL', 'Gm.'), ('CHICKEN', 'Gm.'),
-  ('PASTA', 'Gm.'), ('VEAL', 'Gm.'), ('FIN FISH', 'Gm.'),
-  ('WINE', 'Cl.'), ('BEER', 'Cl.')
-ON CONFLICT (ItemName) DO NOTHING;
-
 WITH rounds (RoundNumber, SubmittedAt) AS (
   VALUES (1, '2026-11-01T18:00:00Z'), (2, NULL)
 )
@@ -25,15 +18,19 @@ WHERE TeamID = -1 AND TeamName = 'Demo Bistro' AND FirmNumber = 1
 ON CONFLICT (TeamID, RoundNumber) DO NOTHING;
 
 INSERT INTO MenuItemDecision
-  (TeamID, RoundNumber, MenuItemID, PrepLevel, OrderSize, InternalPromotion, SalesPrice)
-SELECT TeamID, RoundNumber, MenuItemID, 1, 180, 20, 24.95
+  (TeamID, RoundNumber, SlotNumber, MenuItemID, PrepLevel, OrderSize, InternalPromotion, SalesPrice)
+SELECT TeamID, RoundNumber, 1, MenuItemID, 1, 180, 20, 24.95
 FROM TeamDecision
 JOIN Team USING (TeamID)
 CROSS JOIN MenuItem
 WHERE TeamID = -1 AND TeamName = 'Demo Bistro' AND FirmNumber = 1
-  AND RoundNumber IN (1, 2)
+  AND RoundNumber IN (1, 2) AND Revision = ''
   AND ItemName = 'STEAK' AND OrderSizeUnit = 'Gm.'
-ON CONFLICT (TeamID, RoundNumber, MenuItemID) DO NOTHING;
+  AND NOT EXISTS (
+    SELECT 1 FROM MenuItemDecision existing
+    WHERE existing.TeamID = TeamDecision.TeamID AND existing.RoundNumber = TeamDecision.RoundNumber
+  )
+ON CONFLICT (TeamID, RoundNumber, SlotNumber) DO NOTHING;
 
 INSERT INTO TeamMetrics
   (TeamID, RoundNumber, FoodSales, BeverageSales, FoodCost, BeverageCost,

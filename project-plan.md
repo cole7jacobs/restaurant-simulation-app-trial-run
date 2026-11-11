@@ -55,13 +55,27 @@ Migration 0002 adds a case-insensitive email index, session storage, and
 login rate-limit state. The legacy simulation workflow and production account
 provisioning remain scheduled separately.
 
+## Phase 3 student decisions
+
+Migration 0003 adds ordered menu slots, preserves existing decisions and their
+result fields, and loads the 13 archived catalog items. Preparation choices are
+item-specific. Student accounts save and review their team's decisions for
+Q2–Q7 and submit a completed round. Submission locks the record. Q1 is the
+baseline. The form supports ten slots and requires at least one for submission.
+Round scheduling and any stricter menu minimum remain open.
+
+The approved Finance export standard is the Q5–Q7 eight-field record. The
+first three fields are signed whole-dollar changes in time deposits,
+certificates of deposit, and notes payable, followed by five unsigned zeroes.
+The serializer validates field widths, emits `+0` for newly generated zeroes,
+and writes a 123-character line followed by CRLF. See the
+[RFI specification](docs/rfi-specification.md).
+
 ## Later phases
 
-1. Implement student decision entry and submission after the catalog and
-   preparation mappings are confirmed.
-2. Implement professor submission review and RFI export once the input format
-   is confirmed.
-3. Import FR.LST results once the output format is confirmed.
-4. Connect the results dashboard to imported data and verify the release
+1. Implement detailed professor submission review and full RFI export using
+   the approved Finance record and the archived layout for the other records.
+2. Import FR.LST results once the output format is confirmed.
+3. Connect the results dashboard to imported data and verify the release
    workflow.
-5. Perform end-to-end testing and prepare Cloudflare deployment.
+4. Perform end-to-end testing and prepare Cloudflare deployment.
