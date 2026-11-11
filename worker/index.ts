@@ -25,6 +25,13 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>()
 
+app.use('*', async (c, next) => {
+  await next()
+  c.header('X-Content-Type-Options', 'nosniff')
+  c.header('X-Frame-Options', 'DENY')
+  c.header('Referrer-Policy', 'strict-origin-when-cross-origin')
+})
+
 // ── API Routes ────────────────────────────────────────────────────────────────
 
 /**
