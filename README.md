@@ -5,7 +5,7 @@
 
 A web interface for the restaurant management simulation used in ISDS 4125. Students enter restaurant decisions each round; the application generates the legacy RFI input files for the FORTRAN simulation, imports the resulting FR.LST output, and presents results through a dashboard.
 
-> **Status:** Milestone 1.1 — Project scaffolding complete. Authentication, database, and decision forms are implemented in Phase 2–3.
+> **Status:** Phase 1 complete. Milestone 2.1 adds the local D1 database and development fixtures.
 
 ---
 
@@ -84,6 +84,55 @@ npm run preview
 
 ---
 
+## Local D1 database
+
+The Hono Worker reads Cloudflare D1 through its `DB` binding. The schema
+contains `User`, `Team`, `TeamDecision`, `MenuItem`, `MenuItemDecision`, and
+`TeamMetrics`. Decisions and metrics use team and round keys, while menu
+decisions also reference a catalog item. See the [project plan](project-plan.md)
+for the relationship map, SQLite type mappings, and unresolved schema questions.
+
+Initialize the local database before starting the API Worker.
+
+```bash
+npm run db:init
+npm run dev:api
+```
+
+With the Worker running, check its database readiness endpoint.
+
+```bash
+curl -f http://localhost:8787/api/health/db
+```
+
+Expect `{"status":"ok"}` after the migration creates all six tables. The endpoint
+returns HTTP 503 if the binding or schema is unavailable. `/api/health` checks
+Worker liveness independently. If Wrangler needs the static asset directory on
+a fresh checkout, run `npm run build` once before starting the Worker.
+
+To inspect the local fixtures and foreign keys:
+
+```bash
+npx wrangler d1 execute DB --local --command "SELECT TeamID, TeamName, FirmNumber FROM Team ORDER BY FirmNumber"
+npx wrangler d1 execute DB --local --command "PRAGMA foreign_key_check"
+```
+
+The first command lists five demo teams on a fresh seeded database. An empty
+result from the second means there are no foreign key violations. Wrangler keeps
+local data in the ignored `.wrangler/` directory.
+
+- `npm run db:migrate` applies pending schema migrations from `db/migrations/`.
+  Use this command alone for an empty local schema.
+- `npm run db:seed` loads development fixtures separately. Running it again
+  preserves existing rows. Conflicting IDs, firm numbers, and menu names are
+  skipped. The seed includes no user accounts. Its results are fictional and its
+  menu list is a sample pending OQ-4.
+- The initial migration targets an empty database. If you manually loaded the
+  original `db/schema.sql`, use a fresh local persistence directory with
+  `--persist-to` on the Wrangler migration, seed, and dev commands.
+- The database ID in `wrangler.jsonc` is a local placeholder. A Cloudflare-hosted
+  database needs its own binding and migrations before deployment.
+
 ## Running Tests
 
 ```bash
@@ -94,10 +143,16 @@ npm run test:run
 npm run test
 ```
 
+The database integration suite starts Miniflare on loopback with an isolated,
+in-memory D1 database. It applies the checked-in SQL and leaves your local
+development data intact. Run it on its own with
+`npm run test:run -- test/worker/database.test.ts`.
+
 Tests are located in `test/` and cover:
 - **`test/lib/design-tokens.test.ts`** — guards design token hex values against drift
 - **`test/components/Button.test.tsx`** — Button component rendering, behavior, accessibility
-- **`test/worker/health.test.ts`** — Worker health endpoint status code, body shape, timestamp
+- **`test/worker/health.test.ts`** — Worker liveness and database readiness responses
+- **`test/worker/database.test.ts`** — D1 migrations, reads and writes, constraints, and repeatable development seeding
 
 ---
 
@@ -135,7 +190,9 @@ restaurant-simulation-app-trial-run/
 │   └── index.ts                  # API routes + static asset fallback
 │
 ├── db/
-│   └── schema.sql                # Six-table relational schema
+│   ├── migrations/               # Versioned D1 schema
+│   ├── schema.sql                # Original six-table reference
+│   └── seed.dev.sql              # Local development fixtures
 │
 ├── test/                         # Test files (mirrors src/ structure)
 │
@@ -168,8 +225,8 @@ Dark mode is toggled via the moon/sun button in the navigation bar and persists 
 
 | Phase | Description | Status |
 |---|---|---|
-| 1 | Application foundation, design system, navigation shells | 🔄 In progress |
-| 2 | Database, authentication, role-based access | ⏳ Planned |
+| 1 | Application foundation, design system, navigation shells | Complete |
+| 2 | Database, authentication, role-based access | In progress |
 | 3 | Student decision forms | ⏳ Planned |
 | 4 | Professor tools, RFI file generation | ⏳ Planned |
 | 5 | FR.LST import and parsing | ⏳ Planned |

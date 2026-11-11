@@ -1,3 +1,4 @@
+import type { D1Database } from '@cloudflare/workers-types'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 
@@ -15,12 +16,11 @@ interface AssetFetcher {
  * ASSETS — Cloudflare Static Assets binding (serves the built React app from dist/).
  *          Configured in wrangler.jsonc under `assets.binding`.
  *
- * DB     — Cloudflare D1 database binding (Phase 2).
- *          Commented out until D1 is provisioned and the migration is applied.
+ * DB     — Cloudflare D1 database binding.
  */
 type Bindings = {
   ASSETS: AssetFetcher
-  // DB: D1Database  // Phase 2: uncomment after `wrangler d1 create` and migration
+  DB: D1Database
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -56,6 +56,23 @@ app.get('/api/health', (c) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
   })
+})
+
+const CORE_TABLES = ['User', 'Team', 'TeamDecision', 'MenuItem', 'MenuItemDecision', 'TeamMetrics']
+
+// Readiness checks schema availability without exposing application data.
+app.get('/api/health/db', async (c) => {
+  try {
+    const count = await c.env.DB.prepare(
+      "SELECT COUNT(*) AS count FROM sqlite_schema WHERE type = 'table' AND name IN (?, ?, ?, ?, ?, ?)",
+    ).bind(...CORE_TABLES).first<number>('count')
+
+    if (count === CORE_TABLES.length) return c.json({ status: 'ok' })
+  } catch {
+    // Missing bindings and query failures both mean D1 is unavailable.
+  }
+
+  return c.json({ status: 'unavailable' }, 503)
 })
 
 // Phase 2 — Authentication routes:

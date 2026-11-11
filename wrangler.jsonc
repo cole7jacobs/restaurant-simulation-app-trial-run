@@ -21,14 +21,15 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application"
-  }
+  },
 
-  // Phase 2: D1 database binding will be added here when authentication is implemented.
-  // "d1_databases": [
-  //   {
-  //     "binding": "DB",
-  //     "database_name": "restaurant-simulation-db",
-  //     "database_id": "<id from `wrangler d1 create`>"
-  //   }
-  // ]
+  // Placeholder ID for local D1. A real Cloudflare database must be configured separately.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "restaurant-simulation-db",
+      "database_id": "00000000-0000-4000-8000-000000000001",
+      "migrations_dir": "./db/migrations"
+    }
+  ]
 }

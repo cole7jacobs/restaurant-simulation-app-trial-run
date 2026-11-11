@@ -1,3 +1,4 @@
+-- Original schema reference. Use db/migrations for database initialization.
 -- ============================================================
 -- Restaurant Simulation App — Canonical Database Schema
 -- Source: ISDS 4125 Project Data Dictionary (v1, 2026-10-30)

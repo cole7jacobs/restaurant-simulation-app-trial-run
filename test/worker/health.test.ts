@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import app from '../../worker/index'
 
 /**
@@ -50,5 +50,40 @@ describe('Worker — unknown /api routes', () => {
     // Hono returns 404 for unmatched routes; the ASSETS fallback
     // also returns 404 when no ASSETS binding is provided in test env.
     expect(res.status).toBe(404)
+  })
+})
+
+describe('Worker — GET /api/health/db', () => {
+  it('uses bound table names and returns readiness for a migrated database', async () => {
+    const first = vi.fn().mockResolvedValue(6)
+    const bind = vi.fn().mockReturnValue({ first })
+    const prepare = vi.fn().mockReturnValue({ bind })
+    const env = { DB: { prepare } } as typeof mockEnv
+
+    const res = await app.fetch(new Request('http://localhost/api/health/db'), env)
+
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ status: 'ok' })
+    expect(bind).toHaveBeenCalledWith(
+      'User', 'Team', 'TeamDecision', 'MenuItem', 'MenuItemDecision', 'TeamMetrics',
+    )
+    expect(first).toHaveBeenCalledWith('count')
+  })
+
+  it('returns 503 for a database with missing tables', async () => {
+    const env = {
+      DB: { prepare: () => ({ bind: () => ({ first: async () => 0 }) }) },
+    } as unknown as typeof mockEnv
+
+    const res = await app.fetch(new Request('http://localhost/api/health/db'), env)
+
+    expect(res.status).toBe(503)
+    expect(await res.json()).toEqual({ status: 'unavailable' })
+  })
+
+  it('returns 503 if the binding is unavailable', async () => {
+    const res = await app.fetch(new Request('http://localhost/api/health/db'), mockEnv)
+
+    expect(res.status).toBe(503)
   })
 })
