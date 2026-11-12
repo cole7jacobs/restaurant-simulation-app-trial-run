@@ -10,6 +10,7 @@ import { StudentHomePage } from './routes/student/StudentHomePage'
 import { DecisionsPage } from './routes/student/DecisionsPage'
 import { ReviewPage } from './routes/student/ReviewPage'
 import { ResultsPage } from './routes/student/ResultsPage'
+import { StudentResultsDashboard } from './routes/student/StudentResultsDashboard'
 import { ProfessorLayout } from './routes/professor/ProfessorLayout'
 import { ProfessorHomePage } from './routes/professor/ProfessorHomePage'
 import { SubmissionsPage } from './routes/professor/SubmissionsPage'
@@ -18,7 +19,7 @@ import { ProfessorRFIPage, RFIPage } from './routes/professor/RFIPage'
 import { ImportPage } from './routes/professor/ImportPage'
 import { DevPreviewSelector } from './routes/DevPreviewSelector'
 import { AuthProvider, useAuth } from './context/AuthContext'
-import { PendingAccountPage, ProfessorAccountPage, StudentAccountHome } from './routes/AccountPages'
+import { ProfessorAccountPage, StudentAccountHome } from './routes/AccountPages'
 import { Button } from './components/ui/Button'
 
 function RoleLayout({ role, children }: { role: 'student' | 'professor'; children: ReactElement }) {
@@ -66,7 +67,7 @@ function AppRoutes() {
         <Route path="home" element={<RolePage preview={<StudentHomePage />} signedIn={<StudentAccountHome />} />} />
         <Route path="decisions" element={<RolePage preview={<DecisionsPage />} signedIn={<StudentDecisionForm />} />} />
         <Route path="review" element={<RolePage preview={<ReviewPage />} signedIn={<StudentDecisionForm review />} />} />
-        <Route path="results" element={<RolePage preview={<ResultsPage />} signedIn={<PendingAccountPage title="Results" description="Simulation results will be available in a later milestone." />} />} />
+        <Route path="results" element={<RolePage preview={<ResultsPage />} signedIn={<StudentResultsDashboard />} />} />
       </Route>
 
       <Route path="/professor" element={<RoleLayout role="professor"><ProfessorLayout /></RoleLayout>}>
