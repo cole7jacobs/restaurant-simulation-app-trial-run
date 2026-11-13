@@ -113,6 +113,7 @@ describe('local D1 migrations and relationships', () => {
       ['INSERT INTO TeamMetrics VALUES (999, 1, 0, 0, 0, 0, 0, 0, 0, 0)', /FOREIGN KEY/],
       ['INSERT INTO TeamDecision (TeamID, RoundNumber) VALUES (200, 1)', /UNIQUE/],
       ['INSERT INTO MenuItemDecision VALUES (200, 1, 1, 200, 2, 20, 0, 5, NULL, NULL, NULL)', /UNIQUE/],
+      ['INSERT INTO MenuItemDecision VALUES (200, 1, 2, 200, 2, 20, 0, 5, NULL, NULL, NULL)', /UNIQUE/],
       ["INSERT INTO Team (TeamName, FirmNumber) VALUES ('Duplicate Firm', 6)", /UNIQUE/],
       ['INSERT INTO Team (FirmNumber) VALUES (7)', /NOT NULL/],
       ['UPDATE TeamDecision SET ReportFinancial = 2 WHERE TeamID = 200', /CHECK/],
@@ -120,6 +121,9 @@ describe('local D1 migrations and relationships', () => {
       ['UPDATE MenuItemDecision SET SalesPrice = -1 WHERE TeamID = 200', /CHECK/],
       ["UPDATE TeamDecision SET StaffPerDay = 'invalid' WHERE TeamID = 200", /cannot store/i],
     ] as const
+
+    // Same item with a different preparation is still allowed.
+    await db.prepare('INSERT INTO MenuItemDecision VALUES (200, 1, 3, 200, 1, 20, 0, 5, NULL, NULL, NULL)').run()
 
     for (const [sql, error] of rejected) await expect(db.prepare(sql).run(), sql).rejects.toThrow(error)
     expect((await db.prepare('PRAGMA foreign_key_check').all()).results).toEqual([])
