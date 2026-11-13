@@ -81,6 +81,13 @@ npx wrangler d1 execute DB --local --command "PRAGMA foreign_key_check"
 
 Both health endpoints should return `status: ok`; an empty foreign-key check indicates no violations. The database health check verifies the six core tables, not every migration or feature. For an isolated local state directory, use `--persist-to` consistently for Wrangler migration, seed, and development commands; `LOCAL_D1_STATE` selects that directory for the local account script.
 
+### Database rules
+
+- A team may enter the same menu item more than once in a round only with different preparations. Migration 0005 enforces one row per team, round, item, and preparation; it first removes existing duplicates (keeping the lowest slot) and clears any menu result link to a removed slot.
+- `worker/student-decisions.ts` enforces per-field maximums that follow the data dictionary: staff per day, hourly compensation, amenities per order, the three finance changes, order size, and sales price.
+- Entertainment budget, maintenance budget, and internal promotion have no documented limit, so they only use the general ceiling in the same file.
+- `db/schema.sql` is a hand-kept reference. If it differs from the files in `db/migrations/`, the migrations are correct.
+
 ## Local accounts and sign-in
 
 After `npm run db:init`, create accounts from a trusted Bash or Zsh terminal. Choose a different password of at least 15 characters for each; these prompts do not echo the password. The example student uses seeded Demo Bistro, team `-1`.
