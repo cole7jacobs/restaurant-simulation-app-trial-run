@@ -49,6 +49,13 @@ function validate(input: Record<string, unknown>, catalog: CatalogItem[], submit
       return `Complete menu selection ${index + 1} with an item, preparation, portion, promotion, and price.`
     }
   }
+  const seen = new Set<string>()
+  for (const item of input.menu) {
+    const { MenuItemID, PrepLevel } = object(item)
+    const key = `${MenuItemID}:${PrepLevel}`
+    if (seen.has(key)) return 'You entered the same item and preparation twice. Choose a different preparation or remove one.'
+    seen.add(key)
+  }
   return null
 }
 
