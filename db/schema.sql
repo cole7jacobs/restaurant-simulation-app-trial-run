@@ -86,7 +86,7 @@ CREATE TABLE TeamDecision (
   CertificateOfDepositChange REAL, -- second value
   NotePayableChange          REAL, -- third value
 
-  -- Added by migration 0003: revision marker for the decision row (default empty).
+  -- Added by migration 0003: optimistic-locking token. A random UUID rewritten on every save; empty until the first save.
   Revision TEXT NOT NULL DEFAULT '',
 
   PRIMARY KEY (TeamID, RoundNumber)
