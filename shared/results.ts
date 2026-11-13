@@ -19,6 +19,12 @@ export type MenuResult = {
   TotalSales: number
 }
 
+// Response of GET /api/student/results/:round. Menu rows carry only the stored result columns.
+export type StudentMenuResult = Pick<
+  MenuResult, 'ItemName' | 'PrepLevel' | 'CostOfGoodsSoldPct' | 'OrdersSold' | 'TotalSales'
+> & { ResultSlot: number; DecisionSlot: number | null }
+export type StudentResults = { round: number; metrics: TeamResults; menu: StudentMenuResult[] }
+
 export type ImportPreview = {
   round: number
   token: string

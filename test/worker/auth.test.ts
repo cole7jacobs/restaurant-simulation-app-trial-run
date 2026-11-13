@@ -287,6 +287,12 @@ describe('Worker authentication with local D1', () => {
       metrics: { TeamID: 1, RoundNumber: 5, FoodSales: 786014 },
       menu: expect.arrayContaining([expect.objectContaining({ ItemName: 'STEAK', PrepLevel: 3, OrdersSold: 5291 })]),
     })
+    // The dashboard relies on these statuses: 404 for a round without an import, and role checks.
+    expect((await request('/student/results/4', { headers: { Cookie: studentCookie } })).status).toBe(404)
+    expect((await request('/student/results/6', { headers: { Cookie: studentCookie } })).status).toBe(404)
+    expect((await request('/student/results/8', { headers: { Cookie: studentCookie } })).status).toBe(400)
+    expect((await request('/student/results/5', { headers: { Cookie: professorCookie } })).status).toBe(403)
+    expect((await request('/student/results/5')).status).toBe(401)
     expect((await db.prepare('SELECT FoodSales FROM TeamMetrics WHERE TeamID = 1 AND RoundNumber = 4').first())?.FoodSales).toBe(101)
     expect((await db.prepare('SELECT SalesPrice, OrdersSold FROM MenuItemDecision WHERE TeamID = 1 AND RoundNumber = 5').first()))
       .toEqual({ SalesPrice: 24.95, OrdersSold: null })

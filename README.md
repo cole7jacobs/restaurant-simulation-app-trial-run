@@ -4,7 +4,7 @@
 
 A web application for teams participating in the restaurant management simulation. Students enter decisions for their restaurant, and a professor downloads formatted RFI files for an **external** FORTRAN simulation. After the simulation is run outside this application, the professor imports its `FR.LST` listing to store reported results. The web app does not run FORTRAN or calculate simulation outcomes.
 
-Authentication, student decisions, RFI export, and FR.LST import are implemented. The authenticated student results dashboard remains to be built. The available historical files are examples for the implemented format, not a guarantee that every possible simulation variant is supported.
+Authentication, student decisions, RFI export, and FR.LST import are implemented. The authenticated student results dashboard displays imported results. The available historical files are examples for the implemented format, not a guarantee that every possible simulation variant is supported.
 
 ## Contents
 
@@ -30,7 +30,7 @@ Authentication, student decisions, RFI export, and FR.LST import are implemented
 - **Hosting:** Workers Static Assets serves the built Vite frontend and the Worker handles the API on the same host. Vite proxies `/api` to the local Worker during development.
 - **Tests:** Vitest, Testing Library, and Miniflare. GitHub Actions runs checks for pull requests targeting `main`.
 
-The flow is **student decisions → professor RFI download → external simulation → professor FR.LST preview and import → stored results**. Imported results can be read by the assigned student through an API; the signed-in results page currently displays a placeholder.
+The flow is **student decisions → professor RFI download → external simulation → professor FR.LST preview and import → stored results**. The assigned student reads imported results through an API, and the signed-in results page displays them in a dashboard.
 
 ## Installation and local development
 
@@ -110,7 +110,7 @@ Passwords are salted scrypt hashes. Sessions are stored as token hashes in D1, e
 1. Sign in to view the assigned team on Student Home.
 2. Open **Decisions**, choose Q2–Q7, and enter menu selections, operations, finance, and report choices. Save a draft and use **Review** to inspect saved decisions.
 3. Submit a complete round. Submission locks it against further edits. Q1 is the baseline; a submitted decision needs at least one and at most ten menu selections.
-4. The signed-in **Results** page is currently a placeholder. Imported results are available from the protected results API for the future dashboard.
+4. Open **Results** to view the team's imported metrics, menu-item results, and charts for Q1–Q7. Rounds without an imported FR.LST show an empty state.
 
 ### Professor
 
@@ -153,7 +153,8 @@ Read all four files in `db/migrations/` for current keys, constraints, and relat
 | --- | --- |
 | `src/App.tsx`, `src/context/AuthContext.tsx` | Route tree, role gates, sessions, and protected data requests |
 | `src/routes/student/StudentDecisionForm.tsx` | Authenticated decision and review forms |
-| `src/routes/AccountPages.tsx`, `src/routes/student/ResultsPage.tsx` | Authenticated home/status pages and the development-preview results page |
+| `src/routes/AccountPages.tsx`, `src/routes/student/StudentResultsDashboard.tsx` | Authenticated home/status pages and the student results dashboard |
+| `src/routes/student/ResultsPage.tsx` | Development-preview results page with demo data |
 | `src/routes/professor/RFIPage.tsx`, `src/routes/professor/ProfessorImportPage.tsx` | Authenticated RFI and import interfaces |
 | `src/components/ui/`, `src/styles/index.css`, `src/lib/design-tokens.ts` | Reusable components, styling, and design tokens |
 | `worker/index.ts`, `worker/auth.ts`, `worker/password.mjs` | Worker entry, health, authentication, authorization, and hashing |
@@ -197,7 +198,7 @@ These assignments are suggested ownership, not restrictions. Coordinate changes 
 
 ## Known limitations and open questions
 
-- Signed-in student results are not yet rendered in a dashboard. The development-preview results page is not evidence of a live dashboard.
+- The student results dashboard shows only the stored result fields. Menu price, portion, and promotion are not stored with menu results and are not displayed. The development-preview results page uses demo data.
 - Professor team review currently shows submission status rather than complete decision details. Additional professor management tools remain future work.
 - The RFI generator uses the approved Q5–Q7 eight-field Finance layout, market ME, and requires Product report **No**. The five reserved Finance values have no documented business meanings. Do not silently add the older ten-field format.
 - The importer targets the known five-firm listing layout and known catalog/preparation labels; historical raw examples cover Q1–Q5 and Q7, not Q6. It does not import every printed report field. Review the specifications before extending either format.
