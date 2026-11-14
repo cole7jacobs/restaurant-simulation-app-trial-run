@@ -17,11 +17,34 @@ function object(value: unknown): Record<string, unknown> {
     ? value as Record<string, unknown> : {}
 }
 
-function validNumber(value: unknown, decimals: number, signed = false): value is number {
+// Maximum magnitudes from the DECIMAL(p,s) types in data-dictionary-final.docx.
+// Finance changes are whole dollars here, so DECIMAL(10,2) allows up to 99,999,999.
+// INT fields (EntertainmentBudget, MaintenanceBudget, InternalPromotion) have no documented
+// limit and keep the previous generic ceiling in validNumber.
+const maxima: Record<string, number> = {
+  StaffPerDay: 999.9, // DECIMAL(4,1)
+  HourlyCompensation: 999.99, // DECIMAL(5,2)
+  AmenitiesPerOrder: 99.99, // DECIMAL(4,2)
+  TimeDepositChange: 99999999, // DECIMAL(10,2), whole dollars
+  CertificateOfDepositChange: 99999999,
+  NotePayableChange: 99999999,
+  OrderSize: 9999.9, // DECIMAL(5,1)
+  // DECIMAL(10,2) allows 99,999,999.99, but the RFI file gives each value 10 characters (worker/rfi.ts),
+  // so 9,999,999.99 is the largest price that can be exported.
+  SalesPrice: 9999999.99,
+}
+
+function validNumber(value: unknown, decimals: number, signed = false, max?: number): value is number {
   if (typeof value !== 'number' || !Number.isFinite(value) || (!signed && value < 0)) return false
   if (Math.abs(value) >= 10 ** (signed ? 9 : 10)) return false
+  if (max !== undefined && Math.abs(value) > max) return false
   const formatted = value.toFixed(decimals)
   return formatted.length <= 10 && Number(formatted) === value
+}
+
+function limitText(max: number, decimals: number, signed: boolean) {
+  const text = max.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+  return signed ? `between -${text} and ${text}` : `at most ${text}`
 }
 
 function validate(input: Record<string, unknown>, catalog: CatalogItem[], submit: boolean) {
@@ -30,7 +53,11 @@ function validate(input: Record<string, unknown>, catalog: CatalogItem[], submit
     const value = values[key]
     if (value === null && !submit) continue
     const signed = financeFields.some((field) => field === key)
-    if (!validNumber(value, decimals, signed)) return `${label} must fit the field and use at most ${decimals} decimal places.`
+    const max = maxima[key]
+    if (!validNumber(value, decimals, signed, max)) {
+      const range = max === undefined ? 'a smaller value' : limitText(max, decimals, signed)
+      return `${label} must be ${range}, with at most ${decimals} decimal places.`
+    }
   }
   for (const { key, label } of reportFields) {
     const value = values[key]
@@ -43,6 +70,12 @@ function validate(input: Record<string, unknown>, catalog: CatalogItem[], submit
   }
   for (const [index, item] of input.menu.entries()) {
     const row = object(item)
+    if (typeof row.OrderSize === 'number' && row.OrderSize > maxima.OrderSize) {
+      return `Menu selection ${index + 1}: order size must be ${limitText(maxima.OrderSize, 1, false)}, with at most 1 decimal place.`
+    }
+    if (typeof row.SalesPrice === 'number' && row.SalesPrice > maxima.SalesPrice) {
+      return `Menu selection ${index + 1}: sales price must be ${limitText(maxima.SalesPrice, 2, false)}, with at most 2 decimal places.`
+    }
     if (!catalog.some(({ MenuItemID }) => MenuItemID === row.MenuItemID) ||
         ![1, 2, 3].some((level) => level === row.PrepLevel) ||
         !validNumber(row.OrderSize, 1) || !validNumber(row.InternalPromotion, 0) || !validNumber(row.SalesPrice, 2)) {

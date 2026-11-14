@@ -164,7 +164,35 @@ describe('Worker authentication with local D1', () => {
     expect((await write(null, false, { values: { ...values, TimeDepositChange: 1.25 } })).status).toBe(400)
     const saved = await write(null, false)
     expect(saved.status).toBe(200)
-    const { revision } = await saved.json()
+    let { revision } = await saved.json()
+    let current: string = revision
+    const limits: [string, number, number, RegExp][] = [
+      ['StaffPerDay', 999.9, 1000, /Staff FTEs per day must be at most 999\.9/],
+      ['HourlyCompensation', 999.99, 1000, /Hourly compensation and training \(\$\) must be at most 999\.99/],
+      ['AmenitiesPerOrder', 99.99, 100, /Amenities per order \(\$\) must be at most 99\.99/],
+      ['TimeDepositChange', -99999999, -100000000, /Time deposit change \(\$\) must be between -99,999,999 and 99,999,999/],
+      ['NotePayableChange', 99999999, 100000000, /Note payable change \(\$\) must be between/],
+    ]
+    for (const [key, atLimit, overLimit, message] of limits) {
+      const over = await write(null, false, { values: { ...values, [key]: overLimit } })
+      expect(over.status).toBe(400)
+      expect((await over.json()).error).toMatch(message)
+      const at = await write(current, false, { values: { ...values, [key]: atLimit } })
+      expect(at.status).toBe(200)
+      current = (await at.json()).revision
+    }
+    const overSize = await write(null, false, { menu: [{ ...menu[0], OrderSize: 10000 }] })
+    expect(overSize.status).toBe(400)
+    expect((await overSize.json()).error).toMatch(/order size must be at most 9,999\.9/)
+    const overPrice = await write(null, false, { menu: [{ ...menu[0], SalesPrice: 10000000 }] })
+    expect(overPrice.status).toBe(400)
+    expect((await overPrice.json()).error).toMatch(/sales price must be at most 9,999,999\.99/)
+    const atMenu = await write(current, false, { menu: [{ ...menu[0], OrderSize: 9999.9, SalesPrice: 9999999.99 }] })
+    expect(atMenu.status).toBe(200)
+    current = (await atMenu.json()).revision
+    const restored = await write(current, false)
+    expect(restored.status).toBe(200)
+    revision = (await restored.json()).revision
     const twice = await write(null, false, { menu: [menu[0], menu[0]] })
     expect(twice.status).toBe(400)
     expect((await twice.json()).error).toMatch(/same item and preparation twice/)
