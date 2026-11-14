@@ -1,5 +1,7 @@
 import { Card } from '../../components/ui/Card'
+import { DataTable } from '../../components/ui/DataTable'
 import { MetricCard } from '../../components/ui/MetricCard'
+import { Notice } from '../../components/ui/Notice'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useDevPreview } from '../../context/DevPreviewContext'
 
@@ -63,16 +65,16 @@ export function ResultsPage() {
             </button>
           ))}
         </div>
-        <p className="font-body text-xs text-slate-500 dark:text-slate-400">
+        <p className="font-body text-xs text-deep-green/75 dark:text-card/75">
           Round selector will be functional in Phase 6.
         </p>
       </div>
 
       {/* Demo data alert */}
-      <div className="rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 px-4 py-3 font-body text-sm text-amber-700 dark:text-amber-400">
+      <Notice>
         These are demonstration values only. Real results will be displayed after FR.LST import in
         Phase 5-6.
-      </div>
+      </Notice>
 
       {/* Metric cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -106,34 +108,15 @@ export function ResultsPage() {
         <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
           Menu Performance
         </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full font-body text-sm">
-            <thead>
-              <tr className="border-b border-deep-green/10 dark:border-card/10">
-                {['Item', 'Orders', 'Sales', 'COGS%', 'Price'].map((h) => (
-                  <th
-                    key={h}
-                    className="pb-2 pr-4 text-left font-medium text-deep-green dark:text-card"
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
-              {MENU_PERFORMANCE.map(({ item, orders, sales, cogs, price }) => (
-                <tr key={item}>
-                  <td className="py-2 pr-4 text-deep-green dark:text-card">{item}</td>
-                  <td className="py-2 pr-4 text-deep-green dark:text-card">{orders}</td>
-                  <td className="py-2 pr-4 text-deep-green dark:text-card">{sales}</td>
-                  <td className="py-2 pr-4 text-deep-green dark:text-card">{cogs}</td>
-                  <td className="py-2 pr-4 text-deep-green dark:text-card">{price}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="mt-3 font-body text-xs text-slate-500 dark:text-slate-400">
+        <DataTable
+          caption="Menu performance"
+          columns={['Item', 'Orders', 'Sales', 'COGS%', 'Price']}
+          rows={MENU_PERFORMANCE.map(({ item, orders, sales, cogs, price }) => ({
+            key: item,
+            cells: [item, orders, sales, cogs, price],
+          }))}
+        />
+        <p className="mt-3 font-body text-xs text-deep-green/75 dark:text-card/75">
           Actual values after FR.LST import (Phase 5).
         </p>
       </Card>
@@ -144,7 +127,7 @@ export function ResultsPage() {
           <h2 className="font-heading text-base font-semibold text-deep-green dark:text-card mb-3">
             Sales Breakdown
           </h2>
-          <div className="flex items-center justify-center h-40 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 text-slate-400 dark:text-slate-500 font-body text-sm">
+          <div className="flex items-center justify-center h-40 rounded-xl border-2 border-dashed border-deep-green/20 dark:border-card/20 text-deep-green/75 dark:text-card/75 font-body text-sm">
             Recharts donut chart · Phase 6
           </div>
         </Card>
@@ -152,7 +135,7 @@ export function ResultsPage() {
           <h2 className="font-heading text-base font-semibold text-deep-green dark:text-card mb-3">
             Net Income by Round
           </h2>
-          <div className="flex items-center justify-center h-40 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 text-slate-400 dark:text-slate-500 font-body text-sm">
+          <div className="flex items-center justify-center h-40 rounded-xl border-2 border-dashed border-deep-green/20 dark:border-card/20 text-deep-green/75 dark:text-card/75 font-body text-sm">
             Recharts bar chart · Phase 6
           </div>
         </Card>

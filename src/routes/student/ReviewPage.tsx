@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Card } from '../../components/ui/Card'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
+import { DataTable } from '../../components/ui/DataTable'
 import { useDevPreview } from '../../context/DevPreviewContext'
 
 // ---------------------------------------------------------------------------
@@ -10,40 +11,16 @@ import { useDevPreview } from '../../context/DevPreviewContext'
 
 function MenuTable() {
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm font-body">
-        <thead>
-          <tr className="border-b border-deep-green/10 dark:border-card/10">
-            {['Item', 'Preparation', 'Portion (Gm./Cl.)', 'Advertising ($)', 'Price ($)'].map(
-              (h) => (
-                <th
-                  key={h}
-                  className="pb-2 pr-4 text-left font-medium text-deep-green dark:text-card"
-                >
-                  {h}
-                </th>
-              )
-            )}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
-          {[
-            ['Steak', 'Filet', '250', '150', '$28.00'],
-            ['Chicken', 'Game Hen', '200', '100', '$18.00'],
-            ['Wine', 'Imported', '30', '80', '$12.00'],
-            ['Beer', '—', '50', '60', '$7.00'],
-          ].map((row) => (
-            <tr key={row[0]}>
-              {row.map((val, i) => (
-                <td key={i} className="py-2 pr-4 text-deep-green dark:text-card">
-                  {val}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <DataTable
+      caption="Menu decisions"
+      columns={['Item', 'Preparation', 'Portion (Gm./Cl.)', 'Advertising ($)', 'Price ($)']}
+      rows={[
+        ['Steak', 'Filet', '250', '150', '$28.00'],
+        ['Chicken', 'Game Hen', '200', '100', '$18.00'],
+        ['Wine', 'Imported', '30', '80', '$12.00'],
+        ['Beer', '—', '50', '60', '$7.00'],
+      ].map((cells) => ({ key: cells[0], cells }))}
+    />
   )
 }
 
@@ -89,7 +66,7 @@ function FinanceTable() {
   return (
     <div className="space-y-4">
       <div>
-        <p className="font-body text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+        <p className="font-body text-xs font-semibold text-deep-green/75 dark:text-card/75 uppercase tracking-wider mb-2">
           Management Information
         </p>
         <table className="w-full text-sm font-body">
@@ -104,7 +81,7 @@ function FinanceTable() {
         </table>
       </div>
       <div>
-        <p className="font-body text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+        <p className="font-body text-xs font-semibold text-deep-green/75 dark:text-card/75 uppercase tracking-wider mb-2">
           Finance
         </p>
         <table className="w-full text-sm font-body">
@@ -178,7 +155,7 @@ export function ReviewPage() {
         <Button variant="primary" disabled>
           Submit Decisions
         </Button>
-        <p className="font-body text-xs text-slate-500 dark:text-slate-400">
+        <p className="font-body text-xs text-deep-green/75 dark:text-card/75">
           Submission will be enabled in Phase 3 once data saving is implemented.
         </p>
       </div>
