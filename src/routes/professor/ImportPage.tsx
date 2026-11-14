@@ -2,6 +2,8 @@ import { Card } from '../../components/ui/Card'
 import { Badge } from '../../components/ui/Badge'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
+import { DataTable } from '../../components/ui/DataTable'
+import { Notice } from '../../components/ui/Notice'
 
 const ROUND = 3
 
@@ -18,9 +20,9 @@ export function ImportPage() {
       <PageHeader title="Import Simulation Results" subtitle={`Round ${ROUND}`} />
 
       {/* Not-yet-implemented notice */}
-      <div className="rounded-2xl border border-amber-300 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-700 p-4 text-amber-800 dark:text-amber-200 font-body text-sm">
+      <Notice variant="info">
         Sign in as a professor to preview and import FR.LST results.
-      </div>
+      </Notice>
 
       {/* Upload area */}
       <Card>
@@ -34,13 +36,13 @@ export function ImportPage() {
           <p className="font-body font-medium text-deep-green dark:text-card">
             Drop FR.LST file here or click to upload
           </p>
-          <p className="font-body text-xs text-slate-500 dark:text-slate-400">
+          <p className="font-body text-xs text-deep-green/75 dark:text-card/75">
             Only FR.LST simulation output files are accepted
           </p>
           <Button disabled>Select File</Button>
         </div>
 
-        <p className="font-body text-xs text-slate-500 dark:text-slate-400 mt-3">
+        <p className="font-body text-xs text-deep-green/75 dark:text-card/75 mt-3">
           File upload requires a professor account.
         </p>
       </Card>
@@ -50,29 +52,17 @@ export function ImportPage() {
         <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
           Import History
         </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm font-body">
-            <thead>
-              <tr className="border-b border-deep-green/10 dark:border-card/10 text-left">
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Round</th>
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Imported At</th>
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Teams</th>
-                <th className="pb-2 font-medium text-deep-green dark:text-card">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
-              <tr>
-                <td className="py-3 pr-4 text-deep-green dark:text-card">Round 2</td>
-                <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">Nov 1, 2026</td>
-                <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">4/4</td>
-                <td className="py-3">
-                  <Badge variant="info">Imported</Badge>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p className="font-body text-xs text-slate-500 dark:text-slate-400 mt-3">
+        <DataTable
+          caption="Import history"
+          columns={['Round', 'Imported At', 'Teams', 'Status']}
+          rows={[
+            {
+              key: 'round-2',
+              cells: ['Round 2', 'Nov 1, 2026', '4/4', <Badge variant="info">Imported</Badge>],
+            },
+          ]}
+        />
+        <p className="font-body text-xs text-deep-green/75 dark:text-card/75 mt-3">
           Example import history.
         </p>
       </Card>

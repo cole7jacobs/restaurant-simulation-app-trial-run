@@ -4,6 +4,9 @@ import { decisionRounds } from '../../../shared/decisions'
 import { Card } from '../../components/ui/Card'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
+import { Badge } from '../../components/ui/Badge'
+import { Notice } from '../../components/ui/Notice'
+import { DataTable } from '../../components/ui/DataTable'
 
 import { DEV_PREVIEW_ROUND } from '../../lib/dev-preview'
 import { DEMO_TEAMS } from './demo-teams'
@@ -16,45 +19,30 @@ export function RFIPage() {
       {/* Page header */}
       <PageHeader title="RFI File Generation" subtitle={`Round ${DEV_PREVIEW_ROUND}`} />
 
-      <div className="rounded-2xl border border-amber-300 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-700 p-4 text-amber-800 dark:text-amber-200 font-body text-sm">
+      <Notice variant="info">
         Sign in as a professor to generate files from submitted decisions.
-      </div>
+      </Notice>
 
       {/* Submitted teams ready for export */}
       <Card>
         <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
           Teams Ready for RFI Export
         </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm font-body">
-            <thead>
-              <tr className="border-b border-deep-green/10 dark:border-card/10 text-left">
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Team</th>
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Firm</th>
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Submitted</th>
-                <th className="pb-2 font-medium text-deep-green dark:text-card">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
-              {submittedTeams.map((team) => (
-                <tr key={team.name}>
-                  <td className="py-3 pr-4 text-deep-green dark:text-card">{team.name}</td>
-                  <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">{team.firm}</td>
-                  <td className="py-3 pr-4">
-                    <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                      Submitted
-                    </span>
-                  </td>
-                  <td className="py-3">
-                    <Button variant="outlined" size="sm" disabled>
-                      Download RFI
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          caption="Teams ready for RFI export"
+          columns={['Team', 'Firm', 'Submitted', 'Actions']}
+          rows={submittedTeams.map((team) => ({
+            key: team.name,
+            cells: [
+              team.name,
+              team.firm,
+              <Badge variant="submitted">Submitted</Badge>,
+              <Button variant="outlined" size="sm" disabled>
+                Download RFI
+              </Button>,
+            ],
+          }))}
+        />
       </Card>
 
     </div>

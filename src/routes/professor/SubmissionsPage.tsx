@@ -4,6 +4,7 @@ import { DEMO_TEAMS } from './demo-teams'
 import { DEV_PREVIEW_ROUND } from '../../lib/dev-preview'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
+import { DataTable } from '../../components/ui/DataTable'
 
 /**
  * Submission monitoring page — Milestone 1.2.
@@ -21,46 +22,30 @@ export function SubmissionsPage() {
 
       {/* Submissions table */}
       <Card>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm font-body">
-            <thead>
-              <tr className="border-b border-deep-green/10 dark:border-card/10 text-left">
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Team</th>
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Firm</th>
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Submitted At</th>
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Decision Count</th>
-                <th className="pb-2 font-medium text-deep-green dark:text-card">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
-              {DEMO_TEAMS.map((team) => (
-                <tr key={team.name}>
-                  <td className="py-3 pr-4 text-deep-green dark:text-card">{team.name}</td>
-                  <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">{team.firm}</td>
-                  <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">
-                    {team.submittedAt ?? <span className="text-slate-400 dark:text-slate-500">—</span>}
-                  </td>
-                  <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">
-                    {team.decisionCount}
-                  </td>
-                  <td className="py-3">
-                    {team.decisions ? (
-                      <Button
-                        variant="outlined"
-                        size="sm"
-                        onClick={() => navigate(`/professor/team-review/${team.id}`)}
-                      >
-                        View Decisions
-                      </Button>
-                    ) : (
-                      <span className="text-slate-400 dark:text-slate-500">—</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          caption="Team submissions"
+          columns={['Team', 'Firm', 'Submitted At', 'Decision Count', 'Actions']}
+          rows={DEMO_TEAMS.map((team) => ({
+            key: team.name,
+            cells: [
+              team.name,
+              team.firm,
+              team.submittedAt ?? '—',
+              team.decisionCount,
+              team.decisions ? (
+                <Button
+                  variant="outlined"
+                  size="sm"
+                  onClick={() => navigate(`/professor/team-review/${team.id}`)}
+                >
+                  View Decisions
+                </Button>
+              ) : (
+                '—'
+              ),
+            ],
+          }))}
+        />
       </Card>
 
       {/* Export action */}
@@ -71,7 +56,7 @@ export function SubmissionsPage() {
       </div>
 
       {/* Phase 2 note */}
-      <p className="font-body text-xs text-slate-500 dark:text-slate-400">
+      <p className="font-body text-xs text-deep-green/75 dark:text-card/75">
         Submission monitoring will update automatically when database integration is complete in
         Phase 2.
       </p>
