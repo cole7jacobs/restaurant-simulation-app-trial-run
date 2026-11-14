@@ -44,9 +44,9 @@ export function DevPreviewSelector() {
           <div
             className={[
               'rounded-xl px-4 py-3',
-              'bg-amber-50 dark:bg-amber-950/30',
-              'border border-amber-200 dark:border-amber-800',
-              'text-amber-800 dark:text-amber-200',
+              'bg-alert/15 dark:bg-alert/15',
+              'border border-alert dark:border-alert',
+              'text-deep-green dark:text-card',
               'font-body text-sm',
             ].join(' ')}
             role="note"
