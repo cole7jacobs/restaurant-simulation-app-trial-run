@@ -40,7 +40,7 @@ export function Button({
     'inline-flex items-center justify-center',
     'rounded-full',
     `font-body font-medium ${sizes[size]}`,
-    'transition-colors duration-150',
+    'transition duration-150 active:scale-[0.98]',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
     'disabled:pointer-events-none disabled:opacity-50',
   ].join(' ')
@@ -48,7 +48,7 @@ export function Button({
   const variants = {
     primary: [
       'bg-primary text-deep-green',
-      'hover:bg-primary/85',
+      'shadow-sm hover:bg-primary/85 hover:shadow',
       'dark:bg-primary dark:text-deep-green',
     ].join(' '),
     outlined: [

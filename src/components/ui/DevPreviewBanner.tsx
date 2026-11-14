@@ -29,9 +29,9 @@ export function DevPreviewBanner() {
     <div
       className={[
         'w-full flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2',
-        'bg-amber-50 dark:bg-amber-950/20',
-        'border-b border-amber-200 dark:border-amber-800',
-        'text-amber-800 dark:text-amber-200',
+        'bg-alert/15 dark:bg-alert/15',
+        'border-b border-alert dark:border-alert',
+        'text-deep-green dark:text-card',
         'font-body text-sm',
       ].join(' ')}
       role="status"
@@ -49,8 +49,8 @@ export function DevPreviewBanner() {
           className={[
             'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
             role === 'student'
-              ? 'bg-primary/20 text-primary dark:bg-primary/30'
-              : 'bg-deep-green/15 text-deep-green dark:bg-deep-green/40 dark:text-amber-100',
+              ? 'bg-primary/40 text-deep-green dark:bg-primary/30 dark:text-card'
+              : 'bg-deep-green/15 text-deep-green dark:bg-deep-green/40 dark:text-card',
           ].join(' ')}
         >
           {roleLabel}
@@ -62,7 +62,7 @@ export function DevPreviewBanner() {
         {role !== 'student' && (
           <Button
             variant="outlined"
-            className="py-1.5 px-4 text-xs border-amber-600 text-amber-700 dark:border-amber-400 dark:text-amber-300 hover:bg-amber-100/50 dark:hover:bg-amber-900/30"
+            className="py-1.5 px-4 text-xs border-alert text-deep-green dark:border-alert dark:text-card hover:bg-alert/25 dark:hover:bg-alert/25"
             onClick={() => switchRole('student')}
           >
             Switch to Student
@@ -71,7 +71,7 @@ export function DevPreviewBanner() {
         {role !== 'professor' && (
           <Button
             variant="outlined"
-            className="py-1.5 px-4 text-xs border-amber-600 text-amber-700 dark:border-amber-400 dark:text-amber-300 hover:bg-amber-100/50 dark:hover:bg-amber-900/30"
+            className="py-1.5 px-4 text-xs border-alert text-deep-green dark:border-alert dark:text-card hover:bg-alert/25 dark:hover:bg-alert/25"
             onClick={() => switchRole('professor')}
           >
             Switch to Professor

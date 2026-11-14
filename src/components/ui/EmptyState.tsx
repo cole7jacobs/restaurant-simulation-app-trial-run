@@ -18,7 +18,7 @@ export function EmptyState({ title, description, children }: EmptyStateProps) {
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 48 48"
         fill="none"
-        className="h-12 w-12 text-slate-300 dark:text-slate-600"
+        className="h-12 w-12 text-deep-green/75 dark:text-card/75"
         aria-hidden="true"
       >
         <circle cx="24" cy="24" r="20" stroke="currentColor" strokeWidth="2.5" />
@@ -37,7 +37,7 @@ export function EmptyState({ title, description, children }: EmptyStateProps) {
         <p className="font-heading text-lg font-semibold text-deep-green dark:text-card">
           {title}
         </p>
-        <p className="mt-1 font-body text-sm text-slate-500 dark:text-slate-400">
+        <p className="mt-1 font-body text-sm text-deep-green/75 dark:text-card/75">
           {description}
         </p>
       </div>

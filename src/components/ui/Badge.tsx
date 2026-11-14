@@ -8,9 +8,9 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  submitted: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-  draft: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-  pending: 'bg-slate-100 text-slate-600 dark:bg-slate-800/60 dark:text-slate-400',
+  submitted: 'bg-deep-green text-white dark:bg-primary dark:text-deep-green',
+  draft: 'bg-alert/25 text-deep-green dark:bg-alert/30 dark:text-card',
+  pending: 'bg-deep-green/10 text-deep-green dark:bg-card/10 dark:text-card',
   info: 'bg-card text-deep-green dark:bg-dark-card dark:text-card',
 }
 
