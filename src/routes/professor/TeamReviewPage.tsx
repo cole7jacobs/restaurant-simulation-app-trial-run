@@ -5,6 +5,7 @@ import { DEV_PREVIEW_ROUND } from '../../lib/dev-preview'
 import { DEMO_TEAMS } from './demo-teams'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
+import { DataTable } from '../../components/ui/DataTable'
 
 /**
  * Team Decision Review page — Milestone 1.2.
@@ -42,28 +43,11 @@ export function TeamReviewPage() {
         <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
           Menu Decisions
         </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm font-body">
-            <thead>
-              <tr className="border-b border-deep-green/10 dark:border-card/10 text-left">
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Item</th>
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Prep</th>
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Portion</th>
-                <th className="pb-2 pr-4 font-medium text-deep-green dark:text-card">Advertising</th>
-                <th className="pb-2 font-medium text-deep-green dark:text-card">Price</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
-              <tr>
-                <td className="py-3 pr-4 text-deep-green dark:text-card">{item}</td>
-                <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">{prep}</td>
-                <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">{portion}</td>
-                <td className="py-3 pr-4 text-slate-600 dark:text-slate-400">—</td>
-                <td className="py-3 text-slate-600 dark:text-slate-400">{price}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          caption="Menu decisions"
+          columns={['Item', 'Prep', 'Portion', 'Advertising', 'Price']}
+          rows={[{ key: String(item), cells: [item, prep, portion, '—', price] }]}
+        />
       </Card>
 
       {/* Staffing & Compensation */}
@@ -73,11 +57,11 @@ export function TeamReviewPage() {
         </h2>
         <dl className="grid grid-cols-2 gap-4 text-sm font-body">
           <div>
-            <dt className="text-slate-500 dark:text-slate-400">Staff Per Day</dt>
+            <dt className="text-deep-green/75 dark:text-card/75">Staff Per Day</dt>
             <dd className="font-semibold text-deep-green dark:text-card mt-0.5">{staff}</dd>
           </div>
           <div>
-            <dt className="text-slate-500 dark:text-slate-400">Hourly Compensation</dt>
+            <dt className="text-deep-green/75 dark:text-card/75">Hourly Compensation</dt>
             <dd className="font-semibold text-deep-green dark:text-card mt-0.5">$14.50</dd>
           </div>
         </dl>
@@ -90,15 +74,15 @@ export function TeamReviewPage() {
         </h2>
         <dl className="grid grid-cols-3 gap-4 text-sm font-body">
           <div>
-            <dt className="text-slate-500 dark:text-slate-400">Amenities/Order</dt>
+            <dt className="text-deep-green/75 dark:text-card/75">Amenities/Order</dt>
             <dd className="font-semibold text-deep-green dark:text-card mt-0.5">$2.50</dd>
           </div>
           <div>
-            <dt className="text-slate-500 dark:text-slate-400">Entertainment</dt>
+            <dt className="text-deep-green/75 dark:text-card/75">Entertainment</dt>
             <dd className="font-semibold text-deep-green dark:text-card mt-0.5">$800</dd>
           </div>
           <div>
-            <dt className="text-slate-500 dark:text-slate-400">Maintenance</dt>
+            <dt className="text-deep-green/75 dark:text-card/75">Maintenance</dt>
             <dd className="font-semibold text-deep-green dark:text-card mt-0.5">$500</dd>
           </div>
         </dl>
@@ -113,24 +97,24 @@ export function TeamReviewPage() {
           <div>
             <p className="font-medium text-deep-green dark:text-card mb-2">Reports</p>
             <div className="flex flex-wrap gap-4">
-              <span className="text-green-700 dark:text-green-400">Guest Satisfaction ✓</span>
-              <span className="text-green-700 dark:text-green-400">Financial ✓</span>
-              <span className="text-slate-500 dark:text-slate-400">Product ✗</span>
+              <span className="text-deep-green dark:text-card">Guest Satisfaction ✓</span>
+              <span className="text-deep-green dark:text-card">Financial ✓</span>
+              <span className="text-deep-green/75 dark:text-card/75">Product ✗</span>
             </div>
           </div>
           <div>
             <p className="font-medium text-deep-green dark:text-card mb-2">Finance</p>
             <dl className="grid grid-cols-3 gap-4">
               <div>
-                <dt className="text-slate-500 dark:text-slate-400">Time Deposit</dt>
+                <dt className="text-deep-green/75 dark:text-card/75">Time Deposit</dt>
                 <dd className="font-semibold text-deep-green dark:text-card mt-0.5">$0</dd>
               </div>
               <div>
-                <dt className="text-slate-500 dark:text-slate-400">CD Change</dt>
+                <dt className="text-deep-green/75 dark:text-card/75">CD Change</dt>
                 <dd className="font-semibold text-deep-green dark:text-card mt-0.5">$0</dd>
               </div>
               <div>
-                <dt className="text-slate-500 dark:text-slate-400">Note Payable</dt>
+                <dt className="text-deep-green/75 dark:text-card/75">Note Payable</dt>
                 <dd className="font-semibold text-deep-green dark:text-card mt-0.5">$0</dd>
               </div>
             </dl>
@@ -146,7 +130,7 @@ export function TeamReviewPage() {
       </div>
 
       {/* Phase 3 note */}
-      <p className="font-body text-xs text-slate-500 dark:text-slate-400">
+      <p className="font-body text-xs text-deep-green/75 dark:text-card/75">
         This is placeholder data. Real decisions will be displayed after Phase 3.
       </p>
     </div>

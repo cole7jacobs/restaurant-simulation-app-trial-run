@@ -38,9 +38,9 @@ export function StudentHomePage() {
           subtext="decisions due"
         />
         <Card>
-          <p className="font-body text-sm text-slate-600 dark:text-slate-400">Team</p>
-          <p className="mt-1 font-heading text-3xl font-bold text-primary">{teamName}</p>
-          <p className="mt-1 font-body text-xs text-slate-500 dark:text-slate-500">Firm #—</p>
+          <p className="font-body text-sm text-deep-green/75 dark:text-card/75">Team</p>
+          <p className="mt-1 font-heading text-3xl font-bold text-deep-green dark:text-primary">{teamName}</p>
+          <p className="mt-1 font-body text-xs text-deep-green/75 dark:text-card/75">Firm #—</p>
         </Card>
       </div>
 
@@ -61,7 +61,7 @@ export function StudentHomePage() {
               <Badge variant="draft">Draft</Badge>
               <Link
                 to={to}
-                className="font-body text-sm text-primary hover:underline whitespace-nowrap"
+                className="font-body text-sm text-deep-green dark:text-primary hover:underline whitespace-nowrap"
               >
                 → Go to Decisions
               </Link>

@@ -105,7 +105,7 @@ export function LoginPage() {
               </p>
               <Link
                 to="/dev"
-                className="inline-block font-body text-xs font-semibold text-amber-700 dark:text-amber-400 hover:underline"
+                className="inline-block font-body text-xs font-semibold text-deep-green dark:text-card hover:underline"
               >
                 Open Role Selector (/dev) →
               </Link>

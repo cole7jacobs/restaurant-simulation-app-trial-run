@@ -25,7 +25,7 @@ export function FormField({ label, htmlFor, children, hint }: FormFieldProps) {
       <div className="w-full">{children}</div>
 
       {hint && (
-        <p className="font-body text-xs text-slate-500 dark:text-slate-400">{hint}</p>
+        <p className="font-body text-xs text-deep-green/75 dark:text-card/75">{hint}</p>
       )}
     </div>
   )

@@ -3,43 +3,80 @@ import { Card } from '../../components/ui/Card'
 import { SectionNav } from '../../components/ui/SectionNav'
 import { Button } from '../../components/ui/Button'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { Notice } from '../../components/ui/Notice'
 import { useDevPreview } from '../../context/DevPreviewContext'
 
 // ---------------------------------------------------------------------------
 // Inner section components (placeholder UI — no actual form saving)
 // ---------------------------------------------------------------------------
 
+const MENU_HEADERS = ['Item', 'Preparation', 'Portion (Gm./Cl.)', 'Advertising ($)', 'Price ($)']
+
+const MENU_ROWS = [
+  ['Steak', 'Filet', '250', '150', '28.00'],
+  ['Chicken', 'Game Hen', '200', '100', '18.00'],
+  ['Wine', 'Imported', '30', '80', '12.00'],
+  ['Beer', '—', '50', '60', '7.00'],
+]
+
+const menuInputClass =
+  'w-full rounded border border-deep-green/20 dark:border-card/20 bg-white dark:bg-dark-bg px-2 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60'
+
 function MenuSection() {
   return (
     <div className="space-y-4">
-      <p className="font-body text-sm text-slate-600 dark:text-slate-400">
+      <p className="font-body text-sm text-deep-green/75 dark:text-card/75">
         Enter your menu decisions for this round. Up to 8 items.
       </p>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Phones: one card per menu item, each field labelled so nothing is cut off */}
+      <div className="space-y-3 sm:hidden">
+        {MENU_ROWS.map((row) => (
+          <fieldset
+            key={row[0]}
+            className="rounded-lg border border-deep-green/15 dark:border-card/15 p-3"
+          >
+            <legend className="px-1 font-body text-sm font-medium text-deep-green dark:text-card">
+              {row[0]}
+            </legend>
+            <div className="grid grid-cols-2 gap-3">
+              {row.map((val, i) => (
+                <label
+                  key={MENU_HEADERS[i]}
+                  className="font-body text-xs font-medium text-deep-green dark:text-card"
+                >
+                  {MENU_HEADERS[i]}
+                  <input
+                    type="text"
+                    disabled
+                    defaultValue={val}
+                    className={`mt-1 ${menuInputClass}`}
+                  />
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+      </div>
+
+      {/* Tablet and desktop: table */}
+      <div className="hidden overflow-x-auto sm:block">
         <table className="w-full text-sm font-body">
           <thead>
             <tr className="border-b border-deep-green/10 dark:border-card/10">
-              {['Item', 'Preparation', 'Portion (Gm./Cl.)', 'Advertising ($)', 'Price ($)'].map(
-                (h) => (
-                  <th
-                    key={h}
-                    className="pb-2 pr-4 text-left font-medium text-deep-green dark:text-card"
-                  >
-                    {h}
-                  </th>
-                )
-              )}
+              {MENU_HEADERS.map((h) => (
+                <th
+                  key={h}
+                  scope="col"
+                  className="pb-2 pr-4 text-left font-medium text-deep-green dark:text-card"
+                >
+                  {h}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
-            {[
-              ['Steak', 'Filet', '250', '150', '28.00'],
-              ['Chicken', 'Game Hen', '200', '100', '18.00'],
-              ['Wine', 'Imported', '30', '80', '12.00'],
-              ['Beer', '—', '50', '60', '7.00'],
-            ].map((row) => (
+            {MENU_ROWS.map((row) => (
               <tr key={row[0]}>
                 {row.map((val, i) => (
                   <td key={i} className="py-2 pr-4">
@@ -47,7 +84,8 @@ function MenuSection() {
                       type="text"
                       disabled
                       defaultValue={val}
-                      className="w-full rounded border border-deep-green/20 dark:border-card/20 bg-white dark:bg-dark-bg px-2 py-1 text-sm text-deep-green dark:text-card disabled:opacity-60"
+                      aria-label={`${row[0]} ${MENU_HEADERS[i]}`}
+                      className={menuInputClass}
                     />
                   </td>
                 ))}
@@ -57,10 +95,10 @@ function MenuSection() {
         </table>
       </div>
 
-      <p className="font-body text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-        ⚠ Open Question OQ-4/OQ-5: Complete menu item list and preparation levels pending
+      <Notice>
+        Open Question OQ-4/OQ-5: Complete menu item list and preparation levels pending
         professor confirmation. Fields are shown for reference only.
-      </p>
+      </Notice>
 
       <SaveContinueButton />
     </div>
@@ -80,7 +118,7 @@ function StaffingSection() {
           placeholder="12"
           className="w-full max-w-xs rounded border border-deep-green/20 dark:border-card/20 bg-white dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
         />
-        <p className="mt-1 font-body text-xs text-slate-500 dark:text-slate-400">
+        <p className="mt-1 font-body text-xs text-deep-green/75 dark:text-card/75">
           Total number of staff scheduled per day.
         </p>
       </div>
@@ -96,7 +134,7 @@ function StaffingSection() {
           step="0.01"
           className="w-full max-w-xs rounded border border-deep-green/20 dark:border-card/20 bg-white dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
         />
-        <p className="mt-1 font-body text-xs text-slate-500 dark:text-slate-400">
+        <p className="mt-1 font-body text-xs text-deep-green/75 dark:text-card/75">
           Hourly wage paid to each staff member.
         </p>
       </div>
@@ -141,9 +179,7 @@ function FinanceSection() {
         <h3 className="font-heading text-base font-semibold text-deep-green dark:text-card">
           Management Information
         </h3>
-        <p className="font-body text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-          ⚠ Open Question OQ-3: Report flag field order unconfirmed.
-        </p>
+        <Notice>Open Question OQ-3: Report flag field order unconfirmed.</Notice>
         {['Guest Satisfaction Report', 'Financial Report', 'Product Report'].map((label) => (
           <label
             key={label}
@@ -194,7 +230,7 @@ function SaveContinueButton() {
       <Button variant="primary" disabled>
         Save and continue
       </Button>
-      <p className="font-body text-xs text-slate-500 dark:text-slate-400">
+      <p className="font-body text-xs text-deep-green/75 dark:text-card/75">
         Saving will be enabled in Phase 3.
       </p>
     </div>
