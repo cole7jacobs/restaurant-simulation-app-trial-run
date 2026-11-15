@@ -79,7 +79,7 @@ npx wrangler d1 execute DB --local --command "SELECT TeamID, TeamName, FirmNumbe
 npx wrangler d1 execute DB --local --command "PRAGMA foreign_key_check"
 ```
 
-Both health endpoints should return `status: ok`; an empty foreign-key check indicates no violations. The database health check verifies the six core tables, not every migration or feature. For an isolated local state directory, use `--persist-to` consistently for Wrangler migration, seed, and development commands; `LOCAL_D1_STATE` selects that directory for the local account script.
+Both health endpoints should return `status: ok`; an empty foreign-key check indicates no violations. The database health check verifies the six core tables, the tables added by migrations 0002 to 0004, the unique index from migration 0005, and that the foreign-key check finds no violations; on failure it returns 503 with the missing names. For an isolated local state directory, use `--persist-to` consistently for Wrangler migration, seed, and development commands; `LOCAL_D1_STATE` selects that directory for the local account script.
 
 ## Local accounts and sign-in
 

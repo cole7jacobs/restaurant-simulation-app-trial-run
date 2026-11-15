@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import app from '../../worker/index'
 
 /**
@@ -53,32 +53,42 @@ describe('Worker — unknown /api routes', () => {
   })
 })
 
-describe('Worker — GET /api/health/db', () => {
-  it('uses bound table names and returns readiness for a migrated database', async () => {
-    const first = vi.fn().mockResolvedValue(6)
-    const bind = vi.fn().mockReturnValue({ first })
-    const prepare = vi.fn().mockReturnValue({ bind })
-    const env = { DB: { prepare } } as typeof mockEnv
+const REQUIRED = [
+  'User', 'Team', 'TeamDecision', 'MenuItem', 'MenuItemDecision', 'TeamMetrics',
+  'AuthSession', 'LoginRateLimit', 'SimulationResultImport', 'MenuItemResult',
+  'MenuItemDecisionUniqueItemPrep',
+]
 
-    const res = await app.fetch(new Request('http://localhost/api/health/db'), env)
+/** Fake D1: the schema query returns `names`; PRAGMA foreign_key_check returns `violations`. */
+function fakeEnv(names: string[], violations: unknown[] = []) {
+  const prepare = (sql: string) => ({
+    bind: () => ({ all: async () => ({ results: names.map((name) => ({ name })) }) }),
+    all: async () => ({ results: sql.startsWith('PRAGMA') ? violations : [] }),
+  })
+  return { DB: { prepare } } as unknown as typeof mockEnv
+}
+
+describe('Worker — GET /api/health/db', () => {
+  it('returns ok for a fully migrated database', async () => {
+    const res = await app.fetch(new Request('http://localhost/api/health/db'), fakeEnv(REQUIRED))
 
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({ status: 'ok' })
-    expect(bind).toHaveBeenCalledWith(
-      'User', 'Team', 'TeamDecision', 'MenuItem', 'MenuItemDecision', 'TeamMetrics',
-    )
-    expect(first).toHaveBeenCalledWith('count')
   })
 
-  it('returns 503 for a database with missing tables', async () => {
-    const env = {
-      DB: { prepare: () => ({ bind: () => ({ first: async () => 0 }) }) },
-    } as unknown as typeof mockEnv
-
-    const res = await app.fetch(new Request('http://localhost/api/health/db'), env)
+  it('reports a missing migration table', async () => {
+    const names = REQUIRED.filter((name) => name !== 'AuthSession')
+    const res = await app.fetch(new Request('http://localhost/api/health/db'), fakeEnv(names))
 
     expect(res.status).toBe(503)
-    expect(await res.json()).toEqual({ status: 'unavailable' })
+    expect(await res.json()).toEqual({ status: 'unavailable', missing: ['AuthSession'], foreignKeyViolations: 0 })
+  })
+
+  it('reports foreign key violations', async () => {
+    const res = await app.fetch(new Request('http://localhost/api/health/db'), fakeEnv(REQUIRED, [{ table: 'User' }]))
+
+    expect(res.status).toBe(503)
+    expect(await res.json()).toEqual({ status: 'unavailable', missing: [], foreignKeyViolations: 1 })
   })
 
   it('returns 503 if the binding is unavailable', async () => {
