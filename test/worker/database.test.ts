@@ -147,3 +147,53 @@ describe('local D1 migrations and relationships', () => {
       .bind(-1, 2).first('StaffPerDay')).toBe(15)
   })
 })
+
+describe('migration 0005 cleanup of duplicate menu selections', () => {
+  it('removes duplicates, keeps the lowest slot, clears result links, and enforces uniqueness', async () => {
+    const files = Object.keys(migrations).sort()
+    const migrationDb = new Miniflare({
+      modules: true,
+      script: 'export default { fetch: () => new Response(null) }',
+      compatibilityDate: '2025-04-01',
+      d1Databases: ['DB'],
+      d1Persist: false,
+    })
+    try {
+      const target = await migrationDb.getD1Database('DB')
+      const apply = async (source: string) =>
+        target.batch(unstable_splitSqlQuery(source).map((sql) => target.prepare(sql)))
+      for (const file of files.filter((name) => /\/000[1-4]_/.test(name))) await apply(migrations[file])
+
+      // Slots 1, 2 and 4 repeat item 300 with preparation 1; slot 3 is the same item with preparation 2.
+      await target.batch([
+        target.prepare("INSERT INTO Team (TeamID, TeamName) VALUES (300, 'Duplicate Team')"),
+        target.prepare("INSERT INTO MenuItem (MenuItemID, ItemName, OrderSizeUnit) VALUES (300, 'Duplicate Item', 'Gm.')"),
+        target.prepare('INSERT INTO TeamDecision (TeamID, RoundNumber) VALUES (300, 1)'),
+        target.prepare('INSERT INTO MenuItemDecision (TeamID, RoundNumber, SlotNumber, MenuItemID, PrepLevel, OrderSize, InternalPromotion, SalesPrice) VALUES (300, 1, 1, 300, 1, 100, 0, 5)'),
+        target.prepare('INSERT INTO MenuItemDecision (TeamID, RoundNumber, SlotNumber, MenuItemID, PrepLevel, OrderSize, InternalPromotion, SalesPrice) VALUES (300, 1, 2, 300, 1, 110, 0, 6)'),
+        target.prepare('INSERT INTO MenuItemDecision (TeamID, RoundNumber, SlotNumber, MenuItemID, PrepLevel, OrderSize, InternalPromotion, SalesPrice) VALUES (300, 1, 3, 300, 2, 120, 0, 7)'),
+        target.prepare('INSERT INTO MenuItemDecision (TeamID, RoundNumber, SlotNumber, MenuItemID, PrepLevel, OrderSize, InternalPromotion, SalesPrice) VALUES (300, 1, 4, 300, 1, 130, 0, 8)'),
+        target.prepare('INSERT INTO TeamMetrics VALUES (300, 1, 0, 0, 0, 0, 0, 0, 0, 0)'),
+        // Result 1 points at the kept slot; result 2 points at the duplicate slot 2.
+        target.prepare('INSERT INTO MenuItemResult (TeamID, RoundNumber, ResultSlot, MenuItemID, PrepLevel, DecisionSlot, CostOfGoodsSoldPct, OrdersSold, TotalSales) VALUES (300, 1, 1, 300, 1, 1, 30, 1, 5)'),
+        target.prepare('INSERT INTO MenuItemResult (TeamID, RoundNumber, ResultSlot, MenuItemID, PrepLevel, DecisionSlot, CostOfGoodsSoldPct, OrdersSold, TotalSales) VALUES (300, 1, 2, 300, 1, 2, 30, 1, 6)'),
+      ])
+
+      await apply(migrations[files.find((name) => name.includes('0005_'))!])
+
+      const slots = await target.prepare('SELECT SlotNumber, PrepLevel FROM MenuItemDecision WHERE TeamID = 300 ORDER BY SlotNumber')
+        .all<{ SlotNumber: number; PrepLevel: number }>()
+      expect(slots.results).toEqual([{ SlotNumber: 1, PrepLevel: 1 }, { SlotNumber: 3, PrepLevel: 2 }])
+
+      const links = await target.prepare('SELECT ResultSlot, DecisionSlot FROM MenuItemResult WHERE TeamID = 300 ORDER BY ResultSlot')
+        .all<{ ResultSlot: number; DecisionSlot: number | null }>()
+      expect(links.results).toEqual([{ ResultSlot: 1, DecisionSlot: 1 }, { ResultSlot: 2, DecisionSlot: null }])
+
+      await expect(
+        target.prepare('INSERT INTO MenuItemDecision (TeamID, RoundNumber, SlotNumber, MenuItemID, PrepLevel, OrderSize, InternalPromotion, SalesPrice) VALUES (300, 1, 5, 300, 1, 100, 0, 5)').run(),
+      ).rejects.toThrow(/UNIQUE/)
+    } finally {
+      await migrationDb.dispose()
+    }
+  }, 15000)
+})
