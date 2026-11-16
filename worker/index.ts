@@ -49,14 +49,24 @@ app.get('/api/health', (c) => {
 
 const CORE_TABLES = ['User', 'Team', 'TeamDecision', 'MenuItem', 'MenuItemDecision', 'TeamMetrics']
 
+// Tables from migrations 0002 to 0004 and the unique index from 0005.
+const REQUIRED_SCHEMA = [
+  ...CORE_TABLES, 'AuthSession', 'LoginRateLimit', 'SimulationResultImport', 'MenuItemResult',
+  'MenuItemDecisionUniqueItemPrep',
+]
+
 // Readiness checks schema availability without exposing application data.
 app.get('/api/health/db', async (c) => {
   try {
-    const count = await c.env.DB.prepare(
-      "SELECT COUNT(*) AS count FROM sqlite_schema WHERE type = 'table' AND name IN (?, ?, ?, ?, ?, ?)",
-    ).bind(...CORE_TABLES).first<number>('count')
+    const { results } = await c.env.DB.prepare(
+      `SELECT name FROM sqlite_schema WHERE name IN (${REQUIRED_SCHEMA.map(() => '?').join(', ')})`,
+    ).bind(...REQUIRED_SCHEMA).all<{ name: string }>()
+    const found = new Set(results.map((row) => row.name))
+    const missing = REQUIRED_SCHEMA.filter((name) => !found.has(name))
+    const violations = (await c.env.DB.prepare('PRAGMA foreign_key_check').all()).results.length
 
-    if (count === CORE_TABLES.length) return c.json({ status: 'ok' })
+    if (!missing.length && !violations) return c.json({ status: 'ok' })
+    return c.json({ status: 'unavailable', missing, foreignKeyViolations: violations }, 503)
   } catch {
     // Missing bindings and query failures both mean D1 is unavailable.
   }
