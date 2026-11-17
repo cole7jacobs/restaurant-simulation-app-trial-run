@@ -25,7 +25,7 @@ export function DevPreviewSelector() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-dark-bg flex items-center justify-center px-4 py-16">
+    <div className="min-h-screen bg-card dark:bg-dark-bg flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md space-y-6">
         {/* Card */}
         <div className="rounded-2xl bg-card dark:bg-dark-card shadow-sm p-8 space-y-6">
@@ -75,7 +75,7 @@ export function DevPreviewSelector() {
 
           {/* Currently previewing section — only shown when already in a role */}
           {role && (
-            <div className="border-t border-deep-green/10 dark:border-card/10 pt-4 space-y-2">
+            <div className="border-t border-deep-green/20 dark:border-card/10 pt-4 space-y-2">
               <p className="font-body text-sm text-deep-green dark:text-card text-center">
                 Currently previewing as{' '}
                 <span className="font-medium capitalize">{role}</span>.

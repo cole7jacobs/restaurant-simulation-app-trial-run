@@ -79,7 +79,7 @@ export function ProfessorImportPage() {
         <form onSubmit={onPreview} className="space-y-4">
           <fieldset disabled={busy} className="flex flex-wrap items-end gap-3">
             <label className="grid gap-1 text-sm font-medium">Simulation round
-              <select className="rounded border border-deep-green/30 bg-white px-2 py-2 dark:bg-dark-card"
+              <select className="rounded border border-deep-green/30 bg-card/50 px-2 py-2 dark:bg-dark-card"
                 required value={round} onChange={(event) => { resetPreview(); setRound(event.target.value) }}>
                 <option value="">Choose round</option>
                 {importRounds.map((period) => <option key={period} value={period}>Q{period}</option>)}

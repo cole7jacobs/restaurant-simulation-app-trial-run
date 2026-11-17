@@ -16,7 +16,7 @@ describe('Button component', () => {
       const { container } = render(<Button>Primary</Button>)
       const btn = container.firstElementChild as HTMLElement
       // Primary variant includes bg-primary Tailwind class
-      expect(btn.className).toContain('bg-primary')
+      expect(btn.className).toContain('bg-deep-green')
     })
 
     it('applies outlined variant class when specified', () => {

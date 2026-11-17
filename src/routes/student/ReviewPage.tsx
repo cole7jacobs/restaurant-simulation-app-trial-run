@@ -27,7 +27,7 @@ function MenuTable() {
 function StaffingTable() {
   return (
     <table className="w-full text-sm font-body">
-      <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
+      <tbody className="divide-y divide-deep-green/10 dark:divide-card/5">
         <tr>
           <td className="py-2 font-medium text-deep-green dark:text-card pr-4">Staff Per Day</td>
           <td className="py-2 text-deep-green dark:text-card">12</td>
@@ -46,7 +46,7 @@ function StaffingTable() {
 function AmenitiesTable() {
   return (
     <table className="w-full text-sm font-body">
-      <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
+      <tbody className="divide-y divide-deep-green/10 dark:divide-card/5">
         {[
           ['Amenities Per Order ($)', '$2.50'],
           ['Entertainment Budget ($)', '$800'],
@@ -70,7 +70,7 @@ function FinanceTable() {
           Management Information
         </p>
         <table className="w-full text-sm font-body">
-          <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
+          <tbody className="divide-y divide-deep-green/10 dark:divide-card/5">
             {['Guest Satisfaction Report', 'Financial Report', 'Product Report'].map((label) => (
               <tr key={label}>
                 <td className="py-2 font-medium text-deep-green dark:text-card pr-4">{label}</td>
@@ -85,7 +85,7 @@ function FinanceTable() {
           Finance
         </p>
         <table className="w-full text-sm font-body">
-          <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
+          <tbody className="divide-y divide-deep-green/10 dark:divide-card/5">
             {[
               'Time Deposit Change',
               'Certificate of Deposit Change',

@@ -47,9 +47,9 @@ export function Button({
 
   const variants = {
     primary: [
-      'bg-primary text-deep-green',
-      'shadow-sm hover:bg-primary/85 hover:shadow',
-      'dark:bg-primary dark:text-deep-green',
+      'bg-deep-green text-card',
+      'shadow-sm hover:bg-deep-green/85 hover:shadow',
+      'dark:bg-card dark:text-deep-green',
     ].join(' '),
     outlined: [
       'border border-deep-green text-deep-green bg-transparent',

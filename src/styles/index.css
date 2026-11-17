@@ -23,20 +23,24 @@
   /* ── Colors ──────────────────────────────────────────────────────────── */
 
   /* Gold: main action buttons (Save and continue, Submit), chart bars */
-  --color-primary: #D98B62;
+  --color-primary: #6D8F8F;
 
   /* Deep green: body text, outlines, selected tabs, navigation active state */
-  --color-deep-green: #1F3A2A;
+  --color-deep-green: #2B2E2E;
 
   /* Light orange: card and panel backgrounds */
-  --color-card: #FCEDE4;
+  --color-card: #E6EEEC;
 
   /* Soft orange: warnings, error messages, friendly nudges */
-  --color-alert: #D98B62;
+  --color-alert: #6D8F8F;
+
+  /* Five-color palette: Frozen Teal (deep-green), Icy Ocean (primary/alert), Vanilla Glaze (card), Cream beige, Grey */
+  --color-beige: #D5E2DF;
+  --color-grey: #2B2E2E;
 
   /* Dark mode surfaces */
-  --color-dark-bg: #161616;
-  --color-dark-card: #242424;
+  --color-dark-bg: #2B2E2E;
+  --color-dark-card: #FFFFFF12;
 
   /* ── Typography ──────────────────────────────────────────────────────── */
 
@@ -54,13 +58,13 @@
 @layer base {
   html {
     font-family: var(--font-body);
-    color: #1F3A2A;           /* deep-green text on white */
-    background-color: #FFFFFF;
+    color: #2B2E2E;           /* dark grey text */
+    background-color: #E6EEEC;
   }
 
   html.dark {
-    color: #FCEDE4;           /* light orange text in dark mode (design spec) */
-    background-color: #161616;
+    color: #E6EEEC;           /* vanilla text in dark mode */
+    background-color: #2B2E2E;
   }
 
   h1, h2, h3 {
@@ -75,7 +79,7 @@
 
   /* Ensure focus rings use the primary gold color across interactive elements */
   :focus-visible {
-    outline: 2px solid #D98B62;
+    outline: 2px solid #6D8F8F;
     outline-offset: 2px;
   }
 }

@@ -8,7 +8,7 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  submitted: 'bg-deep-green text-white dark:bg-primary dark:text-deep-green',
+  submitted: 'bg-deep-green text-card dark:bg-card dark:text-deep-green',
   draft: 'bg-alert/25 text-deep-green dark:bg-alert/30 dark:text-card',
   pending: 'bg-deep-green/10 text-deep-green dark:bg-card/10 dark:text-card',
   info: 'bg-card text-deep-green dark:bg-dark-card dark:text-card',

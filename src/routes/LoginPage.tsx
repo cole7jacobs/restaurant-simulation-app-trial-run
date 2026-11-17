@@ -30,7 +30,7 @@ export function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white dark:bg-dark-bg flex items-start justify-center pt-16 px-4">
+    <main className="min-h-screen bg-card dark:bg-dark-bg flex items-start justify-center pt-16 px-4">
       <div className="w-full max-w-sm">
         {/* Page heading */}
         <h1 className="font-heading text-3xl font-bold text-deep-green dark:text-card mb-1">
@@ -63,7 +63,7 @@ export function LoginPage() {
                 name="email" required maxLength={100}
                 className="
                   w-full rounded-xl border border-deep-green dark:border-card
-                  bg-white dark:bg-dark-bg
+                  bg-card dark:bg-dark-bg
                   px-4 py-2.5
                   font-body text-base text-deep-green dark:text-card
                   placeholder:text-deep-green/40 dark:placeholder:text-card/40
@@ -85,7 +85,7 @@ export function LoginPage() {
                 autoComplete="current-password" name="password" required maxLength={256}
                 className="
                   w-full rounded-xl border border-deep-green dark:border-card
-                  bg-white dark:bg-dark-bg
+                  bg-card dark:bg-dark-bg
                   px-4 py-2.5
                   font-body text-base text-deep-green dark:text-card
                   focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0
@@ -99,7 +99,7 @@ export function LoginPage() {
           </form>
 
           {import.meta.env.DEV && (
-            <div className="border-t border-deep-green/10 dark:border-card/10 pt-4 text-center space-y-1">
+            <div className="border-t border-deep-green/20 dark:border-card/10 pt-4 text-center space-y-1">
               <p className="font-body text-xs text-deep-green/60 dark:text-card/60">
                 Milestone 1.2 — Development Preview Mode
               </p>

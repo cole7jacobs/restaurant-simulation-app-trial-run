@@ -11,7 +11,7 @@ interface NoticeProps {
 const styles: Record<NoticeVariant, string> = {
   warning: 'border-alert bg-alert/15',
   error: 'border-alert border-2 bg-alert/20',
-  info: 'border-deep-green/20 bg-deep-green/5 dark:border-card/20 dark:bg-card/5',
+  info: 'border-deep-green/30 bg-deep-green/5 dark:border-card/20 dark:bg-card/5',
   success: 'border-primary bg-primary/20',
 }
 
@@ -37,7 +37,7 @@ export function Notice({ variant = 'warning', children, className = '' }: Notice
     >
       <span
         aria-hidden="true"
-        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-deep-green text-xs font-bold text-white dark:bg-card dark:text-deep-green"
+        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-deep-green text-xs font-bold text-card dark:bg-card dark:text-deep-green"
       >
         {icons[variant]}
       </span>

@@ -20,7 +20,7 @@ const MENU_ROWS = [
 ]
 
 const menuInputClass =
-  'w-full rounded border border-deep-green/20 dark:border-card/20 bg-white dark:bg-dark-bg px-2 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60'
+  'w-full rounded border border-deep-green/40 dark:border-card/20 bg-card/50 dark:bg-dark-bg px-2 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60'
 
 function MenuSection() {
   return (
@@ -63,7 +63,7 @@ function MenuSection() {
       <div className="hidden overflow-x-auto sm:block">
         <table className="w-full text-sm font-body">
           <thead>
-            <tr className="border-b border-deep-green/10 dark:border-card/10">
+            <tr className="border-b border-deep-green/20 dark:border-card/10">
               {MENU_HEADERS.map((h) => (
                 <th
                   key={h}
@@ -75,7 +75,7 @@ function MenuSection() {
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
+          <tbody className="divide-y divide-deep-green/10 dark:divide-card/5">
             {MENU_ROWS.map((row) => (
               <tr key={row[0]}>
                 {row.map((val, i) => (
@@ -116,7 +116,7 @@ function StaffingSection() {
           type="number"
           disabled
           placeholder="12"
-          className="w-full max-w-xs rounded border border-deep-green/20 dark:border-card/20 bg-white dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
+          className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
         />
         <p className="mt-1 font-body text-xs text-deep-green/75 dark:text-card/75">
           Total number of staff scheduled per day.
@@ -132,7 +132,7 @@ function StaffingSection() {
           disabled
           placeholder="14.50"
           step="0.01"
-          className="w-full max-w-xs rounded border border-deep-green/20 dark:border-card/20 bg-white dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
+          className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
         />
         <p className="mt-1 font-body text-xs text-deep-green/75 dark:text-card/75">
           Hourly wage paid to each staff member.
@@ -161,7 +161,7 @@ function AmenitiesSection() {
             disabled
             placeholder={placeholder}
             step="0.01"
-            className="w-full max-w-xs rounded border border-deep-green/20 dark:border-card/20 bg-white dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
+            className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
           />
         </div>
       ))}
@@ -213,7 +213,7 @@ function FinanceSection() {
               type="number"
               disabled
               defaultValue={0}
-              className="w-full max-w-xs rounded border border-deep-green/20 dark:border-card/20 bg-white dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
+              className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
             />
           </div>
         ))}

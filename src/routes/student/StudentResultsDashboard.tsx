@@ -122,7 +122,7 @@ function RoundResults({ results }: { results: StudentResults }) {
           <h2 className={headingClass}>Operating Summary</h2>
           <table className="w-full font-body text-sm">
             <caption className="sr-only">Q{round} income statement amounts</caption>
-            <tbody className="divide-y divide-deep-green/10 dark:divide-card/10">
+            <tbody className="divide-y divide-deep-green/20 dark:divide-card/10">
               {financialRows.map(({ key, label }) => (
                 <tr key={key}>
                   <th scope="row" className="py-2 text-left font-normal">{label}</th>
@@ -153,7 +153,7 @@ function RoundResults({ results }: { results: StudentResults }) {
               <table className="w-full font-body text-sm">
                 <caption className="sr-only">Q{round} menu-item results</caption>
                 <thead>
-                  <tr className="border-b border-deep-green/10 dark:border-card/10">
+                  <tr className="border-b border-deep-green/20 dark:border-card/10">
                     <th scope="col" className="pb-2 pr-4 text-left font-medium">Item</th>
                     <th scope="col" className="pb-2 pr-4 text-left font-medium">Preparation</th>
                     <th scope="col" className="pb-2 pr-4 text-right font-medium">Orders sold</th>
@@ -161,7 +161,7 @@ function RoundResults({ results }: { results: StudentResults }) {
                     <th scope="col" className="pb-2 text-right font-medium">Cost of goods sold</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-deep-green/5 dark:divide-card/5">
+                <tbody className="divide-y divide-deep-green/10 dark:divide-card/5">
                   {menu.map((row) => (
                     <tr key={row.ResultSlot}>
                       <th scope="row" className="py-2 pr-4 text-left font-normal">{row.ItemName}</th>
@@ -272,7 +272,7 @@ export function StudentResultsDashboard() {
                   className={[
                     'inline-flex items-center justify-center rounded-sm px-4 py-1.5 font-body text-sm font-medium transition-colors',
                     value === round
-                      ? 'bg-deep-green text-white dark:bg-primary dark:text-deep-green'
+                      ? 'bg-deep-green text-card dark:bg-card dark:text-deep-green'
                       : 'border border-deep-green/30 dark:border-card/30 text-deep-green dark:text-card hover:bg-deep-green/5 dark:hover:bg-card/10',
                     available || value === round ? '' : 'opacity-60',
                   ].join(' ')}

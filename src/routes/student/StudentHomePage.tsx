@@ -46,7 +46,7 @@ export function StudentHomePage() {
         <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Decision Status
         </h2>
-        <div className="divide-y divide-deep-green/10 dark:divide-card/10">
+        <div className="divide-y divide-deep-green/20 dark:divide-card/10">
           {DECISION_SECTIONS.map(({ label, to }) => (
             <div
               key={label}
@@ -58,7 +58,7 @@ export function StudentHomePage() {
               <Badge variant="draft">Draft</Badge>
               <Link
                 to={to}
-                className="font-body text-sm text-deep-green dark:text-primary hover:underline whitespace-nowrap"
+                className="font-body text-sm text-deep-green dark:text-card hover:underline whitespace-nowrap"
               >
                 → Go to Decisions
               </Link>

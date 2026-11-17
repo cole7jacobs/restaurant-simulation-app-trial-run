@@ -89,7 +89,7 @@ export function ProfessorAccountPage({ title, teamOnly = false }: { title: strin
                   <th scope="col" className="p-2">Round</th>
                   <th scope="col" className="p-2">Submission status</th>
                 </tr></thead>
-                <tbody className="divide-y divide-deep-green/10 dark:divide-card/10">
+                <tbody className="divide-y divide-deep-green/20 dark:divide-card/10">
                   {rows.map((row) => (
                     <tr key={`${row.TeamID}:${row.RoundNumber}`}>
                       <td className="p-2">{teamOnly ? row.TeamName : (
