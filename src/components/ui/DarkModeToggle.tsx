@@ -15,7 +15,7 @@ export function DarkModeToggle() {
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       className="
-        flex h-9 w-9 items-center justify-center rounded-full
+        flex h-11 w-11 items-center justify-center rounded-full
         border border-deep-green text-deep-green
         hover:bg-deep-green/10
         dark:border-card dark:text-card dark:hover:bg-card/10

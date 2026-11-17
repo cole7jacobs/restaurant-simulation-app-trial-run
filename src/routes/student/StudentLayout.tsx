@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { SkipLink } from '../../components/ui/SkipLink'
+import { usePageTitle } from '../../components/ui/usePageTitle'
 import { DarkModeToggle } from '../../components/ui/DarkModeToggle'
 import { SessionControls } from '../../components/ui/SessionControls'
 import { useAuth } from '../../context/AuthContext'
@@ -19,9 +21,11 @@ export function StudentLayout() {
   const studentPath = pathname.replace(/\/+$/, '').toLowerCase()
   const isDecisionPage = studentPath === '/student/decisions' || studentPath === '/student/review'
   const [actionTarget, setActionTarget] = useState<HTMLDivElement | null>(null)
+  usePageTitle(isDecisionPage ? 'Decisions' : NAV_TABS.find((tab) => studentPath.startsWith(tab.to))?.label ?? 'Student')
 
   return (
     <div className={`${isDecisionPage ? 'h-dvh overflow-hidden' : 'min-h-screen'} bg-card dark:bg-dark-bg flex flex-col`}>
+      <SkipLink />
       {/* Top navigation bar */}
       <header className="sticky top-0 z-10 shrink-0 border-b border-deep-green/20 bg-card/90 backdrop-blur dark:border-card/10 dark:bg-dark-bg/90">
         <nav
@@ -29,12 +33,17 @@ export function StudentLayout() {
           aria-label="Student navigation"
         >
           {/* Wordmark */}
+          <img
+            src="/sample-slice-icon.png"
+            alt=""
+            className="order-1 h-[84px] w-[84px] shrink-0 object-contain"
+          />
           <span className="order-1 shrink-0 font-heading text-xl font-extrabold uppercase tracking-wide text-deep-green dark:text-card">
-            Restaurant<span className="text-primary">Sim</span>
+            Sample<span className="text-primary">Slice</span>
           </span>
 
           {/* Nav tabs */}
-          <div className="order-2 flex w-full items-center gap-0 overflow-x-auto sm:w-auto sm:grow">
+          <div className="order-2 flex w-full items-center gap-0 flex-wrap sm:w-auto sm:grow">
             {NAV_TABS.map(({ label, to }) => (
               <NavLink
                 key={to}
@@ -67,7 +76,7 @@ export function StudentLayout() {
 
       <div className={isDecisionPage ? 'min-h-0 flex-1 overflow-y-auto overscroll-contain' : 'flex-1'}>
         {!session && <DevPreviewBanner />}
-        <main className="max-w-6xl mx-auto w-full px-4 py-4 sm:py-5">
+        <main id="main-content" tabIndex={-1} className="max-w-6xl mx-auto w-full px-4 py-4 sm:py-5 focus:outline-none">
           <Outlet context={{ actionTarget }} />
         </main>
       </div>

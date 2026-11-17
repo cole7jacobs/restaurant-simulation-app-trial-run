@@ -11,7 +11,7 @@ import {
   type DecisionResponse, type DecisionValues, type MenuSelection,
 } from '../../../shared/decisions'
 
-const inputClass = 'mt-1 w-full rounded-md border border-deep-green/30 bg-card/70 px-2 py-2 dark:border-card/30 dark:bg-dark-bg'
+const inputClass = 'mt-1 min-h-11 w-full rounded-md border border-deep-green/30 bg-card/70 px-2 py-2 dark:border-card/30 dark:bg-dark-bg'
 const emptyMenu = { MenuItemID: '', PrepLevel: '', OrderSize: '', InternalPromotion: '', SalesPrice: '' }
 type MenuInput = typeof emptyMenu
 type SaveIntent = 'auto' | 'manual' | 'review' | 'submit'

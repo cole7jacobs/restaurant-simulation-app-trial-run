@@ -22,23 +22,24 @@
 @theme {
   /* ── Colors ──────────────────────────────────────────────────────────── */
 
-  /* Gold: main action buttons (Save and continue, Submit), chart bars */
+  /* Icy Ocean (#6D8F8F): accent, focus rings, active tab underline, chart bars */
   --color-primary: #6D8F8F;
 
-  /* Deep green: body text, outlines, selected tabs, navigation active state */
+  /* Charcoal (#2B2E2E): body text, outlines, main buttons. Token is still named deep-green. */
   --color-deep-green: #2B2E2E;
 
-  /* Light orange: card and panel backgrounds */
+  /* Mist (#E6EEEC): page and card background. Token name is card. */
   --color-card: #E6EEEC;
 
-  /* Soft orange: warnings, error messages, friendly nudges */
+  /* Icy Ocean (#6D8F8F): warnings and error messages (same color as primary) */
   --color-alert: #6D8F8F;
 
-  /* Five-color palette: Frozen Teal (deep-green), Icy Ocean (primary/alert), Vanilla Glaze (card), Cream beige, Grey */
+  /* Mist palette: Mist (card), Cloud (beige), Icy Ocean (primary/alert), Charcoal (deep-green/grey) */
+  /* Cloud (#D5E2DF): secondary surfaces */
   --color-beige: #D5E2DF;
   --color-grey: #2B2E2E;
 
-  /* Dark mode surfaces */
+  /* Dark mode surfaces: Charcoal page background, white at 7% for cards */
   --color-dark-bg: #2B2E2E;
   --color-dark-card: #FFFFFF12;
 

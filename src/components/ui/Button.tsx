@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /**
@@ -13,6 +14,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    * - `lg` — large:   py-3   px-8 text-lg
    */
   size?: 'sm' | 'md' | 'lg'
+  /** When set, renders a link styled as a button (one tab stop, no nested link+button). */
+  to?: string
   children: ReactNode
 }
 
@@ -28,12 +31,13 @@ export function Button({
   size = 'md',
   children,
   className = '',
+  to,
   ...props
 }: ButtonProps) {
   const sizes = {
-    sm: 'py-1.5 px-4 text-sm',
-    md: 'py-2 px-5 text-sm',
-    lg: 'py-2.5 px-6 text-base',
+    sm: 'min-h-11 py-1.5 px-4 text-sm',
+    md: 'min-h-11 py-2 px-5 text-sm',
+    lg: 'min-h-12 py-2.5 px-6 text-base',
   }
 
   const base = [
@@ -56,6 +60,14 @@ export function Button({
       'hover:bg-deep-green/5',
       'dark:border-card dark:text-card dark:hover:bg-card/10',
     ].join(' '),
+  }
+
+  if (to) {
+    return (
+      <Link to={to} className={`${base} ${variants[variant]} ${className}`}>
+        {children}
+      </Link>
+    )
   }
 
   return (
