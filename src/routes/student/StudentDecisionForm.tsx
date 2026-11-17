@@ -9,7 +9,7 @@ import {
   type DecisionResponse, type MenuSelection,
 } from '../../../shared/decisions'
 
-const inputClass = 'w-full rounded border border-deep-green/30 bg-white px-2 py-2 dark:border-card/30 dark:bg-dark-card'
+const inputClass = 'w-full rounded border border-deep-green/30 bg-card/50 px-2 py-2 dark:border-card/30 dark:bg-dark-card'
 const emptyMenu = { MenuItemID: '', PrepLevel: '', OrderSize: '', InternalPromotion: '', SalesPrice: '' }
 type MenuInput = typeof emptyMenu
 
@@ -88,7 +88,7 @@ function Editor({ initial, round, review }: { initial: DecisionResponse; round: 
               const item = initial.catalog.find(({ MenuItemID }) => String(MenuItemID) === row.MenuItemID)
               const labels = item ? menuPreparations[item.ItemName] : undefined
               return (
-                <fieldset key={index} className="rounded border border-deep-green/20 p-3 dark:border-card/20">
+                <fieldset key={index} className="rounded border border-deep-green/40 p-3 dark:border-card/20">
                   <legend className="px-1 font-medium">Selection {index + 1}</legend>
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
                     <label className="text-sm">Item

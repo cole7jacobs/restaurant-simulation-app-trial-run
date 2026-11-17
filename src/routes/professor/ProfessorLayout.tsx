@@ -17,9 +17,9 @@ export function ProfessorLayout() {
   const teamReview = useMatch('/professor/team-review/:teamId')
 
   return (
-    <div className="min-h-screen bg-white dark:bg-dark-bg flex flex-col">
+    <div className="min-h-screen bg-card dark:bg-dark-bg flex flex-col">
       {/* Top navigation bar */}
-      <header className="sticky top-0 z-10 border-b border-deep-green/10 bg-white/90 backdrop-blur dark:border-card/10 dark:bg-dark-bg/90">
+      <header className="sticky top-0 z-10 border-b border-deep-green/20 bg-card/90 backdrop-blur dark:border-card/10 dark:bg-dark-bg/90">
         <nav
           className="max-w-6xl mx-auto flex flex-wrap items-center gap-x-4 gap-y-0 px-4 py-1"
           aria-label="Professor navigation"

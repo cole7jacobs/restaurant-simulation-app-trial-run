@@ -30,14 +30,14 @@ export function SectionNav({ items, activeId, onSelect }: SectionNavProps) {
             className={[
               'flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors duration-150',
               isActive
-                ? 'bg-deep-green text-white dark:bg-primary dark:text-deep-green'
+                ? 'bg-deep-green text-card dark:bg-card dark:text-deep-green'
                 : 'text-deep-green hover:bg-deep-green/5 dark:text-card dark:hover:bg-dark-card',
             ].join(' ')}
           >
             {/* Status indicator */}
             <span className="shrink-0 text-base leading-none" aria-hidden="true">
               {item.complete ? (
-                <span className={isActive ? 'text-primary dark:text-deep-green' : 'text-deep-green dark:text-primary'}>✓</span>
+                <span className={isActive ? 'text-primary dark:text-deep-green' : 'text-deep-green dark:text-card'}>✓</span>
               ) : (
                 <span
                   className={[
@@ -60,7 +60,7 @@ export function SectionNav({ items, activeId, onSelect }: SectionNavProps) {
                 className={[
                   'shrink-0 font-body text-xs',
                   isActive
-                    ? 'text-white/70 dark:text-deep-green/70'
+                    ? 'text-card/70 dark:text-deep-green/70'
                     : 'text-deep-green/75 dark:text-card/75',
                 ].join(' ')}
               >

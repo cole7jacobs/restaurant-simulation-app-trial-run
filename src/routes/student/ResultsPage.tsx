@@ -57,7 +57,7 @@ export function ResultsPage() {
               className={[
                 'inline-flex items-center justify-center rounded-sm px-4 py-1.5 font-body text-sm font-medium transition-colors',
                 r === ACTIVE_ROUND
-                  ? 'bg-deep-green text-white dark:bg-primary dark:text-deep-green'
+                  ? 'bg-deep-green text-card dark:bg-card dark:text-deep-green'
                   : 'border border-deep-green/30 dark:border-card/30 text-deep-green dark:text-card hover:bg-deep-green/5 dark:hover:bg-card/10',
               ].join(' ')}
             >
@@ -90,7 +90,7 @@ export function ResultsPage() {
           Operating Summary
         </h2>
         <table className="w-full font-body text-sm">
-          <tbody className="divide-y divide-deep-green/10 dark:divide-card/10">
+          <tbody className="divide-y divide-deep-green/20 dark:divide-card/10">
             {OPERATING_SUMMARY.map(({ label, value }) => (
               <tr key={label}>
                 <td className="py-2 text-deep-green dark:text-card">{label}</td>

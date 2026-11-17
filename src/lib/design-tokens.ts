@@ -12,22 +12,22 @@
 /** Brand colors (hex strings matching the CSS @theme tokens exactly) */
 export const colors = {
   /** Gold — main buttons (Save and continue, Submit), chart bars */
-  primary: '#D98B62',
+  primary: '#6D8F8F',
 
   /** Deep green — text, outlines, selected tabs */
-  deepGreen: '#1F3A2A',
+  deepGreen: '#2B2E2E',
 
   /** Light orange — card and panel backgrounds */
-  card: '#FCEDE4',
+  card: '#E6EEEC',
 
   /** Soft orange — warnings and error messages */
-  alert: '#D98B62',
+  alert: '#6D8F8F',
 
   /** Dark mode — page background */
-  darkBg: '#161616',
+  darkBg: '#2B2E2E',
 
   /** Dark mode — card background */
-  darkCard: '#242424',
+  darkCard: '#FFFFFF12',
 } as const
 
 /** Font family names matching the CSS @theme --font-* values */

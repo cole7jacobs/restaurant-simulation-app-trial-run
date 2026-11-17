@@ -25,7 +25,7 @@ export function DataTable({ caption, columns, rows }: DataTableProps) {
         <table className="w-full text-sm font-body">
           <caption className="sr-only">{caption}</caption>
           <thead>
-            <tr className="border-b border-deep-green/10 dark:border-card/10">
+            <tr className="border-b border-deep-green/20 dark:border-card/10">
               {columns.map((column) => (
                 <th
                   key={column}
@@ -37,7 +37,7 @@ export function DataTable({ caption, columns, rows }: DataTableProps) {
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-deep-green/10 dark:divide-card/10">
+          <tbody className="divide-y divide-deep-green/20 dark:divide-card/10">
             {rows.map((row) => (
               <tr key={row.key}>
                 {row.cells.map((cell, index) => (
@@ -51,7 +51,7 @@ export function DataTable({ caption, columns, rows }: DataTableProps) {
         </table>
       </div>
 
-      <ul aria-label={caption} className="divide-y divide-deep-green/10 border-t border-deep-green/10 sm:hidden dark:divide-card/10 dark:border-card/10">
+      <ul aria-label={caption} className="divide-y divide-deep-green/20 border-t border-deep-green/20 sm:hidden dark:divide-card/10 dark:border-card/10">
         {rows.map((row) => (
           <li
             key={row.key}

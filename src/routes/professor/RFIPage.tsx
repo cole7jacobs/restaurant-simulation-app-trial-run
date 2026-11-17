@@ -111,7 +111,7 @@ function RoundExports({ round }: { round: number }) {
             <th scope="col" className="p-2">Submission status</th>
             <th scope="col" className="p-2">Download</th>
           </tr></thead>
-          <tbody className="divide-y divide-deep-green/10 dark:divide-card/10">
+          <tbody className="divide-y divide-deep-green/20 dark:divide-card/10">
             {data.teams.map((team) => (
               <tr key={team.TeamID}>
                 <th scope="row" className="p-2 font-medium">{team.TeamName}</th>
@@ -140,7 +140,7 @@ export function ProfessorRFIPage() {
     <div className="space-y-4">
       <PageHeader title="RFI File Generation" />
       <label className="inline-grid gap-1 text-sm font-medium">Simulation round
-        <select className="rounded border border-deep-green/30 bg-white px-2 py-2 dark:border-card/30 dark:bg-dark-card"
+        <select className="rounded border border-deep-green/30 bg-card/50 px-2 py-2 dark:border-card/30 dark:bg-dark-card"
           value={round} onChange={(event) => setRound(Number(event.target.value))}>
           {decisionRounds.map((period) => <option key={period} value={period}>Q{period}</option>)}
         </select>
