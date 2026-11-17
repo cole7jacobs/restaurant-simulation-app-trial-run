@@ -4,6 +4,7 @@ import { Badge } from '../../components/ui/Badge'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
 import { DataTable } from '../../components/ui/DataTable'
+import { MetricCard } from '../../components/ui/MetricCard'
 
 import { DEV_PREVIEW_ROUND } from '../../lib/dev-preview'
 import { DEMO_TEAMS } from './demo-teams'
@@ -20,7 +21,7 @@ export function ProfessorHomePage() {
   const navigate = useNavigate()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Page header */}
       <PageHeader
         title="Professor Dashboard"
@@ -28,27 +29,20 @@ export function ProfessorHomePage() {
       />
 
       {/* Summary stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card>
-          <p className="font-body text-sm text-deep-green/75 dark:text-card/75">Active Round</p>
-          <p className="font-heading text-3xl font-bold text-deep-green dark:text-primary mt-1">{DEV_PREVIEW_ROUND}</p>
-        </Card>
-        <Card>
-          <p className="font-body text-sm text-deep-green/75 dark:text-card/75">Teams</p>
-          <p className="font-heading text-3xl font-bold text-deep-green dark:text-primary mt-1">{DEMO_TEAMS.length}</p>
-        </Card>
-        <Card>
-          <p className="font-body text-sm text-deep-green/75 dark:text-card/75">Submitted</p>
-          <p className="font-heading text-3xl font-bold text-deep-green dark:text-primary mt-1">{submittedTeams.length}</p>
-          <p className="font-body text-xs text-deep-green/75 dark:text-card/75 mt-1">
-            {submittedTeams.length} of {DEMO_TEAMS.length} teams
-          </p>
-        </Card>
+      <div className="grid grid-cols-3 gap-3">
+        <MetricCard label="Active Round" value={String(DEV_PREVIEW_ROUND)} ticker />
+        <MetricCard label="Teams" value={String(DEMO_TEAMS.length)} ticker />
+        <MetricCard
+          label="Submitted"
+          value={String(submittedTeams.length)}
+          ticker
+          subtext={`${submittedTeams.length} of ${DEMO_TEAMS.length} teams`}
+        />
       </div>
 
       {/* Team submissions table */}
       <Card>
-        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-2">
           Team Submissions — Round {DEV_PREVIEW_ROUND}
         </h2>
         <DataTable
@@ -79,9 +73,9 @@ export function ProfessorHomePage() {
       </Card>
 
       {/* Quick action cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Card>
-          <h2 className="font-heading text-base font-semibold text-deep-green dark:text-card mb-2">
+          <h2 className="font-heading text-lg font-extrabold text-deep-green dark:text-card mb-2">
             Generate RFI Files
           </h2>
           <p className="font-body text-sm text-deep-green/75 dark:text-card/75 mb-4">
@@ -93,7 +87,7 @@ export function ProfessorHomePage() {
           </Button>
         </Card>
         <Card>
-          <h2 className="font-heading text-base font-semibold text-deep-green dark:text-card mb-2">
+          <h2 className="font-heading text-lg font-extrabold text-deep-green dark:text-card mb-2">
             Import Results
           </h2>
           <p className="font-body text-sm text-deep-green/75 dark:text-card/75 mb-4">

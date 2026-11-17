@@ -20,7 +20,7 @@ const financialRows: { key: keyof TeamResults; label: string }[] = [
 
 const dollars = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 const count = new Intl.NumberFormat('en-US')
-const headingClass = 'font-heading text-lg font-semibold text-deep-green dark:text-card mb-4'
+const headingClass = 'font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4'
 const noteClass = 'font-body text-sm text-slate-600 dark:text-slate-400'
 
 type Loaded = Map<number, StudentResults>
@@ -76,7 +76,7 @@ function BarList({ label, bars }: { label: string; bars: Bar[] }) {
     <ul aria-label={label} className="space-y-3 font-body text-sm">
       {bars.map(({ label: name, value, display }, index) => (
         <li key={`${index}:${name}`} title={`${name}: ${display}`}>
-          <div className="flex items-baseline justify-between gap-4">
+          <div className="flex items-baseline justify-between gap-3">
             <span className="text-deep-green dark:text-card">{name}</span>
             <span className="font-medium tabular-nums text-deep-green dark:text-card">{display}</span>
           </div>
@@ -110,14 +110,14 @@ function RoundResults({ results }: { results: StudentResults }) {
 
   return (
     <>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard label="Net Income" value={dollars.format(metrics.NetIncome)} />
-        <MetricCard label="Operating Profit" value={dollars.format(metrics.OperatingProfit)} />
-        <MetricCard label="Food Orders" value={count.format(metrics.FoodOrders)} />
-        <MetricCard label="Avg Daily Customers" value={count.format(metrics.AvgDailyCustomerCount)} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <MetricCard label="Net Income" value={dollars.format(metrics.NetIncome)} ticker />
+        <MetricCard label="Operating Profit" value={dollars.format(metrics.OperatingProfit)} ticker />
+        <MetricCard label="Food Orders" value={count.format(metrics.FoodOrders)} ticker />
+        <MetricCard label="Avg Daily Customers" value={count.format(metrics.AvgDailyCustomerCount)} ticker />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <Card>
           <h2 className={headingClass}>Operating Summary</h2>
           <table className="w-full font-body text-sm">
@@ -148,7 +148,7 @@ function RoundResults({ results }: { results: StudentResults }) {
         {menu.length === 0 ? (
           <p className={noteClass}>Menu-item results are not available for this round.</p>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div className="overflow-x-auto">
               <table className="w-full font-body text-sm">
                 <caption className="sr-only">Q{round} menu-item results</caption>
@@ -176,7 +176,7 @@ function RoundResults({ results }: { results: StudentResults }) {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h3 className="font-heading text-base font-semibold mb-3">Orders Sold by Item</h3>
+                <h3 className="font-heading text-lg font-extrabold mb-3">Orders Sold by Item</h3>
                 <BarList
                   label={`Q${round} orders sold by menu item`}
                   bars={menuBars.map(({ row, label }) => (
@@ -185,7 +185,7 @@ function RoundResults({ results }: { results: StudentResults }) {
                 />
               </div>
               <div>
-                <h3 className="font-heading text-base font-semibold mb-3">Total Sales by Item</h3>
+                <h3 className="font-heading text-lg font-extrabold mb-3">Total Sales by Item</h3>
                 <BarList
                   label={`Q${round} total sales by menu item`}
                   bars={menuBars.map(({ row, label }) => (
@@ -207,7 +207,7 @@ function Trends({ rounds }: { rounds: Loaded }) {
     { label: `Q${round}`, value: metrics[key], display: dollars.format(metrics[key]) }
   ))
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       <Card>
         <h2 className={headingClass}>Net Income by Round</h2>
         <BarList label="Net income by round" bars={trend('NetIncome')} />
@@ -231,7 +231,7 @@ export function StudentResultsDashboard() {
   const results = round === null ? undefined : rounds?.get(round)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Results"
         subtitle={[round === null ? null : `Q${round}`, session?.account.teamName].filter(Boolean).join(' · ')}
@@ -270,7 +270,7 @@ export function StudentResultsDashboard() {
                   aria-label={available ? `Q${value}` : `Q${value}, no results`}
                   onClick={() => setSelected(value)}
                   className={[
-                    'inline-flex items-center justify-center rounded-full px-4 py-1.5 font-body text-sm font-medium transition-colors',
+                    'inline-flex items-center justify-center rounded-sm px-4 py-1.5 font-body text-sm font-medium transition-colors',
                     value === round
                       ? 'bg-deep-green text-white dark:bg-primary dark:text-deep-green'
                       : 'border border-deep-green/30 dark:border-card/30 text-deep-green dark:text-card hover:bg-deep-green/5 dark:hover:bg-card/10',

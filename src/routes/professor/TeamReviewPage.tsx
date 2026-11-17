@@ -34,13 +34,13 @@ export function TeamReviewPage() {
   const { item, prep, portion, price, staff } = team.decisions
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Page header */}
       <PageHeader title="Team Decision Review" subtitle={`${team.name} · Round ${DEV_PREVIEW_ROUND}`} />
 
       {/* Menu Decisions */}
       <Card>
-        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Menu Decisions
         </h2>
         <DataTable
@@ -52,7 +52,7 @@ export function TeamReviewPage() {
 
       {/* Staffing & Compensation */}
       <Card>
-        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Staffing &amp; Compensation
         </h2>
         <dl className="grid grid-cols-2 gap-4 text-sm font-body">
@@ -69,7 +69,7 @@ export function TeamReviewPage() {
 
       {/* Amenities & Upkeep */}
       <Card>
-        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Amenities &amp; Upkeep
         </h2>
         <dl className="grid grid-cols-3 gap-4 text-sm font-body">
@@ -90,13 +90,13 @@ export function TeamReviewPage() {
 
       {/* Management & Finance */}
       <Card>
-        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Management &amp; Finance
         </h2>
         <div className="space-y-4 text-sm font-body">
           <div>
             <p className="font-medium text-deep-green dark:text-card mb-2">Reports</p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3">
               <span className="text-deep-green dark:text-card">Guest Satisfaction ✓</span>
               <span className="text-deep-green dark:text-card">Financial ✓</span>
               <span className="text-deep-green/75 dark:text-card/75">Product ✗</span>
@@ -104,7 +104,7 @@ export function TeamReviewPage() {
           </div>
           <div>
             <p className="font-medium text-deep-green dark:text-card mb-2">Finance</p>
-            <dl className="grid grid-cols-3 gap-4">
+            <dl className="grid grid-cols-3 gap-3">
               <div>
                 <dt className="text-deep-green/75 dark:text-card/75">Time Deposit</dt>
                 <dd className="font-semibold text-deep-green dark:text-card mt-0.5">$0</dd>
@@ -123,7 +123,7 @@ export function TeamReviewPage() {
       </Card>
 
       {/* Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <Button variant="outlined" onClick={() => navigate('/professor/submissions')}>
           ← Back to Submissions
         </Button>

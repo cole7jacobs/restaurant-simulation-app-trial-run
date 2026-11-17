@@ -23,7 +23,7 @@ export function StudentHomePage() {
   const { teamName, roundNumber } = useDevPreview()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Page header */}
       <PageHeader
         title="Welcome back"
@@ -31,22 +31,19 @@ export function StudentHomePage() {
       />
 
       {/* Stat cards row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <MetricCard
           label="Current Round"
           value={String(roundNumber)}
           subtext="decisions due"
+          ticker
         />
-        <Card>
-          <p className="font-body text-sm text-deep-green/75 dark:text-card/75">Team</p>
-          <p className="mt-1 font-heading text-3xl font-bold text-deep-green dark:text-primary">{teamName}</p>
-          <p className="mt-1 font-body text-xs text-deep-green/75 dark:text-card/75">Firm #—</p>
-        </Card>
+        <MetricCard label="Team" value={teamName} subtext="Firm #—" />
       </div>
 
       {/* Decision status card */}
       <Card>
-        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Decision Status
         </h2>
         <div className="divide-y divide-deep-green/10 dark:divide-card/10">
@@ -71,17 +68,17 @@ export function StudentHomePage() {
       </Card>
 
       {/* Quick links */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Card className="flex flex-col items-start gap-4">
-          <h3 className="font-heading text-base font-semibold text-deep-green dark:text-card">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Card className="flex flex-col items-start gap-3">
+          <h3 className="font-heading text-lg font-extrabold text-deep-green dark:text-card">
             Enter Decisions
           </h3>
           <Link to="/student/decisions">
             <Button variant="primary">Enter Decisions</Button>
           </Link>
         </Card>
-        <Card className="flex flex-col items-start gap-4">
-          <h3 className="font-heading text-base font-semibold text-deep-green dark:text-card">
+        <Card className="flex flex-col items-start gap-3">
+          <h3 className="font-heading text-lg font-extrabold text-deep-green dark:text-card">
             View Results
           </h3>
           <Link to="/student/results">

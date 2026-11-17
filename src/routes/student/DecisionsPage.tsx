@@ -173,10 +173,10 @@ function AmenitiesSection() {
 
 function FinanceSection() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Management Information */}
       <div className="space-y-3">
-        <h3 className="font-heading text-base font-semibold text-deep-green dark:text-card">
+        <h3 className="font-heading text-lg font-extrabold text-deep-green dark:text-card">
           Management Information
         </h3>
         <Notice>Open Question OQ-3: Report flag field order unconfirmed.</Notice>
@@ -197,7 +197,7 @@ function FinanceSection() {
 
       {/* Finance */}
       <div className="space-y-3">
-        <h3 className="font-heading text-base font-semibold text-deep-green dark:text-card">
+        <h3 className="font-heading text-lg font-extrabold text-deep-green dark:text-card">
           Finance
         </h3>
         {[
@@ -279,7 +279,7 @@ export function DecisionsPage() {
   const ActiveSection = SECTION_COMPONENTS[activeId]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Enter Decisions"
         subtitle={`Round ${roundNumber} · ${teamName}`}

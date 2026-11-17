@@ -77,11 +77,11 @@ function Editor({ initial, round, review }: { initial: DecisionResponse; round: 
   }
 
   return (
-    <form onSubmit={save} className="space-y-6">
+    <form onSubmit={save} className="space-y-4">
       {submittedAt && <p role="status">Submitted {new Date(submittedAt).toLocaleString()}.</p>}
-      <fieldset disabled={busy} className="space-y-6">
+      <fieldset disabled={busy} className="space-y-4">
         <Card>
-          <h2 className="mb-3 font-heading text-lg font-semibold">Menu selections</h2>
+          <h2 className="mb-3 font-heading text-xl font-extrabold">Menu selections</h2>
           {menu.length === 0 && <p className="mb-3 text-sm">No menu selections yet.</p>}
           <div className="space-y-4">
             {menu.map((row, index) => {
@@ -132,7 +132,7 @@ function Editor({ initial, round, review }: { initial: DecisionResponse; round: 
         </Card>
 
         <Card>
-          <h2 className="mb-3 font-heading text-lg font-semibold">Operations and finance</h2>
+          <h2 className="mb-3 font-heading text-xl font-extrabold">Operations and finance</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {decisionFields.map(({ key, label, decimals }) => (
               <label key={key} className="text-sm">{label}
@@ -148,7 +148,7 @@ function Editor({ initial, round, review }: { initial: DecisionResponse; round: 
         </Card>
 
         <Card>
-          <h2 className="mb-3 font-heading text-lg font-semibold">Reports</h2>
+          <h2 className="mb-3 font-heading text-xl font-extrabold">Reports</h2>
           <div className="grid gap-3 sm:grid-cols-3">
             {reportFields.map(({ key, label }) => (
               <label key={key} className="text-sm">{label}
@@ -167,7 +167,7 @@ function Editor({ initial, round, review }: { initial: DecisionResponse; round: 
       </fieldset>
       {error && <p role="alert">{error}</p>}
       {message && <p role="status">{message}</p>}
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3">
         {!submittedAt && <Button type="submit" disabled={busy || (review && revision === null)}>
           {busy ? 'Saving…' : review ? 'Submit decisions' : 'Save draft'}
         </Button>}
@@ -192,7 +192,7 @@ export function StudentDecisionForm({ review = false }: { review?: boolean }) {
   const round = decisionRounds.includes(requested) ? requested : decisionRounds[0]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader title={review ? 'Review Decisions' : 'Enter Decisions'} />
       <label className="inline-grid gap-1 text-sm font-medium">Decision round
         <select className={inputClass} value={round} onChange={(event) => setSearch({ round: event.target.value })}>

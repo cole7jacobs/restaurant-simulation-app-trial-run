@@ -32,13 +32,13 @@ export function Button({
 }: ButtonProps) {
   const sizes = {
     sm: 'py-1.5 px-4 text-sm',
-    md: 'py-2.5 px-6 text-base',
-    lg: 'py-3 px-8 text-lg',
+    md: 'py-2 px-5 text-sm',
+    lg: 'py-2.5 px-6 text-base',
   }
 
   const base = [
     'inline-flex items-center justify-center',
-    'rounded-full',
+    'rounded-sm uppercase tracking-wider',
     `font-body font-medium ${sizes[size]}`,
     'transition duration-150 active:scale-[0.98]',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',

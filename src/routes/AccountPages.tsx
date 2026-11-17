@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom'
 import { Card } from '../components/ui/Card'
 import { PageHeader } from '../components/ui/PageHeader'
+import { MetricCard } from '../components/ui/MetricCard'
+import { Button } from '../components/ui/Button'
 import { useAuth, useProtectedData } from '../context/AuthContext'
 
 export function StudentAccountHome() {
@@ -12,14 +14,50 @@ export function StudentAccountHome() {
   } }>('/student/team')
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader title="Welcome back" subtitle={session?.account.name} />
-      <Card>
-        <h2 className="font-heading text-lg font-semibold">Your team</h2>
-        {data ? (
-          <p>{data.team.TeamName} · {data.team.FirmNumber === null ? 'Firm not assigned' : `Firm ${data.team.FirmNumber}`}</p>
-        ) : <p role={error ? 'alert' : 'status'}>{error ?? 'Loading team…'}</p>}
-      </Card>
+
+      {/* Team stat cards */}
+      {data ? (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <MetricCard label="Your team" value={data.team.TeamName} />
+          {data.team.FirmNumber === null ? (
+            <MetricCard label="Firm" value="—" subtext="Firm not assigned" />
+          ) : (
+            <MetricCard label="Firm" value={String(data.team.FirmNumber)} ticker />
+          )}
+        </div>
+      ) : (
+        <Card>
+          <p role={error ? 'alert' : 'status'} className="font-body text-sm">{error ?? 'Loading team…'}</p>
+        </Card>
+      )}
+
+      {/* Quick links */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <Card className="flex flex-col items-start gap-3">
+          <div>
+            <h2 className="font-heading text-lg font-extrabold text-deep-green dark:text-card">Enter decisions</h2>
+            <p className="mt-1 font-body text-sm text-deep-green/75 dark:text-card/75">
+              Set your menu, staffing and finance choices for a round.
+            </p>
+          </div>
+          <Link to="/student/decisions">
+            <Button variant="primary">Enter decisions</Button>
+          </Link>
+        </Card>
+        <Card className="flex flex-col items-start gap-3">
+          <div>
+            <h2 className="font-heading text-lg font-extrabold text-deep-green dark:text-card">View results</h2>
+            <p className="mt-1 font-body text-sm text-deep-green/75 dark:text-card/75">
+              See your imported results and charts by round.
+            </p>
+          </div>
+          <Link to="/student/results">
+            <Button variant="outlined">View results</Button>
+          </Link>
+        </Card>
+      </div>
     </div>
   )
 }
@@ -38,7 +76,7 @@ export function ProfessorAccountPage({ title, teamOnly = false }: { title: strin
   const rows = data?.submissions.filter((row) => !teamOnly || String(row.TeamID) === teamId)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader title={title} />
       <Card>
         {!rows ? <p role={error ? 'alert' : 'status'}>{error ?? 'Loading team submissions…'}</p>
@@ -74,5 +112,5 @@ export function ProfessorAccountPage({ title, teamOnly = false }: { title: strin
 }
 
 export function PendingAccountPage({ title, description }: { title: string; description: string }) {
-  return <div className="space-y-6"><PageHeader title={title} /><Card><p>{description}</p></Card></div>
+  return <div className="space-y-4"><PageHeader title={title} /><Card><p>{description}</p></Card></div>
 }

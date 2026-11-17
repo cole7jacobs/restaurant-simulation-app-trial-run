@@ -23,7 +23,7 @@
   /* ── Colors ──────────────────────────────────────────────────────────── */
 
   /* Gold: main action buttons (Save and continue, Submit), chart bars */
-  --color-primary: #E0A94F;
+  --color-primary: #D98B62;
 
   /* Deep green: body text, outlines, selected tabs, navigation active state */
   --color-deep-green: #1F3A2A;
@@ -40,8 +40,8 @@
 
   /* ── Typography ──────────────────────────────────────────────────────── */
 
-  /* Bricolage Grotesque — screen titles and key numbers (24 px bold) */
-  --font-heading: "Bricolage Grotesque", Arial, sans-serif;
+  /* Big Shoulders Display — screen titles and key numbers (uppercase, extra bold) */
+  --font-heading: "Big Shoulders Display", "Arial Narrow", sans-serif;
 
   /* Hanken Grotesk — button labels, form text, tables, labels (16 px / 14 px medium) */
   --font-body: "Hanken Grotesk", Arial, sans-serif;
@@ -67,9 +67,15 @@
     font-family: var(--font-heading);
   }
 
+  h2, h3 {
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
   /* Ensure focus rings use the primary gold color across interactive elements */
   :focus-visible {
-    outline: 2px solid #E0A94F;
+    outline: 2px solid #D98B62;
     outline-offset: 2px;
   }
 }

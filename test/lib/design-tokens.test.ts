@@ -13,8 +13,8 @@ import { colors, fonts } from '../../src/lib/design-tokens'
  * System document (v1, 2026-10-30).
  */
 describe('design tokens — colors', () => {
-  it('primary (gold) matches the design system value', () => {
-    expect(colors.primary).toBe('#E0A94F')
+  it('primary (peach) matches the design system value', () => {
+    expect(colors.primary).toBe('#D98B62')
   })
 
   it('deepGreen matches the design system value', () => {
@@ -43,8 +43,8 @@ describe('design tokens — colors', () => {
 })
 
 describe('design tokens — fonts', () => {
-  it('heading font includes Bricolage Grotesque', () => {
-    expect(fonts.heading).toContain('Bricolage Grotesque')
+  it('heading font includes Big Shoulders Display', () => {
+    expect(fonts.heading).toContain('Big Shoulders Display')
   })
 
   it('body font includes Hanken Grotesk', () => {

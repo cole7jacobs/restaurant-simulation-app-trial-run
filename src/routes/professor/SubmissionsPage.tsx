@@ -16,7 +16,7 @@ export function SubmissionsPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Page header */}
       <PageHeader title="Team Submissions" subtitle={`Round ${DEV_PREVIEW_ROUND}`} />
 

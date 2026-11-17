@@ -41,7 +41,7 @@ export function ResultsPage() {
   const { teamName, roundNumber } = useDevPreview()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Results"
         subtitle={`Round ${roundNumber} · ${teamName}`}
@@ -55,7 +55,7 @@ export function ResultsPage() {
               key={r}
               type="button"
               className={[
-                'inline-flex items-center justify-center rounded-full px-4 py-1.5 font-body text-sm font-medium transition-colors',
+                'inline-flex items-center justify-center rounded-sm px-4 py-1.5 font-body text-sm font-medium transition-colors',
                 r === ACTIVE_ROUND
                   ? 'bg-deep-green text-white dark:bg-primary dark:text-deep-green'
                   : 'border border-deep-green/30 dark:border-card/30 text-deep-green dark:text-card hover:bg-deep-green/5 dark:hover:bg-card/10',
@@ -77,16 +77,16 @@ export function ResultsPage() {
       </Notice>
 
       {/* Metric cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <MetricCard label="Food Sales" value="$24,850" demo />
-        <MetricCard label="Beverage Sales" value="$8,320" demo />
-        <MetricCard label="Net Income" value="$3,145" demo />
-        <MetricCard label="Avg Daily Customers" value="68" demo />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <MetricCard label="Food Sales" value="$24,850" demo ticker />
+        <MetricCard label="Beverage Sales" value="$8,320" demo ticker />
+        <MetricCard label="Net Income" value="$3,145" demo ticker />
+        <MetricCard label="Avg Daily Customers" value="68" demo ticker />
       </div>
 
       {/* Operating summary */}
       <Card>
-        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Operating Summary
         </h2>
         <table className="w-full font-body text-sm">
@@ -105,7 +105,7 @@ export function ResultsPage() {
 
       {/* Menu performance */}
       <Card>
-        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Menu Performance
         </h2>
         <DataTable
@@ -122,9 +122,9 @@ export function ResultsPage() {
       </Card>
 
       {/* Chart placeholder cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Card>
-          <h2 className="font-heading text-base font-semibold text-deep-green dark:text-card mb-3">
+          <h2 className="font-heading text-lg font-extrabold text-deep-green dark:text-card mb-3">
             Sales Breakdown
           </h2>
           <div className="flex items-center justify-center h-40 rounded-xl border-2 border-dashed border-deep-green/20 dark:border-card/20 text-deep-green/75 dark:text-card/75 font-body text-sm">
@@ -132,7 +132,7 @@ export function ResultsPage() {
           </div>
         </Card>
         <Card>
-          <h2 className="font-heading text-base font-semibold text-deep-green dark:text-card mb-3">
+          <h2 className="font-heading text-lg font-extrabold text-deep-green dark:text-card mb-3">
             Net Income by Round
           </h2>
           <div className="flex items-center justify-center h-40 rounded-xl border-2 border-dashed border-deep-green/20 dark:border-card/20 text-deep-green/75 dark:text-card/75 font-body text-sm">

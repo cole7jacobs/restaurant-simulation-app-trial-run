@@ -34,7 +34,7 @@ export function EmptyState({ title, description, children }: EmptyStateProps) {
       </svg>
 
       <div className="max-w-xs">
-        <p className="font-heading text-lg font-semibold text-deep-green dark:text-card">
+        <p className="font-heading text-xl font-extrabold text-deep-green dark:text-card">
           {title}
         </p>
         <p className="mt-1 font-body text-sm text-deep-green/75 dark:text-card/75">

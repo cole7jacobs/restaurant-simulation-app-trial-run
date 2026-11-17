@@ -12,7 +12,7 @@
 /** Brand colors (hex strings matching the CSS @theme tokens exactly) */
 export const colors = {
   /** Gold — main buttons (Save and continue, Submit), chart bars */
-  primary: '#E0A94F',
+  primary: '#D98B62',
 
   /** Deep green — text, outlines, selected tabs */
   deepGreen: '#1F3A2A',
@@ -32,8 +32,8 @@ export const colors = {
 
 /** Font family names matching the CSS @theme --font-* values */
 export const fonts = {
-  /** Bricolage Grotesque — headings and key numbers */
-  heading: '"Bricolage Grotesque", Arial, sans-serif',
+  /** Big Shoulders Display — headings and key numbers */
+  heading: '"Big Shoulders Display", "Arial Narrow", sans-serif',
 
   /** Hanken Grotesk — body text, button labels, table text, labels */
   body: '"Hanken Grotesk", Arial, sans-serif',
