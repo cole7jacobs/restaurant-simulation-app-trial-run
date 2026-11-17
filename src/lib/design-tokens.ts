@@ -11,16 +11,16 @@
 
 /** Brand colors (hex strings matching the CSS @theme tokens exactly) */
 export const colors = {
-  /** Gold — main buttons (Save and continue, Submit), chart bars */
+  /** Icy Ocean — accent, focus rings, active tab underline, chart bars */
   primary: '#6D8F8F',
 
-  /** Deep green — text, outlines, selected tabs */
+  /** Charcoal (named deepGreen) — text, outlines, main buttons */
   deepGreen: '#2B2E2E',
 
-  /** Light orange — card and panel backgrounds */
+  /** Mist — page and card backgrounds */
   card: '#E6EEEC',
 
-  /** Soft orange — warnings and error messages */
+  /** Icy Ocean — warnings and error messages */
   alert: '#6D8F8F',
 
   /** Dark mode — page background */

@@ -60,7 +60,7 @@ export function StudentHomePage() {
                 to={to}
                 className="font-body text-sm text-deep-green dark:text-card hover:underline whitespace-nowrap"
               >
-                → Go to Decisions
+                → Go to Decisions<span className="sr-only"> for {label}</span>
               </Link>
             </div>
           ))}
@@ -73,17 +73,13 @@ export function StudentHomePage() {
           <h3 className="font-heading text-lg font-extrabold text-deep-green dark:text-card">
             Enter Decisions
           </h3>
-          <Link to="/student/decisions">
-            <Button variant="primary">Enter Decisions</Button>
-          </Link>
+          <Button to="/student/decisions" variant="primary">Enter Decisions</Button>
         </Card>
         <Card className="flex flex-col items-start gap-3">
           <h3 className="font-heading text-lg font-extrabold text-deep-green dark:text-card">
             View Results
           </h3>
-          <Link to="/student/results">
-            <Button variant="outlined">View Results</Button>
-          </Link>
+          <Button to="/student/results" variant="outlined">View Results</Button>
         </Card>
       </div>
     </div>

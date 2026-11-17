@@ -20,7 +20,7 @@ const MENU_ROWS = [
 ]
 
 const menuInputClass =
-  'w-full rounded border border-deep-green/40 dark:border-card/20 bg-card/50 dark:bg-dark-bg px-2 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60'
+  'w-full rounded border border-deep-green/40 dark:border-card/20 bg-card/50 dark:bg-dark-bg min-h-11 px-2 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60'
 
 function MenuSection() {
   return (
@@ -116,7 +116,7 @@ function StaffingSection() {
           type="number"
           disabled
           placeholder="12"
-          className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
+          className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg min-h-11 px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
         />
         <p className="mt-1 font-body text-xs text-deep-green/75 dark:text-card/75">
           Total number of staff scheduled per day.
@@ -132,7 +132,7 @@ function StaffingSection() {
           disabled
           placeholder="14.50"
           step="0.01"
-          className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
+          className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg min-h-11 px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
         />
         <p className="mt-1 font-body text-xs text-deep-green/75 dark:text-card/75">
           Hourly wage paid to each staff member.
@@ -161,7 +161,7 @@ function AmenitiesSection() {
             disabled
             placeholder={placeholder}
             step="0.01"
-            className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
+            className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg min-h-11 px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
           />
         </div>
       ))}
@@ -213,7 +213,7 @@ function FinanceSection() {
               type="number"
               disabled
               defaultValue={0}
-              className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
+              className="w-full max-w-xs rounded border border-deep-green/40 dark:border-card/20 bg-card dark:bg-dark-bg min-h-11 px-3 py-2 text-sm text-deep-green dark:text-card disabled:opacity-60"
             />
           </div>
         ))}

@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { Card } from '../../components/ui/Card'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { Button } from '../../components/ui/Button'
@@ -140,11 +139,9 @@ export function ReviewPage() {
             <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card">
               {title}
             </h2>
-            <Link to="/student/decisions">
-              <Button variant="outlined" size="sm">
-                Edit
-              </Button>
-            </Link>
+            <Button to="/student/decisions" variant="outlined" size="sm">
+              Edit
+            </Button>
           </div>
           <Content />
         </Card>
