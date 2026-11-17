@@ -30,8 +30,13 @@ export function StudentLayout() {
           aria-label="Student navigation"
         >
           {/* Wordmark */}
+          <img
+            src="/sample-slice-icon.png"
+            alt=""
+            className="order-1 h-[84px] w-[84px] shrink-0 object-contain"
+          />
           <span className="order-1 shrink-0 font-heading text-xl font-extrabold uppercase tracking-wide text-deep-green dark:text-card">
-            Restaurant<span className="text-primary">Sim</span>
+            Sample<span className="text-primary">Slice</span>
           </span>
 
           {/* Nav tabs */}

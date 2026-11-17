@@ -93,9 +93,16 @@ export function DevPreviewSelector() {
         </div>
 
         {/* Footer note */}
-        <p className="font-body text-xs text-center text-deep-green/70 dark:text-card/70">
-          Restaurant Simulation App — Milestone 1.2 Dev Build
-        </p>
+        <div className="flex flex-col items-center gap-2">
+          <img
+            src="/sample-slice-logo.png"
+            alt="Sample Slice"
+            className="h-20 w-20 rounded-2xl dark:bg-card dark:p-1"
+          />
+          <p className="font-body text-xs text-center text-deep-green/70 dark:text-card/70">
+            Milestone 1.2 Dev Build
+          </p>
+        </div>
       </div>
     </div>
   )
