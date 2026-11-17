@@ -32,6 +32,11 @@ export function LoginPage() {
   return (
     <main className="min-h-screen bg-card dark:bg-dark-bg flex items-start justify-center pt-16 px-4">
       <div className="w-full max-w-sm">
+        <img
+          src="/sample-slice-logo.png"
+          alt="Sample Slice"
+          className="h-24 w-24 rounded-2xl mb-4"
+        />
         {/* Page heading */}
         <h1 className="font-heading text-3xl font-bold text-deep-green dark:text-card mb-1">
           Sign in
