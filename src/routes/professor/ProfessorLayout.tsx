@@ -25,9 +25,11 @@ export function ProfessorLayout() {
           aria-label="Professor navigation"
         >
           {/* Wordmark */}
-          <span className="order-1 shrink-0 font-heading text-xl font-extrabold uppercase tracking-wide text-deep-green dark:text-card">
-            Restaurant<span className="text-primary">Sim</span>
-          </span>
+          <img
+            src="/sample-slice-logo.png"
+            alt="Sample Slice"
+            className="order-1 h-11 w-11 shrink-0 object-contain"
+          />
 
           {/* Nav tabs */}
           <div className="order-2 flex w-full items-center gap-0 overflow-x-auto sm:w-auto sm:grow">
