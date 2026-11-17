@@ -30,6 +30,9 @@ export function StudentLayout() {
             alt="Sample Slice"
             className="order-1 h-11 w-11 shrink-0 object-contain"
           />
+          <span className="order-1 shrink-0 font-heading text-xl font-extrabold uppercase tracking-wide text-deep-green dark:text-card">
+            Sample<span className="text-primary">Slice</span>
+          </span>
 
           {/* Nav tabs */}
           <div className="order-2 flex w-full items-center gap-0 overflow-x-auto sm:w-auto sm:grow">
