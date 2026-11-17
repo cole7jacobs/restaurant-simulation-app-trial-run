@@ -78,10 +78,10 @@ export function ResultsPage() {
 
       {/* Metric cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <MetricCard label="Food Sales" value="$24,850" demo />
-        <MetricCard label="Beverage Sales" value="$8,320" demo />
-        <MetricCard label="Net Income" value="$3,145" demo />
-        <MetricCard label="Avg Daily Customers" value="68" demo />
+        <MetricCard label="Food Sales" value="$24,850" demo ticker />
+        <MetricCard label="Beverage Sales" value="$8,320" demo ticker />
+        <MetricCard label="Net Income" value="$3,145" demo ticker />
+        <MetricCard label="Avg Daily Customers" value="68" demo ticker />
       </div>
 
       {/* Operating summary */}

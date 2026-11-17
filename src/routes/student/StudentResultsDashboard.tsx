@@ -111,10 +111,10 @@ function RoundResults({ results }: { results: StudentResults }) {
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <MetricCard label="Net Income" value={dollars.format(metrics.NetIncome)} />
-        <MetricCard label="Operating Profit" value={dollars.format(metrics.OperatingProfit)} />
-        <MetricCard label="Food Orders" value={count.format(metrics.FoodOrders)} />
-        <MetricCard label="Avg Daily Customers" value={count.format(metrics.AvgDailyCustomerCount)} />
+        <MetricCard label="Net Income" value={dollars.format(metrics.NetIncome)} ticker />
+        <MetricCard label="Operating Profit" value={dollars.format(metrics.OperatingProfit)} ticker />
+        <MetricCard label="Food Orders" value={count.format(metrics.FoodOrders)} ticker />
+        <MetricCard label="Avg Daily Customers" value={count.format(metrics.AvgDailyCustomerCount)} ticker />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
