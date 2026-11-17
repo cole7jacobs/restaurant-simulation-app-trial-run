@@ -73,11 +73,11 @@ export function ProfessorImportPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader title="Import Simulation Results" />
       <Card>
         <form onSubmit={onPreview} className="space-y-4">
-          <fieldset disabled={busy} className="flex flex-wrap items-end gap-4">
+          <fieldset disabled={busy} className="flex flex-wrap items-end gap-3">
             <label className="grid gap-1 text-sm font-medium">Simulation round
               <select className="rounded border border-deep-green/30 bg-white px-2 py-2 dark:bg-dark-card"
                 required value={round} onChange={(event) => { resetPreview(); setRound(event.target.value) }}>
@@ -101,7 +101,7 @@ export function ProfessorImportPage() {
       {message && <p role="status">{message}</p>}
       {preview && (
         <Card>
-          <h2 className="mb-3 font-heading text-lg font-semibold">Q{preview.round} results for {preview.teams.length} teams</h2>
+          <h2 className="mb-3 font-heading text-xl font-extrabold">Q{preview.round} results for {preview.teams.length} teams</h2>
           {preview.teams.map((team) => (
             <details key={team.TeamID} className="border-b border-deep-green/15 py-3 dark:border-card/15">
               <summary className="cursor-pointer">

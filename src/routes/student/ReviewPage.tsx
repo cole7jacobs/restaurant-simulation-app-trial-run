@@ -127,7 +127,7 @@ export function ReviewPage() {
   const { teamName, roundNumber } = useDevPreview()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader
         title="Review Decisions"
         subtitle={`Round ${roundNumber} · ${teamName}`}
@@ -137,7 +137,7 @@ export function ReviewPage() {
       {REVIEW_SECTIONS.map(({ title, Content }) => (
         <Card key={title}>
           <div className="flex items-center justify-between gap-4 mb-4">
-            <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card">
+            <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card">
               {title}
             </h2>
             <Link to="/student/decisions">

@@ -33,7 +33,7 @@ export function Notice({ variant = 'warning', children, className = '' }: Notice
   return (
     <div
       role={role}
-      className={`flex gap-3 rounded-xl border p-3 font-body text-sm text-deep-green dark:text-card ${styles[variant]} ${className}`}
+      className={`flex gap-3 rounded-sm border border-l-4 p-3 font-body text-sm text-deep-green dark:text-card ${styles[variant]} ${className}`}
     >
       <span
         aria-hidden="true"

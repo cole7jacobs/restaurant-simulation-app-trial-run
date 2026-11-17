@@ -15,7 +15,7 @@ const ROUND = 3
  */
 export function ImportPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Page header */}
       <PageHeader title="Import Simulation Results" subtitle={`Round ${ROUND}`} />
 
@@ -26,7 +26,7 @@ export function ImportPage() {
 
       {/* Upload area */}
       <Card>
-        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Upload FR.LST File
         </h2>
 
@@ -49,7 +49,7 @@ export function ImportPage() {
 
       {/* Import history */}
       <Card>
-        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Import History
         </h2>
         <DataTable

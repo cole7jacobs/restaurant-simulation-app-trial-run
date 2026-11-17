@@ -1,29 +1,33 @@
+import { TickerNumber } from './TickerNumber'
+
 interface MetricCardProps {
   label: string
   value: string
   subtext?: string
   demo?: boolean
+  /** Roll the digits into place when the page loads (odometer style). */
+  ticker?: boolean
 }
 
 /**
  * A single KPI / metric card.
  * When demo=true a small "Demo data" pill appears in the top-right corner.
  */
-export function MetricCard({ label, value, subtext, demo = false }: MetricCardProps) {
+export function MetricCard({ label, value, subtext, demo = false, ticker = false }: MetricCardProps) {
   return (
-    <div className="relative rounded-2xl border-l-4 border-primary bg-card p-5 shadow-sm ring-1 ring-deep-green/5 sm:p-6 dark:bg-dark-card dark:ring-card/10">
+    <div className="relative rounded-sm border border-deep-green/20 border-t-4 border-t-primary bg-white p-4 dark:bg-dark-card dark:border-card/10 dark:border-t-primary">
       {/* Demo data pill */}
       {demo && (
-        <span className="absolute right-4 top-4 rounded-full border border-alert px-2 py-0.5 font-body text-xs text-deep-green dark:text-card">
+        <span className="mb-1 inline-block font-body text-[10px] font-medium uppercase tracking-[0.15em] text-deep-green/60 dark:text-card/60">
           Demo data
         </span>
       )}
 
       {/* Label */}
-      <p className="font-body text-sm text-deep-green/75 dark:text-card/75">{label}</p>
+      <p className="font-body text-xs font-medium uppercase tracking-[0.12em] text-deep-green/75 dark:text-card/75">{label}</p>
 
       {/* Value */}
-      <p className="mt-1 font-heading text-3xl font-bold text-deep-green dark:text-primary">{value}</p>
+      <p className="mt-1 font-heading text-4xl font-extrabold leading-none tabular-nums text-deep-green dark:text-primary">{ticker ? <TickerNumber value={value} /> : value}</p>
 
       {/* Optional subtext */}
       {subtext && (

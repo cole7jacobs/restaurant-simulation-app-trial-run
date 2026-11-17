@@ -15,7 +15,7 @@ const submittedTeams = DEMO_TEAMS.filter((team) => team.status === 'submitted')
 
 export function RFIPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Page header */}
       <PageHeader title="RFI File Generation" subtitle={`Round ${DEV_PREVIEW_ROUND}`} />
 
@@ -25,7 +25,7 @@ export function RFIPage() {
 
       {/* Submitted teams ready for export */}
       <Card>
-        <h2 className="font-heading text-lg font-semibold text-deep-green dark:text-card mb-4">
+        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Teams Ready for RFI Export
         </h2>
         <DataTable
@@ -137,7 +137,7 @@ function RoundExports({ round }: { round: number }) {
 export function ProfessorRFIPage() {
   const [round, setRound] = useState(decisionRounds[0])
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader title="RFI File Generation" />
       <label className="inline-grid gap-1 text-sm font-medium">Simulation round
         <select className="rounded border border-deep-green/30 bg-white px-2 py-2 dark:border-card/30 dark:bg-dark-card"
