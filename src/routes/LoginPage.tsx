@@ -35,13 +35,13 @@ export function LoginPage() {
         <img
           src="/sample-slice-logo.png"
           alt="Sample Slice"
-          className="h-24 w-24 rounded-2xl mb-4"
+          className="mx-auto mb-4 block w-72 max-w-full"
         />
         {/* Page heading */}
-        <h1 className="font-heading text-3xl font-bold text-deep-green dark:text-card mb-1">
+        <h1 className="font-heading text-center text-3xl font-bold text-deep-green dark:text-card mb-1">
           Sign in
         </h1>
-        <p className="font-body text-sm text-deep-green/70 dark:text-card/70 mb-6">
+        <p className="font-body text-sm text-center text-deep-green/70 dark:text-card/70 mb-6">
           Use the email and password assigned to you.
         </p>
 
