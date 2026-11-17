@@ -7,8 +7,6 @@ import { LoginPage } from './routes/LoginPage'
 import { NotFoundPage } from './routes/NotFoundPage'
 import { StudentLayout } from './routes/student/StudentLayout'
 import { StudentHomePage } from './routes/student/StudentHomePage'
-import { DecisionsPage } from './routes/student/DecisionsPage'
-import { ReviewPage } from './routes/student/ReviewPage'
 import { ResultsPage } from './routes/student/ResultsPage'
 import { StudentResultsDashboard } from './routes/student/StudentResultsDashboard'
 import { ProfessorLayout } from './routes/professor/ProfessorLayout'
@@ -65,8 +63,8 @@ function AppRoutes() {
       <Route path="/student" element={<RoleLayout role="student"><StudentLayout /></RoleLayout>}>
         <Route index element={<Navigate to="home" replace />} />
         <Route path="home" element={<RolePage preview={<StudentHomePage />} signedIn={<StudentAccountHome />} />} />
-        <Route path="decisions" element={<RolePage preview={<DecisionsPage />} signedIn={<StudentDecisionForm />} />} />
-        <Route path="review" element={<RolePage preview={<ReviewPage />} signedIn={<StudentDecisionForm review />} />} />
+        <Route path="decisions" element={<StudentDecisionForm />} />
+        <Route path="review" element={<StudentDecisionForm review />} />
         <Route path="results" element={<RolePage preview={<ResultsPage />} signedIn={<StudentResultsDashboard />} />} />
       </Route>
 

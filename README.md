@@ -115,8 +115,8 @@ Passwords are salted scrypt hashes. Sessions are stored as token hashes in D1, e
 ### Student
 
 1. Sign in to view the assigned team on Student Home.
-2. Open **Decisions**, choose Q2–Q7, and enter menu selections, operations, finance, and report choices. Save a draft and use **Review** to inspect saved decisions.
-3. Submit a complete round. Submission locks it against further edits. Q1 is the baseline; a submitted decision needs at least one and at most ten menu selections.
+2. Open **Decisions**, choose Q2–Q7, and enter menu selections, operations, finance, and report choices. Drafts save after 1.2 seconds of inactivity once menu rows are complete; **Save Draft** is also available. Select **Review & Submit** to save and inspect the draft on the same page.
+3. Select **Submit Decisions** to submit a complete round. Submission locks it against further edits. Q1 is the baseline; a submitted decision needs at least one and at most ten menu selections. In development preview, demo drafts and submissions stay in that browser only.
 4. Open **Results** to view the team's imported metrics, menu-item results, and charts for Q1–Q7. Rounds without an imported FR.LST show an empty state.
 
 ### Professor
@@ -159,13 +159,13 @@ Read all four files in `db/migrations/` for current keys, constraints, and relat
 | Location | Start here for |
 | --- | --- |
 | `src/App.tsx`, `src/context/AuthContext.tsx` | Route tree, role gates, sessions, and protected data requests |
-| `src/routes/student/StudentDecisionForm.tsx` | Authenticated decision and review forms |
+| `src/routes/student/StudentDecisionForm.tsx`, `src/lib/preview-decisions.ts` | Shared decision editor and browser-only development drafts |
 | `src/routes/AccountPages.tsx`, `src/routes/student/StudentResultsDashboard.tsx` | Authenticated home/status pages and the student results dashboard |
 | `src/routes/student/ResultsPage.tsx` | Development-preview results page with demo data |
 | `src/routes/professor/RFIPage.tsx`, `src/routes/professor/ProfessorImportPage.tsx` | Authenticated RFI and import interfaces |
 | `src/components/ui/`, `src/styles/index.css`, `src/lib/design-tokens.ts` | Reusable components, styling, and design tokens |
 | `worker/index.ts`, `worker/auth.ts`, `worker/password.mjs` | Worker entry, health, authentication, authorization, and hashing |
-| `worker/student-decisions.ts`, `shared/decisions.ts` | Decision API, shared fields, catalog/preparation rules |
+| `worker/student-decisions.ts`, `shared/decisions.ts`, `shared/decision-validation.ts` | Decision API, shared fields, and validation rules |
 | `worker/professor-rfi.ts`, `worker/rfi.ts`, `worker/rfi-finance.ts` | RFI API and formatting |
 | `worker/professor-import.ts`, `worker/fr-lst.ts`, `shared/results.ts` | Import API, listing parser, result types |
 | `db/migrations/`, `db/seed.dev.sql` | Current database migrations and fictional fixtures |

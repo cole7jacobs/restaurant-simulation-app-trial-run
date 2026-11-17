@@ -51,6 +51,74 @@
   --font-body: "Hanken Grotesk", Arial, sans-serif;
 }
 
+/* Decision cards share one scroll pane; their columns size independently. */
+.decision-tiles {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.decision-column {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  min-width: 0;
+}
+
+.decision-tile {
+  min-width: 0;
+  scroll-margin-block: 0.75rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 0.875rem;
+  background: var(--color-beige);
+  padding: 1rem;
+}
+
+.dark .decision-tile {
+  border-color: rgb(230 238 236 / 0.1);
+  background: var(--color-dark-card);
+}
+
+.decision-action-bar {
+  border-top: 1px solid rgb(43 46 46 / 0.2);
+  background: var(--color-card);
+  padding: 0.75rem 1rem;
+}
+
+.dark .decision-action-bar {
+  border-color: rgb(230 238 236 / 0.1);
+  background: var(--color-dark-bg);
+}
+
+@media (min-width: 768px) {
+  .decision-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .decision-menu { grid-column: 1 / -1; }
+}
+
+/* Content is visible by default, including in browsers without scroll timelines. */
+@supports (animation-timeline: view()) and (animation-range: entry 0% entry 120px) {
+  @media (prefers-reduced-motion: no-preference) {
+    .decision-tile {
+      animation: decision-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 120px;
+    }
+
+    .decision-tile:focus,
+    .decision-tile:focus-within {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@keyframes decision-reveal {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /*
  * Base styles
  * Apply sensible defaults that match the design system.
