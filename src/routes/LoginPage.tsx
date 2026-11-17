@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
+import { usePageTitle } from '../components/ui/usePageTitle'
 
 import { useAuth } from '../context/AuthContext'
 import { useDevPreview } from '../context/DevPreviewContext'
@@ -8,6 +9,7 @@ import { useDevPreview } from '../context/DevPreviewContext'
 export function LoginPage() {
   const { session, login, expired } = useAuth()
   const { exitPreview } = useDevPreview()
+  usePageTitle('Sign in')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
@@ -71,7 +73,7 @@ export function LoginPage() {
                   bg-card dark:bg-dark-bg
                   px-4 py-2.5
                   font-body text-base text-deep-green dark:text-card
-                  placeholder:text-deep-green/40 dark:placeholder:text-card/40
+                  placeholder:text-deep-green/70 dark:placeholder:text-card/70
                   focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0
                 "
               />
@@ -105,7 +107,7 @@ export function LoginPage() {
 
           {import.meta.env.DEV && (
             <div className="border-t border-deep-green/20 dark:border-card/10 pt-4 text-center space-y-1">
-              <p className="font-body text-xs text-deep-green/60 dark:text-card/60">
+              <p className="font-body text-xs text-deep-green/70 dark:text-card/70">
                 Milestone 1.2 — Development Preview Mode
               </p>
               <Link

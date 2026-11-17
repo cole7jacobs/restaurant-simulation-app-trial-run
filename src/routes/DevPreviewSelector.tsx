@@ -83,7 +83,7 @@ export function DevPreviewSelector() {
               <div className="flex justify-center">
                 <button
                   onClick={leavePreview}
-                  className="font-body text-sm text-deep-green/60 dark:text-card/60 underline underline-offset-2 hover:text-deep-green dark:hover:text-card transition-colors"
+                  className="font-body text-sm text-deep-green/70 dark:text-card/70 underline underline-offset-2 hover:text-deep-green dark:hover:text-card transition-colors"
                 >
                   Exit preview
                 </button>
@@ -99,7 +99,7 @@ export function DevPreviewSelector() {
             alt="Sample Slice"
             className="h-20 w-20 rounded-2xl dark:bg-card dark:p-1"
           />
-          <p className="font-body text-xs text-center text-deep-green/40 dark:text-card/40">
+          <p className="font-body text-xs text-center text-deep-green/70 dark:text-card/70">
             Milestone 1.2 Dev Build
           </p>
         </div>

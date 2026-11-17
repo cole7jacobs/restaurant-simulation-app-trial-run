@@ -1,4 +1,6 @@
 import { Link, Outlet, useLocation, useMatch } from 'react-router-dom'
+import { SkipLink } from '../../components/ui/SkipLink'
+import { usePageTitle } from '../../components/ui/usePageTitle'
 import { DarkModeToggle } from '../../components/ui/DarkModeToggle'
 import { SessionControls } from '../../components/ui/SessionControls'
 import { useAuth } from '../../context/AuthContext'
@@ -15,9 +17,11 @@ export function ProfessorLayout() {
   const { session } = useAuth()
   const { pathname } = useLocation()
   const teamReview = useMatch('/professor/team-review/:teamId')
+  usePageTitle(teamReview ? 'Team Review' : NAV_TABS.find((t) => t.to === pathname.toLowerCase().replace(/\/+$/, ''))?.label ?? 'Professor')
 
   return (
     <div className="min-h-screen bg-card dark:bg-dark-bg flex flex-col">
+      <SkipLink />
       {/* Top navigation bar */}
       <header className="sticky top-0 z-10 border-b border-deep-green/20 bg-card/90 backdrop-blur dark:border-card/10 dark:bg-dark-bg/90">
         <nav
@@ -35,7 +39,7 @@ export function ProfessorLayout() {
           </span>
 
           {/* Nav tabs */}
-          <div className="order-2 flex w-full items-center gap-0 overflow-x-auto sm:w-auto sm:grow">
+          <div className="order-2 flex w-full items-center gap-0 flex-wrap sm:w-auto sm:grow">
             {NAV_TABS.map(({ label, to }) => {
               const isCurrent = pathname.toLowerCase().replace(/\/+$/, '') === to
               const isSection = Boolean(teamReview) && label === 'Submissions'
@@ -74,7 +78,7 @@ export function ProfessorLayout() {
       {!session && <DevPreviewBanner />}
 
       {/* Page content */}
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-4 sm:py-5">
+      <main id="main-content" tabIndex={-1} className="flex-1 max-w-6xl mx-auto w-full px-4 py-4 sm:py-5 focus:outline-none">
         <Outlet />
       </main>
     </div>

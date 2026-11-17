@@ -9,7 +9,7 @@ import {
   type DecisionResponse, type MenuSelection,
 } from '../../../shared/decisions'
 
-const inputClass = 'w-full rounded border border-deep-green/30 bg-card/50 px-2 py-2 dark:border-card/30 dark:bg-dark-card'
+const inputClass = 'w-full rounded border border-deep-green/30 bg-card/50 min-h-11 px-2 py-2 dark:border-card/30 dark:bg-dark-card'
 const emptyMenu = { MenuItemID: '', PrepLevel: '', OrderSize: '', InternalPromotion: '', SalesPrice: '' }
 type MenuInput = typeof emptyMenu
 
