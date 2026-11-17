@@ -35,7 +35,7 @@ export function LoginPage() {
         <img
           src="/sample-slice-logo.png"
           alt="Sample Slice"
-          className="mx-auto mb-4 block w-72 max-w-full"
+          className="mx-auto mb-4 block w-72 max-w-full dark:rounded-3xl dark:bg-card dark:p-4"
         />
         {/* Page heading */}
         <h1 className="font-heading text-center text-3xl font-bold text-deep-green dark:text-card mb-1">

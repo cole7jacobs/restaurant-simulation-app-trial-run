@@ -97,7 +97,7 @@ export function DevPreviewSelector() {
           <img
             src="/sample-slice-logo.png"
             alt="Sample Slice"
-            className="h-20 w-20 rounded-2xl"
+            className="h-20 w-20 rounded-2xl dark:bg-card dark:p-1"
           />
           <p className="font-body text-xs text-center text-deep-green/40 dark:text-card/40">
             Milestone 1.2 Dev Build
