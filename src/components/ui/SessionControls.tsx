@@ -28,7 +28,7 @@ export function SessionControls() {
   return (
     <>
       {error && <span role="alert" className="text-sm">Sign-out failed. Try again.</span>}
-      <Button variant="outlined" className="py-1.5 px-4 text-sm" disabled={busy} onClick={leave}>
+      <Button variant="outlined" className="text-sm" disabled={busy} onClick={leave}>
         {session ? 'Sign out' : 'Exit preview'}
       </Button>
     </>
