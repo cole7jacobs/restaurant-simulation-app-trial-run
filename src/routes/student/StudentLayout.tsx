@@ -28,7 +28,7 @@ export function StudentLayout() {
           <img
             src="/sample-slice-logo.png"
             alt="Sample Slice"
-            className="order-1 h-11 w-11 shrink-0 object-contain"
+            className="order-1 h-16 w-16 shrink-0 object-contain"
           />
           <span className="order-1 shrink-0 font-heading text-xl font-extrabold uppercase tracking-wide text-deep-green dark:text-card">
             Sample<span className="text-primary">Slice</span>
