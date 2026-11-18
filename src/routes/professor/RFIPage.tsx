@@ -26,7 +26,7 @@ export function RFIPage({ embedded = false }: { embedded?: boolean }) {
       </Notice>
 
       {/* Submitted teams ready for export */}
-      <Card>
+      <Card className={embedded ? 'professor-tile-inner' : ''}>
         <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Teams Ready for RFI Export
         </h2>
@@ -59,7 +59,7 @@ type ExportTeam = {
   HasDecisions: number
 }
 
-function RoundExports({ round }: { round: number }) {
+function RoundExports({ round, embedded }: { round: number; embedded: boolean }) {
   const { data, error } = useProtectedData<{ teams: ExportTeam[] }>(`/professor/rfi/${round}`)
   const { expire } = useAuth()
   const [busy, setBusy] = useState<number | null>(null)
@@ -102,9 +102,9 @@ function RoundExports({ round }: { round: number }) {
   }
 
   if (!data) return <p role={error ? 'alert' : 'status'}>{error ?? 'Loading teams…'}</p>
-  if (data.teams.length === 0) return <Card>No teams available.</Card>
+  if (data.teams.length === 0) return <Card className={embedded ? 'professor-tile-inner' : ''}>No teams available.</Card>
   return (
-    <Card>
+    <Card className={embedded ? 'professor-tile-inner' : ''}>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead><tr>
@@ -136,7 +136,7 @@ function RoundExports({ round }: { round: number }) {
   )
 }
 
-function DemoExports() {
+function DemoExports({ embedded }: { embedded: boolean }) {
   const [message, setMessage] = useState('')
   function download() {
     try {
@@ -149,7 +149,7 @@ function DemoExports() {
       setMessage('Sample RFI download started. No data was sent to the server.')
     } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to generate sample RFI.') }
   }
-  return <Card><div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr><th className="p-2">Team</th><th className="p-2">Firm</th><th className="p-2">Submission status</th><th className="p-2">Download</th></tr></thead><tbody><tr><td className="p-2">Demo Bistro</td><td className="p-2">1</td><td className="p-2">Sample</td><td className="p-2"><Button size="sm" onClick={download}>Generate RFI</Button></td></tr></tbody></table></div>{message && <p role="status">{message}</p>}</Card>
+  return <Card className={embedded ? 'professor-tile-inner' : ''}><div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr><th className="p-2">Team</th><th className="p-2">Firm</th><th className="p-2">Submission status</th><th className="p-2">Download</th></tr></thead><tbody><tr><td className="p-2">Demo Bistro</td><td className="p-2">1</td><td className="p-2">Sample</td><td className="p-2"><Button size="sm" onClick={download}>Generate RFI</Button></td></tr></tbody></table></div>{message && <p role="status">{message}</p>}</Card>
 }
 
 export function ProfessorRFIPage({ demo = false, embedded = false }: { demo?: boolean; embedded?: boolean }) {
@@ -163,7 +163,7 @@ export function ProfessorRFIPage({ demo = false, embedded = false }: { demo?: bo
           {(demo ? [5] : decisionRounds).map((period) => <option key={period} value={period}>Q{period}</option>)}
         </select>
       </label>
-      {demo ? <DemoExports /> : <RoundExports key={round} round={round} />}
+      {demo ? <DemoExports embedded={embedded} /> : <RoundExports key={round} round={round} embedded={embedded} />}
     </div>
   )
 }

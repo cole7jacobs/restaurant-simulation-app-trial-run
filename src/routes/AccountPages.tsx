@@ -94,7 +94,7 @@ function ProfessorAccountContent({ title, teamOnly, rows, error, demo = false, e
   return (
     <div className="space-y-4">
       {!embedded && <PageHeader title={title} />}
-      <Card>
+      <Card className={embedded ? 'professor-tile-inner' : ''}>
         {!rows ? <p role={error ? 'alert' : 'status'}>{error ?? 'Loading team submissions…'}</p>
           : rows.length === 0 ? <p>No teams found.</p> : (
             <div className="overflow-x-auto">
@@ -123,6 +123,7 @@ function ProfessorAccountContent({ title, teamOnly, rows, error, demo = false, e
             </div>
           )}
       </Card>
+      {teamOnly && <Button to="/professor/home#submissions" variant="outlined">Back to submissions</Button>}
     </div>
   )
 }

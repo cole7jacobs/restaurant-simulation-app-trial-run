@@ -1,5 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 import { afterEach, expect, it, vi } from 'vitest'
 import { App } from '../../src/App'
@@ -26,45 +25,20 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-it('shows the professor tools together and keeps the navigation drawer accessible', async () => {
-  document.body.style.overflow = 'auto'
+it('shows the professor tools as tiles without a navigation header', () => {
   const fetchMock = renderDemo()
-  const user = userEvent.setup()
   expect(screen.getByRole('heading', { name: 'Professor Dashboard', level: 1 })).toBeVisible()
   expect(screen.getByRole('heading', { name: 'Team Submissions', level: 2 })).toBeVisible()
   expect(screen.getByRole('heading', { name: 'RFI Generation', level: 2 })).toBeVisible()
   expect(screen.getByRole('heading', { name: 'FR.LST Import', level: 2 })).toBeVisible()
+  expect(screen.getByRole('region', { name: 'Team Submissions' })).toHaveClass('professor-tile')
+  expect(screen.getByRole('region', { name: 'RFI Generation' })).toHaveClass('professor-tile')
+  expect(screen.getByRole('region', { name: 'FR.LST Import' })).toHaveClass('professor-tile')
+  expect(screen.queryByText('Monitor teams, generate RFI files, and import simulation results from one place.')).not.toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Generate RFI' })).toBeVisible()
   expect(screen.getByRole('button', { name: 'Preview results' })).toBeVisible()
-
-  const trigger = screen.getByRole('button', { name: 'Open navigation menu' })
-  expect(trigger).toHaveAttribute('aria-expanded', 'false')
-  expect(trigger).toHaveAttribute('aria-controls', 'professor-navigation-drawer')
-  await user.click(trigger)
-  expect(trigger).toHaveAttribute('aria-expanded', 'true')
-  expect(document.body.style.overflow).toBe('hidden')
-  const dialog = screen.getByRole('dialog', { name: 'Professor menu' })
-  const close = within(dialog).getByRole('button', { name: 'Close navigation menu' })
-  expect(close).toHaveFocus()
-  const nav = within(dialog).getByRole('navigation', { name: 'Professor navigation' })
-  await user.tab({ shift: true })
-  expect(within(nav).getByRole('link', { name: 'FR.LST Import' })).toHaveFocus()
-  await user.tab()
-  expect(close).toHaveFocus()
-  await user.keyboard('{Escape}')
-  expect(trigger).toHaveAttribute('aria-expanded', 'false')
-  expect(trigger).toHaveFocus()
-  expect(document.body.style.overflow).toBe('auto')
-
-  await user.click(trigger)
-  fireEvent.click(screen.getByTestId('professor-navigation-scrim'))
-  expect(trigger).toHaveAttribute('aria-expanded', 'false')
-  expect(trigger).toHaveFocus()
-
-  await user.click(trigger)
-  await user.click(within(screen.getByRole('navigation', { name: 'Professor navigation' })).getByRole('link', { name: 'RFI Generation' }))
-  expect(screen.getByTestId('location')).toHaveTextContent('/demo/professor/home#rfi')
-  expect(trigger).toHaveFocus()
+  expect(screen.queryByRole('button', { name: 'Open navigation menu' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('navigation', { name: 'Professor navigation' })).not.toBeInTheDocument()
   expect(fetchMock).not.toHaveBeenCalled()
 })
 

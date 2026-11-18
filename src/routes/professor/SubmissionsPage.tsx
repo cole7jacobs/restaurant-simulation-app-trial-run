@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Card } from '../../components/ui/Card'
+import { Badge } from '../../components/ui/Badge'
 import { DEMO_TEAMS } from './demo-teams'
 import { DEV_PREVIEW_ROUND } from '../../lib/dev-preview'
 import { PageHeader } from '../../components/ui/PageHeader'
@@ -21,15 +22,16 @@ export function SubmissionsPage({ embedded = false }: { embedded?: boolean }) {
       {!embedded && <PageHeader title="Team Submissions" subtitle={`Round ${DEV_PREVIEW_ROUND}`} />}
 
       {/* Submissions table */}
-      <Card>
+      <Card className={embedded ? 'professor-tile-inner' : ''}>
         <DataTable
           caption="Team submissions"
-          columns={['Team', 'Firm', 'Submitted At', 'Decision Count', 'Actions']}
+          columns={['Team', 'Firm', 'Status', 'Submitted At', 'Decision Count', 'Actions']}
           rows={DEMO_TEAMS.map((team) => ({
             key: team.name,
             cells: [
               team.name,
               team.firm,
+              <Badge variant={team.status}>{team.status.charAt(0).toUpperCase() + team.status.slice(1)}</Badge>,
               team.submittedAt ?? '—',
               team.decisionCount,
               team.decisions ? (

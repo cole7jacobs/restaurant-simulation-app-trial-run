@@ -113,7 +113,7 @@ export function ProfessorImportPage({ demo = false, embedded = false }: { demo?:
   return (
     <div className="space-y-4">
       {!embedded && <PageHeader title="Import Simulation Results" />}
-      <Card>
+      <Card className={embedded ? 'professor-tile-inner' : ''}>
         <form onSubmit={onPreview} className="space-y-4">
           <fieldset disabled={busy} className="flex flex-wrap items-end gap-3">
             <label className="grid gap-1 text-sm font-medium">{embedded ? 'Import simulation round' : 'Simulation round'}

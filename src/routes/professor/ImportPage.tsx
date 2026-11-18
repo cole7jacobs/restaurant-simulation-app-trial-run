@@ -25,7 +25,7 @@ export function ImportPage({ embedded = false }: { embedded?: boolean }) {
       </Notice>
 
       {/* Upload area */}
-      <Card>
+      <Card className={embedded ? 'professor-tile-inner' : ''}>
         <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Upload FR.LST File
         </h2>
@@ -48,7 +48,7 @@ export function ImportPage({ embedded = false }: { embedded?: boolean }) {
       </Card>
 
       {/* Import history */}
-      <Card>
+      <Card className={embedded ? 'professor-tile-inner' : ''}>
         <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
           Import History
         </h2>

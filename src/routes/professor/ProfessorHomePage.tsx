@@ -40,6 +40,7 @@ export function ProfessorHomePage({ embedded = false }: { embedded?: boolean }) 
         />
       </div>
 
+      {!embedded && <>
       {/* Team submissions table */}
       <Card>
         <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-2">
@@ -99,6 +100,7 @@ export function ProfessorHomePage({ embedded = false }: { embedded?: boolean }) 
           </Button>
         </Card>
       </div>
+      </>}
     </div>
   )
 }
