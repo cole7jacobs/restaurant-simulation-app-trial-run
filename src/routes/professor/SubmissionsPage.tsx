@@ -12,13 +12,13 @@ import { DataTable } from '../../components/ui/DataTable'
  * Shows submission status for all teams in the current round.
  * Phase 2: replace demo data with live database queries.
  */
-export function SubmissionsPage() {
+export function SubmissionsPage({ embedded = false }: { embedded?: boolean }) {
   const navigate = useNavigate()
 
   return (
     <div className="space-y-4">
       {/* Page header */}
-      <PageHeader title="Team Submissions" subtitle={`Round ${DEV_PREVIEW_ROUND}`} />
+      {!embedded && <PageHeader title="Team Submissions" subtitle={`Round ${DEV_PREVIEW_ROUND}`} />}
 
       {/* Submissions table */}
       <Card>
@@ -50,7 +50,7 @@ export function SubmissionsPage() {
 
       {/* Export action */}
       <div>
-        <Button variant="outlined" onClick={() => navigate('/professor/rfi')}>
+        <Button variant="outlined" onClick={() => navigate('/professor/home#rfi')}>
           Go to RFI Generation
         </Button>
       </div>

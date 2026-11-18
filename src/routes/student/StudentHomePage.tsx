@@ -1,18 +1,9 @@
-import { Link } from 'react-router-dom'
 import { Card } from '../../components/ui/Card'
-import { Badge } from '../../components/ui/Badge'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { MetricCard } from '../../components/ui/MetricCard'
 import { Button } from '../../components/ui/Button'
 import { useDevPreview } from '../../context/DevPreviewContext'
-
-const DECISION_SECTIONS = [
-  { label: 'Menu', to: '/student/decisions#menu' },
-  { label: 'Staffing & Compensation', to: '/student/decisions#staffing' },
-  { label: 'Finance', to: '/student/decisions#finance' },
-  { label: 'Amenities & Upkeep', to: '/student/decisions#amenities' },
-  { label: 'Reports', to: '/student/decisions#reports' },
-] as const
+import { DecisionSectionTiles } from './DecisionSectionTiles'
 
 /**
  * Student home page — displays current round info, team name, decision status,
@@ -42,31 +33,7 @@ export function StudentHomePage() {
         <MetricCard label="Team" value={teamName} subtext="Firm #—" />
       </div>
 
-      {/* Decision status card */}
-      <Card>
-        <h2 className="font-heading text-xl font-extrabold text-deep-green dark:text-card mb-4">
-          Decision Status
-        </h2>
-        <div className="divide-y divide-deep-green/20 dark:divide-card/10">
-          {DECISION_SECTIONS.map(({ label, to }) => (
-            <div
-              key={label}
-              className="flex items-center justify-between py-3 gap-3"
-            >
-              <span className="font-body text-sm text-deep-green dark:text-card flex-1">
-                {label}
-              </span>
-              <Badge variant="draft">Draft</Badge>
-              <Link
-                to={to}
-                className="font-body text-sm text-deep-green dark:text-card hover:underline whitespace-nowrap"
-              >
-                → Go to Decisions<span className="sr-only"> for {label}</span>
-              </Link>
-            </div>
-          ))}
-        </div>
-      </Card>
+      <DecisionSectionTiles />
 
       {/* Quick links */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

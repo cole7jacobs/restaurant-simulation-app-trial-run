@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, expect, it, vi } from 'vitest'
@@ -12,6 +12,16 @@ function openDemo(path = '/demo') {
   return fetchMock
 }
 afterEach(() => { cleanup(); sessionStorage.clear(); vi.unstubAllGlobals() })
+
+it('shows decision section tiles that open the matching editor section', async () => {
+  const fetchMock = openDemo('/demo/student/home')
+  const sections = screen.getByRole('navigation', { name: 'Decision sections' })
+  expect(within(sections).getAllByRole('link')).toHaveLength(5)
+  expect(within(sections).getByRole('link', { name: 'Menu selections' })).toHaveAttribute('href', '/demo/student/decisions#menu')
+  await userEvent.click(within(sections).getByRole('link', { name: 'Reports' }))
+  expect(await screen.findByRole('region', { name: 'Reports' })).toHaveFocus()
+  expect(fetchMock).not.toHaveBeenCalled()
+})
 
 it('opens public demo, displays Q5 results, and never calls protected APIs', async () => {
   const fetchMock = openDemo()
@@ -48,10 +58,11 @@ it('switches to professor and previews and confirms fictional results locally', 
   expect(await screen.findByText('Professor Dashboard')).toBeVisible()
   expect(screen.getByRole('contentinfo')).toHaveTextContent('Changes stay in this browser and do not recalculate results')
   expect(screen.getByText('Demo Mode · Q5 · Demo Bistro')).toBeVisible()
-  expect(screen.getByText('Demo Mode · Q5 · Demo Bistro').compareDocumentPosition(screen.getByRole('navigation', { name: 'Professor navigation' })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  expect(screen.getByText('Demo Mode · Q5 · Demo Bistro').compareDocumentPosition(screen.getByRole('button', { name: 'Open navigation menu' })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   expect(screen.getByRole('button', { name: 'Professor View' })).toHaveAttribute('aria-pressed', 'true')
   expect(screen.getByRole('button', { name: 'Student View' })).toHaveAttribute('aria-pressed', 'false')
-  await user.click(screen.getAllByRole('link', { name: 'FR.LST Import' })[0])
+  await user.click(screen.getByRole('button', { name: 'Open navigation menu' }))
+  await user.click(within(screen.getByRole('navigation', { name: 'Professor navigation' })).getByRole('link', { name: 'FR.LST Import' }))
   await user.click(screen.getByRole('button', { name: 'Preview results' }))
   expect(await screen.findByText(/Fictional sample figures/)).toBeVisible()
   await user.click(screen.getByRole('button', { name: 'Confirm import' }))
@@ -67,7 +78,8 @@ it('allows adding and removing menu selections and generates a local sample RFI'
   await user.click(screen.getByRole('button', { name: 'Remove selection 2' }))
   expect(screen.queryByText('Selection 2')).not.toBeInTheDocument()
   await user.click(screen.getByRole('button', { name: 'Professor View' }))
-  await user.click(screen.getByRole('link', { name: 'RFI Generation' }))
+  await user.click(screen.getByRole('button', { name: 'Open navigation menu' }))
+  await user.click(within(screen.getByRole('navigation', { name: 'Professor navigation' })).getByRole('link', { name: 'RFI Generation' }))
   const createObjectURL = vi.fn(() => 'blob:demo')
   vi.stubGlobal('URL', Object.assign(URL, { createObjectURL, revokeObjectURL: vi.fn() }))
   const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})

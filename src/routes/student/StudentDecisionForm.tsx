@@ -182,18 +182,20 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
   function fieldTile(id: string, title: string, keys: readonly string[]) {
     return (
       <section id={id} tabIndex={-1} aria-labelledby={id + '-title'} className="decision-tile">
-        <h2 id={id + '-title'} className="mb-3 font-heading text-xl font-extrabold">{title}</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {decisionFields.filter(({ key }) => keys.includes(key)).map(({ key, label, decimals }) => (
-            <label key={key} className="text-sm font-medium">{label}
-              <input className={inputClass} type="number" readOnly={readOnly || lockedForReviewSave}
-                step={10 ** -decimals} min={financeKeys.includes(key) ? undefined : 0} value={values[key] ?? ''}
-                onChange={(event) => {
-                  changed()
-                  setValues((previous) => ({ ...previous, [key]: event.target.value }))
-                }} />
-            </label>
-          ))}
+        <div className="decision-tile-surface tile-entrance">
+          <h2 id={id + '-title'} className="mb-3 font-heading text-xl font-extrabold">{title}</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {decisionFields.filter(({ key }) => keys.includes(key)).map(({ key, label, decimals }) => (
+              <label key={key} className="text-sm font-medium">{label}
+                <input className={inputClass} type="number" readOnly={readOnly || lockedForReviewSave}
+                  step={10 ** -decimals} min={financeKeys.includes(key) ? undefined : 0} value={values[key] ?? ''}
+                  onChange={(event) => {
+                    changed()
+                    setValues((previous) => ({ ...previous, [key]: event.target.value }))
+                  }} />
+              </label>
+            ))}
+          </div>
         </div>
       </section>
     )
@@ -246,58 +248,60 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
       {readOnly && !submittedAt && <p className="text-sm">Review your saved draft below. Select Keep Editing to make changes.</p>}
       <div ref={tilesRef} className="decision-tiles">
         <section id="menu" tabIndex={-1} aria-labelledby="menu-title" className="decision-tile decision-menu">
-          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-            <h2 id="menu-title" className="font-heading text-xl font-extrabold">Menu selections</h2>
-            <span className="text-xs">{menu.length} / {menuSlots} selections</span>
-          </div>
-          {menu.length === 0 && <p className="mb-3 text-sm">No menu selections yet.</p>}
-          <div className="space-y-3">
-            {menu.map((row, index) => {
-              const item = initial.catalog.find(({ MenuItemID }) => String(MenuItemID) === row.MenuItemID)
-              const labels = item ? menuPreparations[item.ItemName] : undefined
-              return (
-                <fieldset key={index} disabled={lockedForReviewSave} className="rounded-lg border border-deep-green/30 p-3 dark:border-card/20">
-                  <legend className="px-1 text-sm font-semibold">Selection {index + 1}</legend>
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                    <label className="text-sm font-medium">Item
-                      <select className={inputClass} value={row.MenuItemID} disabled={readOnly}
-                        onChange={(event) => updateMenu(index, 'MenuItemID', event.target.value)}>
-                        <option value="">Choose item</option>
-                        {!item && row.MenuItemID && <option value={row.MenuItemID}>Unavailable catalog item</option>}
-                        {initial.catalog.map((entry) => <option key={entry.MenuItemID} value={entry.MenuItemID}>{entry.ItemName}</option>)}
-                      </select>
-                    </label>
-                    <label className="text-sm font-medium">Preparation
-                      <select className={inputClass} value={row.PrepLevel} disabled={readOnly || !labels}
-                        onChange={(event) => updateMenu(index, 'PrepLevel', event.target.value)}>
-                        <option value="">Choose preparation</option>
-                        {labels?.map((label, prep) => <option key={prep} value={prep + 1}>{label}</option>)}
-                      </select>
-                    </label>
-                    {([
-                      ['OrderSize', 'Portion' + (item ? ' (' + item.OrderSizeUnit + ')' : ''), '0.1'],
-                      ['InternalPromotion', 'Promotion ($)', '1'],
-                      ['SalesPrice', 'Price ($)', '0.01'],
-                    ] as const).map(([key, label, step]) => (
-                      <label key={key} className="text-sm font-medium">{label}
-                        <input className={inputClass} type="number" min="0" step={step} value={row[key]} readOnly={readOnly}
-                          onChange={(event) => updateMenu(index, key, event.target.value)} />
+          <div className="decision-tile-surface tile-entrance">
+            <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+              <h2 id="menu-title" className="font-heading text-xl font-extrabold">Menu selections</h2>
+              <span className="text-xs">{menu.length} / {menuSlots} selections</span>
+            </div>
+            {menu.length === 0 && <p className="mb-3 text-sm">No menu selections yet.</p>}
+            <div className="space-y-3">
+              {menu.map((row, index) => {
+                const item = initial.catalog.find(({ MenuItemID }) => String(MenuItemID) === row.MenuItemID)
+                const labels = item ? menuPreparations[item.ItemName] : undefined
+                return (
+                  <fieldset key={index} disabled={lockedForReviewSave} className="rounded-lg border border-deep-green/30 p-3 dark:border-card/20">
+                    <legend className="px-1 text-sm font-semibold">Selection {index + 1}</legend>
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                      <label className="text-sm font-medium">Item
+                        <select className={inputClass} value={row.MenuItemID} disabled={readOnly}
+                          onChange={(event) => updateMenu(index, 'MenuItemID', event.target.value)}>
+                          <option value="">Choose item</option>
+                          {!item && row.MenuItemID && <option value={row.MenuItemID}>Unavailable catalog item</option>}
+                          {initial.catalog.map((entry) => <option key={entry.MenuItemID} value={entry.MenuItemID}>{entry.ItemName}</option>)}
+                        </select>
                       </label>
-                    ))}
-                  </div>
-                  {!readOnly && <button type="button" className="mt-2 text-sm underline" onClick={() => {
-                    changed()
-                    setMenu((previous) => previous.filter((_, position) => position !== index))
-                  }}>Remove selection {index + 1}</button>}
-                </fieldset>
-              )
-            })}
+                      <label className="text-sm font-medium">Preparation
+                        <select className={inputClass} value={row.PrepLevel} disabled={readOnly || !labels}
+                          onChange={(event) => updateMenu(index, 'PrepLevel', event.target.value)}>
+                          <option value="">Choose preparation</option>
+                          {labels?.map((label, prep) => <option key={prep} value={prep + 1}>{label}</option>)}
+                        </select>
+                      </label>
+                      {([
+                        ['OrderSize', 'Portion' + (item ? ' (' + item.OrderSizeUnit + ')' : ''), '0.1'],
+                        ['InternalPromotion', 'Promotion ($)', '1'],
+                        ['SalesPrice', 'Price ($)', '0.01'],
+                      ] as const).map(([key, label, step]) => (
+                        <label key={key} className="text-sm font-medium">{label}
+                          <input className={inputClass} type="number" min="0" step={step} value={row[key]} readOnly={readOnly}
+                            onChange={(event) => updateMenu(index, key, event.target.value)} />
+                        </label>
+                      ))}
+                    </div>
+                    {!readOnly && <button type="button" className="mt-2 text-sm underline" onClick={() => {
+                      changed()
+                      setMenu((previous) => previous.filter((_, position) => position !== index))
+                    }}>Remove selection {index + 1}</button>}
+                  </fieldset>
+                )
+              })}
+            </div>
+            {!readOnly && menu.length < menuSlots && <Button type="button" variant="outlined" className="mt-3"
+              disabled={lockedForReviewSave} onClick={() => {
+                changed()
+                setMenu((previous) => [...previous, { ...emptyMenu }])
+              }}>Add selection</Button>}
           </div>
-          {!readOnly && menu.length < menuSlots && <Button type="button" variant="outlined" className="mt-3"
-            disabled={lockedForReviewSave} onClick={() => {
-              changed()
-              setMenu((previous) => [...previous, { ...emptyMenu }])
-            }}>Add selection</Button>}
         </section>
         <div className="decision-column">
           {fieldTile('staffing', 'Staffing & Compensation', staffKeys)}
@@ -306,21 +310,23 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
         <div className="decision-column">
           {fieldTile('amenities', 'Amenities & Upkeep', amenityKeys)}
           <section id="reports" tabIndex={-1} aria-labelledby="reports-title" className="decision-tile">
-            <h2 id="reports-title" className="mb-3 font-heading text-xl font-extrabold">Reports</h2>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {reportFields.map(({ key, label }) => (
-                <label key={key} className="text-sm font-medium">{label}
-                  <select className={inputClass} disabled={readOnly || lockedForReviewSave} value={values[key] ?? ''}
-                    onChange={(event) => {
-                      changed()
-                      setValues((previous) => ({ ...previous, [key]: event.target.value }))
-                    }}>
-                    <option value="">Choose…</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                  </select>
-                </label>
-              ))}
+            <div className="decision-tile-surface tile-entrance">
+              <h2 id="reports-title" className="mb-3 font-heading text-xl font-extrabold">Reports</h2>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {reportFields.map(({ key, label }) => (
+                  <label key={key} className="text-sm font-medium">{label}
+                    <select className={inputClass} disabled={readOnly || lockedForReviewSave} value={values[key] ?? ''}
+                      onChange={(event) => {
+                        changed()
+                        setValues((previous) => ({ ...previous, [key]: event.target.value }))
+                      }}>
+                      <option value="">Choose…</option>
+                      <option value="1">Yes</option>
+                      <option value="0">No</option>
+                    </select>
+                  </label>
+                ))}
+              </div>
             </div>
           </section>
         </div>

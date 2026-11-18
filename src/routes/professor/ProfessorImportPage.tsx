@@ -9,7 +9,7 @@ import { importRounds, maxListingSize, type ImportPreview } from '../../../share
 
 const amount = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 })
 
-export function ProfessorImportPage({ demo = false }: { demo?: boolean }) {
+export function ProfessorImportPage({ demo = false, embedded = false }: { demo?: boolean; embedded?: boolean }) {
   const { expire } = useAuth()
   const [round, setRound] = useState(demo ? '5' : '')
   const [file, setFile] = useState<File | null>(null)
@@ -83,11 +83,11 @@ export function ProfessorImportPage({ demo = false }: { demo?: boolean }) {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Import Simulation Results" />
+      {!embedded && <PageHeader title="Import Simulation Results" />}
       <Card>
         <form onSubmit={onPreview} className="space-y-4">
           <fieldset disabled={busy} className="flex flex-wrap items-end gap-3">
-            <label className="grid gap-1 text-sm font-medium">Simulation round
+            <label className="grid gap-1 text-sm font-medium">{embedded ? 'Import simulation round' : 'Simulation round'}
               <select className="rounded border border-deep-green/30 bg-card/50 px-2 py-2 dark:bg-dark-card"
                 required value={round} onChange={(event) => { resetPreview(); setRound(event.target.value) }}>
                 <option value="">Choose round</option>

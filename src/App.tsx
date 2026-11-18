@@ -1,4 +1,3 @@
-import { ProfessorImportPage } from './routes/professor/ProfessorImportPage'
 import { StudentDecisionForm } from './routes/student/StudentDecisionForm'
 import type { ReactElement } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
@@ -10,11 +9,8 @@ import { StudentHomePage } from './routes/student/StudentHomePage'
 import { ResultsPage } from './routes/student/ResultsPage'
 import { StudentResultsDashboard } from './routes/student/StudentResultsDashboard'
 import { ProfessorLayout } from './routes/professor/ProfessorLayout'
-import { ProfessorHomePage } from './routes/professor/ProfessorHomePage'
-import { SubmissionsPage } from './routes/professor/SubmissionsPage'
 import { TeamReviewPage } from './routes/professor/TeamReviewPage'
-import { ProfessorRFIPage, RFIPage } from './routes/professor/RFIPage'
-import { ImportPage } from './routes/professor/ImportPage'
+import { ProfessorSectionRedirect, ProfessorWorkspace } from './routes/professor/ProfessorWorkspace'
 import { DevPreviewSelector } from './routes/DevPreviewSelector'
 import { AuthProvider, DemoAuthProvider, useAuth } from './context/AuthContext'
 import { ProfessorAccountPage, StudentAccountHome } from './routes/AccountPages'
@@ -70,10 +66,10 @@ function AppRoutes() {
       </Route>
       <Route path="/demo/professor" element={<ProfessorLayout />}>
         <Route index element={<Navigate to="home" replace />} />
-        <Route path="home" element={<ProfessorAccountPage title="Professor Dashboard" demo />} />
-        <Route path="submissions" element={<ProfessorAccountPage title="Team Submissions" demo />} />
-        <Route path="rfi" element={<ProfessorRFIPage demo />} />
-        <Route path="import" element={<ProfessorImportPage demo />} />
+        <Route path="home" element={<ProfessorWorkspace demo />} />
+        <Route path="submissions" element={<ProfessorSectionRedirect section="submissions" demo />} />
+        <Route path="rfi" element={<ProfessorSectionRedirect section="rfi" demo />} />
+        <Route path="import" element={<ProfessorSectionRedirect section="import" demo />} />
       </Route>
 
       <Route path="/student" element={<RoleLayout role="student"><StudentLayout /></RoleLayout>}>
@@ -86,11 +82,11 @@ function AppRoutes() {
 
       <Route path="/professor" element={<RoleLayout role="professor"><ProfessorLayout /></RoleLayout>}>
         <Route index element={<Navigate to="home" replace />} />
-        <Route path="home" element={<RolePage preview={<ProfessorHomePage />} signedIn={<ProfessorAccountPage title="Professor Dashboard" />} />} />
-        <Route path="submissions" element={<RolePage preview={<SubmissionsPage />} signedIn={<ProfessorAccountPage title="Team Submissions" />} />} />
+        <Route path="home" element={<ProfessorWorkspace />} />
+        <Route path="submissions" element={<ProfessorSectionRedirect section="submissions" />} />
         <Route path="team-review/:teamId" element={<RolePage preview={<TeamReviewPage />} signedIn={<ProfessorAccountPage title="Team Decision Review" teamOnly />} />} />
-        <Route path="rfi" element={<RolePage preview={<RFIPage />} signedIn={<ProfessorRFIPage />} />} />
-        <Route path="import" element={<RolePage preview={<ImportPage />} signedIn={<ProfessorImportPage />} />} />
+        <Route path="rfi" element={<ProfessorSectionRedirect section="rfi" />} />
+        <Route path="import" element={<ProfessorSectionRedirect section="import" />} />
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />

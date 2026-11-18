@@ -13,11 +13,11 @@ const ROUND = 3
  * UI placeholder for Phase 5 — imports FORTRAN simulation output results.
  * Open question OQ-2 (output format) must be resolved before implementation.
  */
-export function ImportPage() {
+export function ImportPage({ embedded = false }: { embedded?: boolean }) {
   return (
     <div className="space-y-4">
       {/* Page header */}
-      <PageHeader title="Import Simulation Results" subtitle={`Round ${ROUND}`} />
+      {!embedded && <PageHeader title="Import Simulation Results" subtitle={`Round ${ROUND}`} />}
 
       {/* Not-yet-implemented notice */}
       <Notice variant="info">

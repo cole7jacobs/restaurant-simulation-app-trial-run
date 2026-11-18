@@ -121,10 +121,10 @@ Passwords are salted scrypt hashes. Sessions are stored as token hashes in D1, e
 
 ### Professor
 
-1. Sign in to view teams and their draft/submitted statuses. The existing team-review page shows the filtered submission status, not a full decision-detail editor.
-2. Open **RFI Generation**, select Q2–Q7, and download an RFI for each submitted team with firm number 1–5. Product report must be set to **No** for the current export mapping. The approved Finance record has eight numeric fields; see the [RFI specification](docs/rfi-specification.md).
+1. Sign in to view team submissions, RFI generation, and FR.LST import on the professor dashboard. Use the menu to jump to a section. The existing team-review page shows the filtered submission status, not a full decision-detail editor.
+2. In **RFI Generation**, select Q2–Q7 and download an RFI for each submitted team with firm number 1–5. Product report must be set to **No** for the current export mapping. The approved Finance record has eight numeric fields; see the [RFI specification](docs/rfi-specification.md).
 3. Run the FORTRAN simulation separately using the appropriate external process. The app makes no claim that generated files are accepted by an untested executable.
-4. Open **FR.LST Import**, select Q1–Q7, upload the matching `.LST` file, inspect the preview and warnings, and confirm. Different results for an already imported round require explicit replacement. The [FR.LST specification](docs/fr-lst-specification.md) describes firm mapping, validation, and stored fields.
+4. In **FR.LST Import**, select Q1–Q7, upload the matching `.LST` file, inspect the preview and warnings, and confirm. Different results for an already imported round require explicit replacement. The [FR.LST specification](docs/fr-lst-specification.md) describes firm mapping, validation, and stored fields.
 
 ## API and data model
 

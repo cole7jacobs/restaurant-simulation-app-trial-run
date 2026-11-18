@@ -15,11 +15,11 @@ import { DEMO_TEAMS } from './demo-teams'
 
 const submittedTeams = DEMO_TEAMS.filter((team) => team.status === 'submitted')
 
-export function RFIPage() {
+export function RFIPage({ embedded = false }: { embedded?: boolean }) {
   return (
     <div className="space-y-4">
       {/* Page header */}
-      <PageHeader title="RFI File Generation" subtitle={`Round ${DEV_PREVIEW_ROUND}`} />
+      {!embedded && <PageHeader title="RFI File Generation" subtitle={`Round ${DEV_PREVIEW_ROUND}`} />}
 
       <Notice variant="info">
         Sign in as a professor to generate files from submitted decisions.
@@ -152,12 +152,12 @@ function DemoExports() {
   return <Card><div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr><th className="p-2">Team</th><th className="p-2">Firm</th><th className="p-2">Submission status</th><th className="p-2">Download</th></tr></thead><tbody><tr><td className="p-2">Demo Bistro</td><td className="p-2">1</td><td className="p-2">Sample</td><td className="p-2"><Button size="sm" onClick={download}>Generate RFI</Button></td></tr></tbody></table></div>{message && <p role="status">{message}</p>}</Card>
 }
 
-export function ProfessorRFIPage({ demo = false }: { demo?: boolean }) {
+export function ProfessorRFIPage({ demo = false, embedded = false }: { demo?: boolean; embedded?: boolean }) {
   const [round, setRound] = useState(demo ? 5 : decisionRounds[0])
   return (
     <div className="space-y-4">
-      <PageHeader title="RFI File Generation" />
-      <label className="inline-grid gap-1 text-sm font-medium">Simulation round
+      {!embedded && <PageHeader title="RFI File Generation" />}
+      <label className="inline-grid gap-1 text-sm font-medium">{embedded ? 'RFI simulation round' : 'Simulation round'}
         <select className="rounded border border-deep-green/30 bg-card/50 px-2 py-2 dark:border-card/30 dark:bg-dark-card"
           value={round} onChange={(event) => setRound(Number(event.target.value))}>
           {(demo ? [5] : decisionRounds).map((period) => <option key={period} value={period}>Q{period}</option>)}

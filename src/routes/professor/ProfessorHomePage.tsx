@@ -17,16 +17,16 @@ const submittedTeams = DEMO_TEAMS.filter((team) => team.status === 'submitted')
  * Shows a round summary, team submission status table, and quick-action cards.
  * Phase 2: replace demo data with live round management API calls.
  */
-export function ProfessorHomePage() {
+export function ProfessorHomePage({ embedded = false }: { embedded?: boolean }) {
   const navigate = useNavigate()
 
   return (
     <div className="space-y-4">
       {/* Page header */}
-      <PageHeader
+      {!embedded && <PageHeader
         title="Professor Dashboard"
         subtitle={`Round ${DEV_PREVIEW_ROUND} · Fall 2026`}
-      />
+      />}
 
       {/* Summary stat cards */}
       <div className="grid grid-cols-3 gap-3">
@@ -82,7 +82,7 @@ export function ProfessorHomePage() {
             Export submitted team decisions as FORTRAN-compatible RFI input files for the
             simulation engine. Available after OQ-1 is resolved.
           </p>
-          <Button variant="outlined" onClick={() => navigate('/professor/rfi')}>
+          <Button variant="outlined" onClick={() => navigate('/professor/home#rfi')}>
             Go to RFI Generator
           </Button>
         </Card>
@@ -94,7 +94,7 @@ export function ProfessorHomePage() {
             Upload a FR.LST simulation output file to import round results for all teams.
             Available after OQ-2 is resolved.
           </p>
-          <Button variant="outlined" onClick={() => navigate('/professor/import')}>
+          <Button variant="outlined" onClick={() => navigate('/professor/home#import')}>
             Go to FR.LST Import
           </Button>
         </Card>
