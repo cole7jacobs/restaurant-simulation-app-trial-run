@@ -61,10 +61,7 @@
 }
 
 .decision-column {
-  display: grid;
-  gap: 0.75rem;
-  align-content: start;
-  min-width: 0;
+  display: contents;
 }
 
 .decision-tile {
@@ -78,8 +75,15 @@
 
 .dark .decision-tile {
   border-color: rgb(230 238 236 / 0.1);
-  background: var(--color-dark-card);
+  background: var(--color-dark-bg);
+  background-image: linear-gradient(var(--color-dark-card), var(--color-dark-card));
 }
+
+.decision-tile:where(#menu) { --stack-offset: 0px; z-index: 1; }
+.decision-tile:where(#staffing) { --stack-offset: 12px; z-index: 2; }
+.decision-tile:where(#finance) { --stack-offset: 24px; z-index: 3; }
+.decision-tile:where(#amenities) { --stack-offset: 36px; z-index: 4; }
+.decision-tile:where(#reports) { --stack-offset: 48px; z-index: 5; }
 
 .decision-action-bar {
   border-top: 1px solid rgb(43 46 46 / 0.2);
@@ -95,6 +99,19 @@
 @media (min-width: 768px) {
   .decision-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .decision-menu { grid-column: 1 / -1; }
+  .decision-column { display: grid; gap: 0.75rem; align-content: start; min-width: 0; }
+  .decision-tile:where(#amenities) { --stack-offset: 12px; z-index: 2; }
+  .decision-tile:where(#reports) { --stack-offset: 24px; z-index: 3; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (position: sticky) {
+    .decision-tile {
+      position: sticky;
+      /* Oversized cards scroll normally so their controls remain reachable. */
+      top: var(--stack-top, min(var(--stack-offset), calc(var(--stack-pane-height) - var(--stack-card-height) - 12px)));
+    }
+  }
 }
 
 /* Content is visible by default, including in browsers without scroll timelines. */
@@ -113,6 +130,14 @@
       transform: none;
     }
   }
+}
+
+/* Let keyboard and pointer users reach every control in an overlapping stack. */
+.decision-tile:focus,
+.decision-tile:focus-within {
+  position: relative;
+  top: auto;
+  z-index: 10;
 }
 
 @keyframes decision-reveal {

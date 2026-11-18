@@ -46,8 +46,55 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
   const [error, setError] = useState('')
   const editVersion = useRef(0)
   const savingRef = useRef(false)
+  const tilesRef = useRef<HTMLDivElement>(null)
   const readOnly = reviewing || Boolean(submittedAt)
   const incompleteMenu = menu.some((row) => Object.values(row).some((value) => value === ''))
+
+  useEffect(() => {
+    const tiles = tilesRef.current
+    const pane = tiles?.closest<HTMLElement>('[data-decision-scroll]')
+    if (!tiles || !pane || typeof ResizeObserver === 'undefined') return
+    const cards = Array.from(tiles.querySelectorAll<HTMLElement>('.decision-tile'))
+    const clearMeasurements = () => {
+      tiles.style.removeProperty('--stack-pane-height')
+      cards.forEach((card) => {
+        card.style.removeProperty('--stack-card-height')
+        card.style.removeProperty('--stack-top')
+      })
+    }
+    const measure = () => {
+      if (!pane.clientHeight) {
+        clearMeasurements()
+        return
+      }
+      tiles.style.setProperty('--stack-pane-height', `${pane.clientHeight}px`)
+      cards.forEach((card) => {
+        if (card.offsetHeight) {
+          card.style.setProperty('--stack-card-height', `${card.offsetHeight}px`)
+          if (card.offsetHeight + 12 > pane.clientHeight) card.style.setProperty('--stack-top', 'auto')
+          else card.style.removeProperty('--stack-top')
+        } else {
+          card.style.removeProperty('--stack-card-height')
+          card.style.removeProperty('--stack-top')
+        }
+      })
+    }
+    let observer: ResizeObserver | undefined
+    try {
+      const currentObserver = new ResizeObserver(measure)
+      observer = currentObserver
+      currentObserver.observe(pane)
+      cards.forEach((card) => currentObserver.observe(card))
+      measure()
+      return () => {
+        currentObserver.disconnect()
+        clearMeasurements()
+      }
+    } catch {
+      observer?.disconnect()
+      clearMeasurements()
+    }
+  }, [])
 
   useEffect(() => {
     if (!hash) return
@@ -197,7 +244,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
       </PageHeader>
       {roundLocked && <p id="round-change-help" className="text-xs">Save your changes before changing rounds.</p>}
       {readOnly && !submittedAt && <p className="text-sm">Review your saved draft below. Select Keep Editing to make changes.</p>}
-      <div className="decision-tiles">
+      <div ref={tilesRef} className="decision-tiles">
         <section id="menu" tabIndex={-1} aria-labelledby="menu-title" className="decision-tile decision-menu">
           <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
             <h2 id="menu-title" className="font-heading text-xl font-extrabold">Menu selections</h2>
