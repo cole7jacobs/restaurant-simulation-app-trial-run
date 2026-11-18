@@ -22,9 +22,19 @@ it('opens public demo, displays Q5 results, and never calls protected APIs', asy
   expect(screen.getByRole('button', { name: 'Student View' })).toHaveAttribute('aria-pressed', 'true')
   expect(screen.getByRole('button', { name: 'Professor View' })).toHaveAttribute('aria-pressed', 'false')
   await userEvent.click(screen.getByRole('link', { name: 'Results' }))
-  expect(await screen.findByRole('button', { name: 'Q5' })).toHaveAttribute('aria-pressed', 'true')
-  expect(screen.getAllByText('$25,932')[1]).toBeVisible()
-  expect(screen.getByRole('contentinfo')).toHaveTextContent('Changes stay in this browser and do not recalculate results; the FORTRAN simulation runs externally. Q5 results are sample data; Q7 results come from the file you import.')
+  expect(await screen.findByRole('button', { name: 'Q6' })).toHaveAttribute('aria-pressed', 'true')
+  expect(screen.getAllByText('$32,333')[1]).toBeVisible()
+  expect(screen.getByRole('contentinfo')).toHaveTextContent('Changes stay in this browser and do not recalculate results; the FORTRAN simulation runs externally. Q1 to Q6 results are sample data; Q7 results come from the file you import.')
+  expect(fetchMock).not.toHaveBeenCalled()
+})
+
+it('shows Q1 to Q6 data for Demo Bistro and leaves Q7 empty before an import', async () => {
+  const fetchMock = openDemo('/demo/student/results')
+  const user = userEvent.setup()
+  expect(await screen.findByRole('table', { name: 'Q6 income statement amounts' })).toHaveTextContent('$32,333')
+  for (let round = 1; round <= 5; round++) expect(screen.getByRole('button', { name: `Q${round}` })).toBeVisible()
+  await user.click(screen.getByRole('button', { name: /Q7, no results/ }))
+  expect(screen.getByText('No results available for Quarter 7. The professor has not imported the simulation results yet.')).toBeVisible()
   expect(fetchMock).not.toHaveBeenCalled()
 })
 

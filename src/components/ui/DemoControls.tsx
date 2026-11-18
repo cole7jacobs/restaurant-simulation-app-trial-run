@@ -28,6 +28,6 @@ export function DemoControls() {
 
 export function DemoFooter() {
   return <footer className="mx-auto w-full max-w-6xl px-4 pb-4 font-body text-xs leading-relaxed text-deep-green/70 dark:text-card/70">
-    Changes stay in this browser and do not recalculate results; the FORTRAN simulation runs externally. Q5 results are sample data; Q7 results come from the file you import.
+    Changes stay in this browser and do not recalculate results; the FORTRAN simulation runs externally. Q1 to Q6 results are sample data; Q7 results come from the file you import.
   </footer>
 }
