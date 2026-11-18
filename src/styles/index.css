@@ -64,8 +64,8 @@
   --text-6xl: 4.3125rem;
 }
 
-.professor-workspace { display: grid; gap: 2.5rem; }
-.professor-section { scroll-margin-top: calc(var(--professor-header-height, 6rem) + 1rem); }
+.professor-workspace { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+.professor-section { min-width: 0; scroll-margin-top: calc(var(--professor-header-height, 6rem) + 1rem); }
 .professor-section-kicker {
   font-family: var(--font-body);
   font-size: var(--text-xs);

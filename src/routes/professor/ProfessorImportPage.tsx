@@ -1,4 +1,5 @@
-import { demoResults } from '../../lib/demo'
+import { demoQ7Key } from '../../lib/demo'
+import { parseListing, ListingError } from '../../../worker/fr-lst'
 import { useState, type FormEvent } from 'react'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -11,7 +12,7 @@ const amount = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 })
 
 export function ProfessorImportPage({ demo = false, embedded = false }: { demo?: boolean; embedded?: boolean }) {
   const { expire } = useAuth()
-  const [round, setRound] = useState(demo ? '5' : '')
+  const [round, setRound] = useState(demo ? '7' : '')
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<ImportPreview | null>(null)
   const [replace, setReplace] = useState(false)
@@ -28,12 +29,40 @@ export function ProfessorImportPage({ demo = false, embedded = false }: { demo?:
 
   async function send(action: 'preview' | 'confirm') {
     if (demo) {
-      if (action === 'confirm') { setMessage('Sample import confirmed locally. No file or results were saved.'); return }
-      setPreview({ round: 5, token: 'demo', alreadyImported: false, replacesResults: false,
-        warnings: ['Fictional sample figures; no real simulation file was imported.'],
-        teams: [{ TeamID: -1, TeamName: 'Demo Bistro', FirmNumber: 1, metrics: demoResults.metrics,
-          menu: [{ ItemName: 'STEAK', PrepLevel: 3, OrderSize: 170, OrderSizeUnit: 'Gm.', InternalPromotion: 1750, SalesPrice: 24.95, CostOfGoodsSoldPct: 28.7, OrdersSold: 5291, TotalSales: 132010, DecisionSlot: null }] }] })
-      setMessage(''); return
+      if (action === 'confirm') {
+        if (!preview) return
+        const firm = preview.teams.find((team) => team.FirmNumber === 1)
+        if (!firm) { setError('Firm 1 is missing from the preview.'); return }
+        try {
+          sessionStorage.setItem(demoQ7Key, JSON.stringify({ round: 7, metrics: firm.metrics,
+            menu: firm.menu.map((row, index) => ({ ...row, ResultSlot: index + 1, DecisionSlot: null })) }))
+          setPreview({ ...preview, alreadyImported: true })
+          setMessage('Q7 results imported for Demo Bistro in this browser session. Switch to Student View and open Results.')
+        } catch { setError('Unable to save the results in this browser session.') }
+        return
+      }
+      setError(''); setMessage(''); setPreview(null)
+      if (round !== '7') { setError('Demo Mode currently supports imports for Q7 only. Select Q7 to continue.'); return }
+      if (!file || !/\.lst$/i.test(file.name) || !file.size || file.size > maxListingSize) {
+        setError('Choose a nonempty .LST file no larger than 256 KiB.'); return
+      }
+      setBusy(true)
+      try {
+        const text = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(String(reader.result))
+          reader.onerror = () => reject(new Error('Unable to read the file.'))
+          reader.readAsText(file, 'utf-8')
+        })
+        const listing = parseListing(text)
+        if (listing.round !== 7) throw new ListingError(`The file reports Q${listing.round}; select a Period 7 file.`)
+        setPreview({ round: 7, token: '', alreadyImported: false, replacesResults: false, warnings: [],
+          teams: listing.firms.map(({ firm, metrics, menu }) => ({ TeamID: -firm, FirmNumber: firm,
+            TeamName: firm === 1 ? 'Demo Bistro' : `Firm ${firm}`, metrics,
+            menu: menu.map((row) => ({ ...row, DecisionSlot: null })) })) })
+      } catch (failure) { setError(failure instanceof Error ? failure.message : 'Unable to process the listing.') }
+      finally { setBusy(false) }
+      return
     }
     if (!file || !round || busy) return
     setError('')
@@ -91,23 +120,35 @@ export function ProfessorImportPage({ demo = false, embedded = false }: { demo?:
               <select className="rounded border border-deep-green/30 bg-card/50 px-2 py-2 dark:bg-dark-card"
                 required value={round} onChange={(event) => { resetPreview(); setRound(event.target.value) }}>
                 <option value="">Choose round</option>
-                {(demo ? [5] : importRounds).map((period) => <option key={period} value={period}>Q{period}</option>)}
+                {importRounds.map((period) => <option key={period} value={period}>Q{period}</option>)}
               </select>
             </label>
             {!demo && <label className="grid gap-1 text-sm font-medium">FR.LST file
               <input type="file" accept=".lst" required onChange={(event) => {
-                resetPreview()
-                setFile(event.target.files?.[0] ?? null)
+                resetPreview(); setFile(event.target.files?.[0] ?? null)
               }} />
             </label>}
-            <Button type="submit" disabled={busy || !round || (!demo && !file)}>Preview results</Button>
+            {!demo && <Button type="submit" disabled={busy || !round || !file}>Preview results</Button>}
           </fieldset>
-          <p className="text-sm">{demo ? 'Preview fictional sample results without uploading a file.' : 'The period printed in the file must match the selected round.'}</p>
+          {demo ? <>
+            <p className="text-sm">Demo Mode currently supports Q7 imports only. Other quarters remain visible for reference.</p>
+            <label onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => { event.preventDefault(); if (!busy) { resetPreview(); setFile(event.dataTransfer.files[0] ?? null) } }}
+              className="flex min-h-44 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-deep-green/40 p-5 text-center font-body text-deep-green hover:bg-deep-green/5 focus-within:ring-2 focus-within:ring-primary dark:border-card/40 dark:text-card dark:hover:bg-card/5">
+              <svg aria-hidden="true" className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 16V4m0 0L8 8m4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></svg>
+              <span className="font-heading text-lg font-extrabold">Drag and drop your FR.LST file here</span>
+              <span className="text-sm underline">or click to browse files</span>
+              <span className="text-sm">Upload the output file generated by the legacy FORTRAN simulation.</span>
+              <input aria-label="FR.LST file" className="sr-only" type="file" accept=".lst" disabled={busy} onChange={(event) => { resetPreview(); setFile(event.target.files?.[0] ?? null) }} />
+              {file && <span className="text-sm font-semibold">Selected: {file.name}</span>}
+            </label>
+            <Button type="button" onClick={() => void send('preview')} disabled={busy || !round || !file}>Preview results</Button>
+          </> : <p className="text-sm">The period printed in the file must match the selected round.</p>}
         </form>
       </Card>
       {busy && <p role="status">Processing FR.LST…</p>}
-      {error && <p role="alert">{error}</p>}
-      {message && <p role="status">{message}</p>}
+      {error && <p role="alert" className={demo ? "rounded border border-red-700 p-3 font-semibold text-red-800 dark:text-red-200" : undefined}>{error}</p>}
+      {message && <p role="status" className={demo ? "rounded border border-deep-green/40 p-3 font-semibold dark:border-card/40" : undefined}>{message}</p>}
       {preview && (
         <Card>
           <h2 className="mb-3 font-heading text-xl font-extrabold">Q{preview.round} results for {preview.teams.length} teams</h2>

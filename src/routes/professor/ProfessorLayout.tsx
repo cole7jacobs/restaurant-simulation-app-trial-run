@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, Outlet, useLocation, useMatch } from 'react-router-dom'
 import { DemoControls, DemoFooter } from '../../components/ui/DemoControls'
 import { SkipLink } from '../../components/ui/SkipLink'
@@ -22,7 +22,7 @@ export function ProfessorLayout() {
   const current = teamReview ? 'submissions' : hash.slice(1) || 'overview'
   usePageTitle(teamReview ? 'Team Review' : 'Professor Dashboard')
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const element = header.current
     const shell = element?.parentElement
     if (!element || !shell) return

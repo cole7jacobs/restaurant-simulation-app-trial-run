@@ -5,7 +5,7 @@ import { EmptyState } from '../../components/ui/EmptyState'
 import { MetricCard } from '../../components/ui/MetricCard'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuth } from '../../context/AuthContext'
-import { demoResults } from '../../lib/demo'
+import { demoResults, readDemoQ7 } from '../../lib/demo'
 import { menuPreparations } from '../../../shared/decisions'
 import { importRounds, type StudentResults, type TeamResults } from '../../../shared/results'
 
@@ -34,7 +34,12 @@ function useAllRounds(demo: boolean) {
   const [state, setState] = useState<LoadState>({ status: 'loading' })
 
   useEffect(() => {
-    if (demo) { setState({ status: 'ready', rounds: new Map([[5, demoResults]]) }); return }
+    if (demo) {
+      const rounds: Loaded = new Map([[5, demoResults]])
+      const q7 = readDemoQ7()
+      if (q7) rounds.set(7, q7)
+      setState({ status: 'ready', rounds }); return
+    }
     const controller = new AbortController()
     setState({ status: 'loading' })
     async function load() {
@@ -289,7 +294,7 @@ export function StudentResultsDashboard({ demo = false }: { demo?: boolean }) {
             <Card>
               <EmptyState
                 title={`No results for Q${round}`}
-                description="Results for this round have not been imported yet."
+                description={demo && round === 7 ? 'No results available for Quarter 7. The professor has not imported the simulation results yet.' : 'Results for this round have not been imported yet.'}
               />
             </Card>
           )}
