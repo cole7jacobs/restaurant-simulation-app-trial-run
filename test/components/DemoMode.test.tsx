@@ -14,9 +14,9 @@ function openDemo(path = '/demo') {
 }
 afterEach(() => { cleanup(); sessionStorage.clear(); vi.unstubAllGlobals() })
 
-it('opens public demo, displays Q5 results, and never calls protected APIs', async () => {
+it('opens public demo, displays Q6 results, and never calls protected APIs', async () => {
   const fetchMock = openDemo()
-  expect(await screen.findByText('Demo Bistro · Q5')).toBeVisible()
+  expect(await screen.findByText('Demo Bistro · Q6')).toBeVisible()
   expect(screen.getByText('Demo Mode · Team 1: Demo Bistro')).toBeVisible()
   expect(screen.getByText('Demo Mode · Team 1: Demo Bistro').compareDocumentPosition(screen.getByRole('navigation', { name: 'Student navigation' })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   expect(screen.getByRole('button', { name: 'Student View' })).toHaveAttribute('aria-pressed', 'true')

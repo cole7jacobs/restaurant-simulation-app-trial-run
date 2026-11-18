@@ -69,7 +69,7 @@ export function StudentLayout() {
           <div className="order-1 ml-auto flex items-center gap-3 sm:order-3">
             {/* Team name and round number from DevPreview context */}
             <span className="font-body text-sm text-deep-green dark:text-card hidden sm:block">
-              {demo ? 'Demo Bistro · Round 5' : session ? session.account.teamName : `${teamName} · Round ${roundNumber}`}
+              {demo ? 'Demo Bistro · Round 6' : session ? session.account.teamName : `${teamName} · Round ${roundNumber}`}
             </span>
             {!demo && <SessionControls />}
             <DarkModeToggle />
