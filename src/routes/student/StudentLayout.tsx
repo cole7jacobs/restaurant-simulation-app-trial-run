@@ -30,6 +30,7 @@ export function StudentLayout() {
       <SkipLink />
       {/* Top navigation bar */}
       <header className="sticky top-0 z-10 shrink-0 border-b border-deep-green/20 bg-card/90 backdrop-blur dark:border-card/10 dark:bg-dark-bg/90">
+        {demo && <DemoControls />}
         <nav
           className="max-w-6xl mx-auto flex flex-wrap items-center gap-x-4 gap-y-0 px-4 py-1"
           aria-label="Student navigation"
@@ -74,7 +75,6 @@ export function StudentLayout() {
             <DarkModeToggle />
           </div>
         </nav>
-        {demo && <DemoControls />}
       </header>
       <div className={isDecisionPage ? 'min-h-0 flex-1 overflow-y-auto overscroll-contain' : 'flex-1'}>
         {!demo && !session && <DevPreviewBanner />}
