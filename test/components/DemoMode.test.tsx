@@ -22,7 +22,7 @@ it('opens public demo, displays Q5 results, and never calls protected APIs', asy
   await userEvent.click(screen.getByRole('link', { name: 'Results' }))
   expect(await screen.findByRole('button', { name: 'Q5' })).toHaveAttribute('aria-pressed', 'true')
   expect(screen.getAllByText('$25,932')[1]).toBeVisible()
-  expect(screen.getByText(/do not recalculate results/)).toBeVisible()
+  expect(screen.getByRole('contentinfo')).toHaveTextContent('Changes stay in this browser and do not recalculate results; the FORTRAN simulation runs externally. Results are fictional sample data.')
   expect(fetchMock).not.toHaveBeenCalled()
 })
 
@@ -45,6 +45,7 @@ it('switches to professor and previews and confirms fictional results locally', 
   const user = userEvent.setup()
   await user.click(await screen.findByRole('button', { name: 'Professor View' }))
   expect(await screen.findByText('Professor Dashboard')).toBeVisible()
+  expect(screen.getByRole('contentinfo')).toHaveTextContent('Changes stay in this browser and do not recalculate results')
   expect(screen.getByText('Demo Mode · Q5 · Demo Bistro')).toBeVisible()
   expect(screen.getByRole('button', { name: 'Professor View' })).toHaveAttribute('aria-pressed', 'true')
   expect(screen.getByRole('button', { name: 'Student View' })).toHaveAttribute('aria-pressed', 'false')

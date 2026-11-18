@@ -1,4 +1,4 @@
-import { DemoControls } from '../../components/ui/DemoControls'
+import { DemoControls, DemoFooter } from '../../components/ui/DemoControls'
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { SkipLink } from '../../components/ui/SkipLink'
@@ -81,6 +81,7 @@ export function StudentLayout() {
         <main id="main-content" tabIndex={-1} className="max-w-6xl mx-auto w-full px-4 py-4 sm:py-5 focus:outline-none">
           <Outlet context={{ actionTarget }} />
         </main>
+        {demo && <DemoFooter />}
       </div>
       {isDecisionPage && <div ref={setActionTarget} className="shrink-0" />}
     </div>

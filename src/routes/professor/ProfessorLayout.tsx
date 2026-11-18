@@ -1,4 +1,4 @@
-import { DemoControls } from '../../components/ui/DemoControls'
+import { DemoControls, DemoFooter } from '../../components/ui/DemoControls'
 import { Link, Outlet, useLocation, useMatch } from 'react-router-dom'
 import { SkipLink } from '../../components/ui/SkipLink'
 import { usePageTitle } from '../../components/ui/usePageTitle'
@@ -84,6 +84,7 @@ export function ProfessorLayout() {
       <main id="main-content" tabIndex={-1} className="flex-1 max-w-6xl mx-auto w-full px-4 py-4 sm:py-5 focus:outline-none">
         <Outlet />
       </main>
+      {demo && <DemoFooter />}
     </div>
   )
 }

@@ -12,7 +12,7 @@ export function DemoControls() {
   }
   return <div className="border-t border-deep-green/20 px-4 py-2 text-deep-green dark:border-card/10 dark:text-card">
     <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-2">
-      <p className="w-full font-heading text-sm font-extrabold sm:w-auto sm:grow">Demo Mode · Q5 · Demo Bistro</p>
+      <p className="w-full font-heading text-xl font-extrabold sm:w-auto sm:grow sm:text-2xl">Demo Mode · Q5 · Demo Bistro</p>
       <div role="group" aria-label="Demo view" className="flex flex-wrap gap-2">
         <Button size="sm" variant={student ? 'primary' : 'outlined'} aria-pressed={student}
           onClick={() => navigate('/demo/student/home')}>Student View</Button>
@@ -21,7 +21,12 @@ export function DemoControls() {
       </div>
       <Button size="sm" variant="outlined" onClick={reset}>Reset Demo</Button>
       <Button size="sm" variant="outlined" to="/login">Exit Demo</Button>
-      <p className="w-full font-body text-xs">Changes stay in this browser and do not recalculate results; the FORTRAN simulation runs externally. Results are fictional sample data.</p>
     </div>
   </div>
+}
+
+export function DemoFooter() {
+  return <footer className="mx-auto w-full max-w-6xl px-4 pb-4 font-body text-xs leading-relaxed text-deep-green/70 dark:text-card/70">
+    Changes stay in this browser and do not recalculate results; the FORTRAN simulation runs externally. Results are fictional sample data.
+  </footer>
 }
