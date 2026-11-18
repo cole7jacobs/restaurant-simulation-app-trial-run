@@ -10,3 +10,12 @@ export const demoResults: StudentResults = {
 }
 export const demoKey = (round: number) => `sample-slice:demo:decisions:${round}`
 export const isDemoPath = (path: string) => path === '/demo' || path.startsWith('/demo/')
+
+export const demoQ7Key = 'sample-slice:demo:results:q7:v1'
+
+export function readDemoQ7(): StudentResults | null {
+  try {
+    const raw = sessionStorage.getItem(demoQ7Key)
+    return raw ? JSON.parse(raw) as StudentResults : null
+  } catch { return null }
+}
