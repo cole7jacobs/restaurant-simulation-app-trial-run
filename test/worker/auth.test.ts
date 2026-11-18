@@ -329,6 +329,37 @@ describe('Worker authentication with local D1', () => {
       .toEqual({ SalesPrice: 24.95, OrdersSold: null })
   })
 
+  it('serves a leaderboard of cumulative totals from imported rounds only, with no other fields', async () => {
+    const studentCookie = cookie(await login(student))
+    const professorCookie = cookie(await login(professor))
+    await db.batch([
+      // Round 6 is imported for teams 1 and 2 only; team 3's row there is not in the mapping.
+      db.prepare("INSERT INTO SimulationResultImport VALUES (6, 'hash', '[[1,1],[2,2]]', '2026-11-18T00:00:00Z', 'w')"),
+      db.prepare('INSERT INTO TeamMetrics VALUES (1, 6, 10, 5, 0, 0, 100, 1000, 7, 7)'),
+      db.prepare('INSERT INTO TeamMetrics VALUES (2, 6, 20, 5, 0, 0, 200, 50000, 7, 7)'),
+      db.prepare('INSERT INTO TeamMetrics VALUES (3, 6, 1, 1, 0, 0, 1, 999999, 7, 7)'),
+    ])
+    const response = await request('/student/leaderboard', { headers: { Cookie: studentCookie } })
+    expect(response.status).toBe(200)
+    // Round 4 (team 1, net income 0) has metrics but no import record, so it is not counted.
+    // Round 5 comes from the import above (the real archive when present); round 6 is added here.
+    const round6: Record<number, [number, number, number]> = { 1: [15, 1000, 100], 2: [25, 50000, 200] }
+    const { results: round5 } = await db.prepare(`SELECT t.TeamID, t.TeamName, t.FirmNumber, m.NetIncome,
+      m.FoodSales + m.BeverageSales AS Revenue, m.OperatingProfit FROM TeamMetrics m JOIN Team t USING (TeamID)
+      WHERE m.RoundNumber = 5`).all<{ TeamID: number; TeamName: string; FirmNumber: number; NetIncome: number; Revenue: number; OperatingProfit: number }>()
+    const expected = round5.map((row) => {
+      const [revenue, netIncome, profit] = round6[row.TeamID] ?? [0, 0, 0]
+      return {
+        TeamName: row.TeamName, FirmNumber: row.FirmNumber, IsOwn: row.TeamID === 1,
+        NetIncome: row.NetIncome + netIncome, Revenue: row.Revenue + revenue, OperatingProfit: row.OperatingProfit + profit,
+      }
+    }).sort((a, b) => b.NetIncome - a.NetIncome || a.TeamName.localeCompare(b.TeamName))
+    expect(expected).toHaveLength(5)
+    expect(await response.json()).toEqual({ teams: expected })
+    expect((await request('/student/leaderboard', { headers: { Cookie: professorCookie } })).status).toBe(403)
+    expect((await request('/student/leaderboard')).status).toBe(401)
+  })
+
   it('rate limits repeated attempts before password verification', async () => {
     await db.prepare('UPDATE LoginRateLimit SET Attempts = 8').run()
     const response = await login(student)

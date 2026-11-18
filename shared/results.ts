@@ -25,6 +25,17 @@ export type StudentMenuResult = Pick<
 > & { ResultSlot: number; DecisionSlot: number | null }
 export type StudentResults = { round: number; metrics: TeamResults; menu: StudentMenuResult[] }
 
+// Response of GET /api/student/leaderboard: cumulative totals over imported rounds, best net income first.
+export type LeaderboardEntry = {
+  TeamName: string
+  FirmNumber: number | null
+  IsOwn: boolean
+  NetIncome: number
+  Revenue: number
+  OperatingProfit: number
+}
+export type Leaderboard = { teams: LeaderboardEntry[] }
+
 export type ImportPreview = {
   round: number
   token: string

@@ -2,7 +2,7 @@ import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, expect, it, vi } from 'vitest'
-import type { StudentResults } from '../../shared/results'
+import type { LeaderboardEntry, StudentResults } from '../../shared/results'
 import { App } from '../../src/App'
 
 afterEach(() => {
@@ -31,11 +31,12 @@ function results(round: number, overrides: Partial<StudentResults['metrics']> = 
 }
 
 /** Stubs fetch with per-round responses; rounds that are not listed return the API's 404. */
-function renderDashboard(rounds: Record<number, () => Response | Promise<Response>>) {
+function renderDashboard(rounds: Record<number, () => Response | Promise<Response>>, leaderboard: LeaderboardEntry[] = []) {
   const fetchMock = vi.fn(async (path: string) => {
     if (path === '/api/auth/session') {
       return Response.json({ account, expiresAt: Math.floor(Date.now() / 1000) + 3600 })
     }
+    if (path === '/api/student/leaderboard') return Response.json({ teams: leaderboard })
     const match = /^\/api\/student\/results\/([1-7])$/.exec(path)
     if (!match) throw new Error(`Unexpected request to ${path}`)
     return rounds[Number(match[1])]?.() ??
@@ -131,4 +132,27 @@ it('returns to sign-in when the session has expired', async () => {
   renderDashboard({ 5: () => Response.json({ error: 'Session expired or invalid. Sign in again.' }, { status: 401 }) })
   expect(await screen.findByRole('button', { name: /sign in/i })).toBeVisible()
   expect(screen.queryByText('Loading results…')).not.toBeInTheDocument()
+})
+
+it('shows the leaderboard with the own team highlighted and re-ranks by the chosen view', async () => {
+  const entry = (TeamName: string, FirmNumber: number, NetIncome: number, Revenue: number, OperatingProfit: number, IsOwn = false) =>
+    ({ TeamName, FirmNumber, IsOwn, NetIncome, Revenue, OperatingProfit })
+  renderDashboard({ 5: () => Response.json(results(5)) }, [
+    entry('Alpha', 1, 300, 10, 20),
+    entry('Bistro', 2, 200, 50, 5, true),
+    entry('Cafe', 3, 100, 30, 90),
+  ])
+  const user = userEvent.setup()
+  const names = () => within(screen.getByRole('table', { name: /leaderboard/ })).getAllByRole('rowheader').map((cell) => cell.textContent)
+
+  expect(await screen.findByRole('table', { name: 'Overall leaderboard' })).toBeVisible()
+  expect(names()).toEqual(['1. Alpha', '2. Bistro (you)', '3. Cafe'])
+  expect(screen.getByRole('row', { name: /Bistro/ })).toHaveAttribute('aria-current', 'true')
+  expect(screen.getByRole('row', { name: /Alpha/ })).not.toHaveAttribute('aria-current')
+
+  await user.click(screen.getByRole('button', { name: 'Revenue' }))
+  expect(names()).toEqual(['2. Bistro (you)', '3. Cafe', '1. Alpha'])
+  await user.click(screen.getByRole('button', { name: 'Operating profit' }))
+  expect(names()).toEqual(['3. Cafe', '1. Alpha', '2. Bistro (you)'])
+  expect(screen.getByRole('row', { name: /Bistro/ })).toHaveAttribute('aria-current', 'true')
 })

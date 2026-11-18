@@ -7,7 +7,7 @@ import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuth } from '../../context/AuthContext'
 import { demoResults, readDemoQ7 } from '../../lib/demo'
 import { menuPreparations } from '../../../shared/decisions'
-import { importRounds, type StudentResults, type TeamResults } from '../../../shared/results'
+import { importRounds, type Leaderboard as LeaderboardData, type LeaderboardEntry, type StudentResults, type TeamResults } from '../../../shared/results'
 
 // Every figure on this page is shown as imported from FR.LST; nothing is recalculated.
 const financialRows: { key: keyof TeamResults; label: string }[] = [
@@ -227,6 +227,91 @@ function Trends({ rounds }: { rounds: Loaded }) {
   )
 }
 
+const leaderboardViews = [
+  { name: 'Overall', key: 'NetIncome' },
+  { name: 'Revenue', key: 'Revenue' },
+  { name: 'Net income', key: 'NetIncome' },
+  { name: 'Operating profit', key: 'OperatingProfit' },
+] as const
+
+/** Every team's cumulative totals over imported rounds. The signed-in team's row is highlighted. */
+function Leaderboard() {
+  const { expire } = useAuth()
+  const [teams, setTeams] = useState<LeaderboardEntry[] | null>(null)
+  const [view, setView] = useState<number>(0)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetch('/api/student/leaderboard', { signal: controller.signal, cache: 'no-store' })
+      .then(async (response) => {
+        if (response.status === 401) expire()
+        else if (response.ok) setTeams(((await response.json()) as LeaderboardData).teams)
+      })
+      .catch(() => {})
+    return () => controller.abort()
+  }, [expire])
+
+  if (!teams?.length) return null
+  const { key, name } = leaderboardViews[view]
+  const ranked = [...teams].sort((a, b) => b[key] - a[key])
+  const measures = name === 'Overall' ? leaderboardViews.slice(1) : [leaderboardViews[view]]
+  return (
+    <Card>
+      <h2 className={headingClass}>Leaderboard</h2>
+      <p className={`${noteClass} mb-3`}>Cumulative totals across all imported rounds.</p>
+      <div role="group" aria-label="Leaderboard view" className="flex items-center gap-2 flex-wrap mb-3">
+        {leaderboardViews.map(({ name: label }, index) => (
+          <button
+            key={label}
+            type="button"
+            aria-pressed={index === view}
+            onClick={() => setView(index)}
+            className={[
+              'inline-flex items-center justify-center rounded-sm px-3 py-1 font-body text-sm font-medium transition-colors',
+              index === view
+                ? 'bg-deep-green text-card dark:bg-card dark:text-deep-green'
+                : 'border border-deep-green/30 dark:border-card/30 text-deep-green dark:text-card hover:bg-deep-green/5 dark:hover:bg-card/10',
+            ].join(' ')}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full font-body text-sm">
+          <caption className="sr-only">{name} leaderboard</caption>
+          <thead>
+            <tr className="border-b border-deep-green/20 dark:border-card/10">
+              <th scope="col" className="pb-2 pr-4 text-left font-medium">Rank</th>
+              <th scope="col" className="pb-2 pr-4 text-left font-medium">Team</th>
+              {measures.map(({ name: label }) => (
+                <th key={label} scope="col" className="pb-2 pl-4 text-right font-medium">{label}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-deep-green/10 dark:divide-card/5">
+            {ranked.map((team, index) => (
+              <tr
+                key={team.TeamName}
+                aria-current={team.IsOwn ? 'true' : undefined}
+                className={team.IsOwn ? 'bg-primary/15 font-semibold' : undefined}
+              >
+                <td className="py-2 pr-4 tabular-nums">{index + 1}</td>
+                <th scope="row" className="py-2 pr-4 text-left font-normal">
+                  {team.FirmNumber === null ? '' : `${team.FirmNumber}. `}{team.TeamName}{team.IsOwn ? ' (you)' : ''}
+                </th>
+                {measures.map(({ key: measure, name: label }) => (
+                  <td key={label} className="py-2 pl-4 text-right tabular-nums">{dollars.format(team[measure])}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  )
+}
+
 /** Authenticated results dashboard for the signed-in student's assigned team. */
 export function StudentResultsDashboard({ demo = false }: { demo?: boolean }) {
   const { session } = useAuth()
@@ -300,6 +385,7 @@ export function StudentResultsDashboard({ demo = false }: { demo?: boolean }) {
           )}
 
           {rounds.size > 1 && <Trends rounds={rounds} />}
+          {!demo && <Leaderboard />}
         </>
       )}
     </div>

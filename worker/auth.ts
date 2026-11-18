@@ -1,5 +1,5 @@
 import { professorImport } from './professor-import'
-import { importRounds } from '../shared/results'
+import { importRounds, type LeaderboardEntry } from '../shared/results'
 import { professorRfi } from './professor-rfi'
 import type { D1Database } from '@cloudflare/workers-types'
 import { Hono, type MiddlewareHandler } from 'hono'
@@ -182,6 +182,19 @@ authRoutes.get('/student/results/:round', async (c) => {
   ])
   if (!metrics.results.length) return c.json({ error: 'No imported results for this round.' }, 404)
   return c.json({ round, metrics: metrics.results[0], menu: menu.results })
+})
+
+// Cumulative totals per team across imported rounds only. Exposes just the agreed fields, never whole TeamMetrics rows.
+authRoutes.get('/student/leaderboard', async (c) => {
+  const { results } = await c.env.DB.prepare(`
+    SELECT t.TeamName, t.FirmNumber, t.TeamID = ? AS IsOwn, SUM(m.NetIncome) AS NetIncome,
+      SUM(m.FoodSales + m.BeverageSales) AS Revenue, SUM(m.OperatingProfit) AS OperatingProfit
+    FROM TeamMetrics m JOIN SimulationResultImport USING (RoundNumber) JOIN Team t USING (TeamID)
+    WHERE EXISTS (SELECT 1 FROM json_each(TeamMapping) WHERE json_extract(value, '$[1]') = m.TeamID)
+    GROUP BY t.TeamID ORDER BY NetIncome DESC, t.TeamName
+  `).bind(c.get('account').teamId).all<Omit<LeaderboardEntry, 'IsOwn'> & { IsOwn: number }>()
+  const teams: LeaderboardEntry[] = results.map((row) => ({ ...row, IsOwn: row.IsOwn === 1 }))
+  return c.json({ teams })
 })
 
 authRoutes.use('/professor/*', requireSession, requireRole('professor'))
