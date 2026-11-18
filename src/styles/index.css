@@ -50,7 +50,89 @@
 
   /* Hanken Grotesk — button labels, form text, tables, labels (16 px / 14 px medium) */
   --font-body: "Hanken Grotesk", Arial, sans-serif;
+
+  /* Increase the existing type scale by 15% without changing layout spacing. */
+  --text-xs: 0.8625rem;
+  --text-sm: 1.00625rem;
+  --text-base: 1.15rem;
+  --text-lg: 1.29375rem;
+  --text-xl: 1.4375rem;
+  --text-2xl: 1.725rem;
+  --text-3xl: 2.15625rem;
+  --text-4xl: 2.5875rem;
+  --text-5xl: 3.45rem;
+  --text-6xl: 4.3125rem;
 }
+
+.professor-workspace { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+.professor-tiles { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.75rem; align-items: start; }
+.professor-section { min-width: 0; scroll-margin-top: calc(var(--professor-header-height, 6rem) + 1rem); }
+.professor-section-kicker {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.professor-section-title { font-size: var(--text-xl); }
+.professor-tile .professor-tile-inner { border: 0; border-radius: 0; background: transparent; padding: 0; box-shadow: none; animation: none; }
+
+.navigation-menu-button,
+.navigation-drawer-close {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.navigation-menu-button:hover,
+.navigation-drawer-close:hover { background: rgb(109 143 143 / 0.15); }
+.navigation-menu-icon { display: grid; gap: 4px; width: 1.3rem; }
+.navigation-menu-icon span { display: block; height: 2px; background: currentColor; }
+
+.navigation-drawer-layer { position: fixed; inset: 0; z-index: 50; display: flex; }
+.navigation-drawer-layer[hidden] { display: none; }
+.navigation-drawer-scrim { position: absolute; inset: 0; background: rgb(20 25 25 / 0.55); }
+.navigation-drawer-panel {
+  position: relative;
+  z-index: 1;
+  width: min(23rem, calc(100vw - 2rem));
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-card);
+  color: var(--color-deep-green);
+  padding: 1.5rem;
+  box-shadow: 8px 0 30px rgb(0 0 0 / 0.2);
+}
+.dark .navigation-drawer-panel { background: var(--color-dark-bg); color: var(--color-card); }
+.navigation-drawer-close { min-width: 2.75rem; font-size: var(--text-xl); line-height: 1; }
+.navigation-drawer-link {
+  display: flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+.navigation-drawer-link:hover,
+.navigation-drawer-link[aria-current] { background: rgb(109 143 143 / 0.2); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .navigation-drawer-scrim { animation: navigation-scrim-in 180ms ease-out; }
+  .navigation-drawer-panel { animation: navigation-drawer-in 220ms ease-out; }
+}
+@keyframes navigation-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes navigation-drawer-in { from { transform: translateX(-100%); } to { transform: translateX(0); } }
 
 /* Decision cards share one scroll pane; their columns size independently. */
 .decision-tiles {
@@ -61,25 +143,58 @@
 }
 
 .decision-column {
-  display: grid;
-  gap: 0.75rem;
-  align-content: start;
-  min-width: 0;
+  display: contents;
 }
 
 .decision-tile {
   min-width: 0;
   scroll-margin-block: 0.75rem;
+}
+
+.decision-tile-surface,
+.professor-tile,
+.decision-shortcut {
   border: 1px solid var(--color-primary);
+  border-top-width: 3px;
   border-radius: 0.875rem;
   background: var(--color-beige);
+  box-shadow: 0 6px 18px rgb(43 46 46 / 0.08);
   padding: 1rem;
 }
 
-.dark .decision-tile {
+.dark .decision-tile-surface,
+.dark .professor-tile,
+.dark .decision-shortcut {
   border-color: rgb(230 238 236 / 0.1);
-  background: var(--color-dark-card);
+  border-top-color: var(--color-primary);
+  background: var(--color-dark-bg);
+  background-image: linear-gradient(var(--color-dark-card), var(--color-dark-card));
 }
+
+.decision-tile:where(#menu) { --stack-offset: 0px; --tile-delay: 0ms; z-index: 1; }
+.decision-tile:where(#staffing) { --stack-offset: 12px; --tile-delay: 60ms; z-index: 2; }
+.decision-tile:where(#finance) { --stack-offset: 24px; --tile-delay: 120ms; z-index: 3; }
+.decision-tile:where(#amenities) { --stack-offset: 36px; --tile-delay: 180ms; z-index: 4; }
+.decision-tile:where(#reports) { --stack-offset: 48px; --tile-delay: 240ms; z-index: 5; }
+
+.decision-shortcut-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.decision-shortcut {
+  display: flex;
+  min-width: 0;
+  min-height: 6rem;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.decision-shortcut:hover { border-color: var(--color-deep-green); }
+.dark .decision-shortcut:hover { border-color: var(--color-card); }
 
 .decision-action-bar {
   border-top: 1px solid rgb(43 46 46 / 0.2);
@@ -93,8 +208,47 @@
 }
 
 @media (min-width: 768px) {
+  .professor-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .professor-tiles #submissions { grid-column: 1 / -1; }
   .decision-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .decision-menu { grid-column: 1 / -1; }
+  .decision-column { display: grid; gap: 0.75rem; align-content: start; min-width: 0; }
+  .decision-tile:where(#amenities) { --stack-offset: 12px; z-index: 2; }
+  .decision-tile:where(#reports) { --stack-offset: 24px; z-index: 3; }
+  .decision-shortcut-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .decision-shortcut:nth-child(1) { grid-column: 1 / -1; }
+  .decision-shortcut:nth-child(2) { grid-column: 1; grid-row: 2; }
+  .decision-shortcut:nth-child(3) { grid-column: 1; grid-row: 3; }
+  .decision-shortcut:nth-child(4) { grid-column: 2; grid-row: 2; }
+  .decision-shortcut:nth-child(5) { grid-column: 2; grid-row: 3; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tile-entrance {
+    animation: tile-appear 560ms cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    animation-delay: var(--tile-delay, 0ms);
+  }
+
+  .tile-entrance:nth-child(2) { --tile-delay: 60ms; }
+  .tile-entrance:nth-child(3) { --tile-delay: 120ms; }
+  .tile-entrance:nth-child(4) { --tile-delay: 180ms; }
+  .tile-entrance:nth-child(n + 5) { --tile-delay: 240ms; }
+
+  .tile-entrance:focus,
+  .tile-entrance:focus-within,
+  .decision-tile:focus-within .tile-entrance {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  @supports (position: sticky) {
+    .decision-tile {
+      position: sticky;
+      /* Oversized cards scroll normally so their controls remain reachable. */
+      top: var(--stack-top, min(var(--stack-offset), calc(var(--stack-pane-height) - var(--stack-card-height) - 12px)));
+    }
+  }
 }
 
 /* Content is visible by default, including in browsers without scroll timelines. */
@@ -113,6 +267,19 @@
       transform: none;
     }
   }
+}
+
+/* Let keyboard and pointer users reach every control in an overlapping stack. */
+.decision-tile:focus,
+.decision-tile:focus-within {
+  position: relative;
+  top: auto;
+  z-index: 10;
+}
+
+@keyframes tile-appear {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes decision-reveal {
@@ -135,6 +302,8 @@
     color: #E6EEEC;           /* vanilla text in dark mode */
     background-color: #2B2E2E;
   }
+
+  body { font-size: 1.15rem; }
 
   h1, h2, h3 {
     font-family: var(--font-heading);

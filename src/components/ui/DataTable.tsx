@@ -30,7 +30,7 @@ export function DataTable({ caption, columns, rows }: DataTableProps) {
                 <th
                   key={column}
                   scope="col"
-                  className="pb-2 pr-4 text-left text-[11px] font-medium uppercase tracking-[0.12em] text-deep-green/70 dark:text-card/70"
+                  className="pb-2 pr-4 text-left text-[0.79rem] font-medium uppercase tracking-[0.12em] text-deep-green/70 dark:text-card/70"
                 >
                   {column}
                 </th>
@@ -63,7 +63,7 @@ export function DataTable({ caption, columns, rows }: DataTableProps) {
             <dl className="mt-1 grid grid-cols-3 gap-x-3 gap-y-1 font-body text-sm">
               {row.cells.slice(1).map((cell, index) => (
                 <div key={index}>
-                  <dt className="text-[10px] uppercase tracking-wider text-deep-green/70 dark:text-card/70">
+                  <dt className="text-[0.725rem] uppercase tracking-wider text-deep-green/70 dark:text-card/70">
                     {columns[index + 1]}
                   </dt>
                   <dd className="font-medium text-deep-green dark:text-card">{cell}</dd>

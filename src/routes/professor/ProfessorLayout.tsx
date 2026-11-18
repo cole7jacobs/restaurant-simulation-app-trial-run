@@ -1,5 +1,6 @@
+import { useLayoutEffect, useRef } from 'react'
+import { Outlet, useLocation, useMatch } from 'react-router-dom'
 import { DemoControls, DemoFooter } from '../../components/ui/DemoControls'
-import { Link, Outlet, useLocation, useMatch } from 'react-router-dom'
 import { SkipLink } from '../../components/ui/SkipLink'
 import { usePageTitle } from '../../components/ui/usePageTitle'
 import { DarkModeToggle } from '../../components/ui/DarkModeToggle'
@@ -7,80 +8,58 @@ import { SessionControls } from '../../components/ui/SessionControls'
 import { useAuth } from '../../context/AuthContext'
 import { DevPreviewBanner } from '../../components/ui/DevPreviewBanner'
 
-const NAV_TABS = [
-  { label: 'Home', to: '/professor/home' },
-  { label: 'Submissions', to: '/professor/submissions' },
-  { label: 'RFI Generation', to: '/professor/rfi' },
-  { label: 'FR.LST Import', to: '/professor/import' },
-] as const
-
 export function ProfessorLayout() {
   const { session } = useAuth()
   const { pathname } = useLocation()
   const demo = pathname.startsWith('/demo/')
   const teamReview = useMatch('/professor/team-review/:teamId')
-  usePageTitle(teamReview ? 'Team Review' : NAV_TABS.find((t) => t.to === pathname.toLowerCase().replace(/^\/demo/, '').replace(/\/+$/, ''))?.label ?? 'Professor')
+  const header = useRef<HTMLElement>(null)
+  usePageTitle(teamReview ? 'Team Review' : 'Professor Dashboard')
+
+  useLayoutEffect(() => {
+    const element = header.current
+    const shell = element?.parentElement
+    if (!element || !shell) return
+    const measure = () => shell.style.setProperty('--professor-header-height', element.offsetHeight + 'px')
+    measure()
+    window.addEventListener('resize', measure)
+    let observer: ResizeObserver | undefined
+    try {
+      if (typeof ResizeObserver !== 'undefined') {
+        observer = new ResizeObserver(measure)
+        observer.observe(element)
+      }
+    } catch {
+      observer?.disconnect()
+    }
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', measure)
+      shell.style.removeProperty('--professor-header-height')
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-card dark:bg-dark-bg flex flex-col">
       <SkipLink />
-      {/* Top navigation bar */}
-      <header className="sticky top-0 z-10 border-b border-deep-green/20 bg-card/90 backdrop-blur dark:border-card/10 dark:bg-dark-bg/90">
+      <header ref={header} className="sticky top-0 z-10 shrink-0 border-b border-deep-green/20 bg-card/90 backdrop-blur dark:border-card/10 dark:bg-dark-bg/90">
         {demo && <DemoControls />}
-        <nav
-          className="max-w-6xl mx-auto flex flex-wrap items-center gap-x-4 gap-y-0 px-4 py-1"
-          aria-label="Professor navigation"
-        >
-          {/* Wordmark */}
-          <img
-            src="/sample-slice-icon.png"
-            alt=""
-            className="order-1 h-[84px] w-[84px] shrink-0 object-contain"
-          />
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-1 px-4 py-1" aria-label="Professor header">
+          <img src="/sample-slice-icon.png" alt="" className="order-1 h-[84px] w-[84px] shrink-0 object-contain" />
           <span className="order-1 shrink-0 font-heading text-xl font-extrabold uppercase tracking-wide text-deep-green dark:text-card">
             Sample<span className="text-primary">Slice</span>
           </span>
-
-          {/* Nav tabs */}
-          <div className="order-2 flex w-full items-center gap-0 flex-wrap sm:w-auto sm:grow">
-            {NAV_TABS.map(({ label, to }) => {
-              const isCurrent = pathname.toLowerCase().replace(/^\/demo/, '').replace(/\/+$/, '') === to
-              const isSection = Boolean(teamReview) && label === 'Submissions'
-
-              return (
-                <Link
-                  key={to}
-                  to={demo ? '/demo' + to : to}
-                  aria-current={isCurrent ? 'page' : isSection ? 'location' : undefined}
-                  className={[
-                    'inline-flex min-h-11 shrink-0 items-center whitespace-nowrap px-3 sm:px-4 border-b-2 font-body text-sm font-medium uppercase tracking-wider transition-colors',
-                    isCurrent || isSection
-                      ? 'border-primary text-deep-green dark:text-card'
-                      : 'border-transparent text-deep-green/70 dark:text-card/70 hover:text-deep-green dark:hover:text-card',
-                  ].join(' ')}
-                >
-                  {label}
-                </Link>
-              )
-            })}
-          </div>
-
-          {/* Right-side controls */}
           <div className="order-1 ml-auto flex items-center gap-3 sm:order-3">
-            {/* Phase 2: replace with actual user name from auth session */}
-            <span className="font-body text-sm text-deep-green dark:text-card hidden sm:block">
+            <span className="hidden font-body text-sm text-deep-green sm:block dark:text-card">
               {session?.account.name ?? 'Professor'}
             </span>
             {!demo && <SessionControls />}
             <DarkModeToggle />
           </div>
-        </nav>
+        </div>
       </header>
 
-      {/* Dev preview banner — hidden when not in preview mode */}
       {!demo && !session && <DevPreviewBanner />}
-
-      {/* Page content */}
       <main id="main-content" tabIndex={-1} className="flex-1 max-w-6xl mx-auto w-full px-4 py-4 sm:py-5 focus:outline-none">
         <Outlet />
       </main>

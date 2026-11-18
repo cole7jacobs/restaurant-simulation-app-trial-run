@@ -164,7 +164,7 @@ it('shows save errors without losing values and allows a manual retry', async ()
 
 it('supports old review URLs and focuses the tile linked from the dashboard', async () => {
   await signedIn('/student/review/?round=2')
-  expect(screen.getByRole('navigation', { name: 'Student navigation' })).toHaveTextContent('SampleSlice')
+  expect(screen.getByRole('button', { name: 'Open navigation menu' })).toBeVisible()
   expect(screen.getByRole('link', { name: 'Skip to main content' })).toHaveAttribute('href', '#main-content')
   expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content')
   expect(document.title).toBe('Decisions · Restaurant Simulation')

@@ -1,8 +1,9 @@
 import { DemoControls, DemoFooter } from '../../components/ui/DemoControls'
 import { useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { SkipLink } from '../../components/ui/SkipLink'
 import { usePageTitle } from '../../components/ui/usePageTitle'
+import { NavigationDrawer } from '../../components/ui/NavigationDrawer'
 import { DarkModeToggle } from '../../components/ui/DarkModeToggle'
 import { SessionControls } from '../../components/ui/SessionControls'
 import { useAuth } from '../../context/AuthContext'
@@ -31,10 +32,12 @@ export function StudentLayout() {
       {/* Top navigation bar */}
       <header className="sticky top-0 z-10 shrink-0 border-b border-deep-green/20 bg-card/90 backdrop-blur dark:border-card/10 dark:bg-dark-bg/90">
         {demo && <DemoControls />}
-        <nav
-          className="max-w-6xl mx-auto flex flex-wrap items-center gap-x-4 gap-y-0 px-4 py-1"
-          aria-label="Student navigation"
-        >
+        <div className="max-w-6xl mx-auto flex flex-wrap items-center gap-x-4 gap-y-0 px-4 py-1">
+          <NavigationDrawer items={NAV_TABS.map(({ label, to }) => ({
+            label,
+            to: demo ? '/demo' + to : to,
+            active: studentPath === to || (to === '/student/decisions' && studentPath === '/student/review'),
+          }))} />
           {/* Wordmark */}
           <img
             src="/sample-slice-icon.png"
@@ -45,26 +48,6 @@ export function StudentLayout() {
             Sample<span className="text-primary">Slice</span>
           </span>
 
-          {/* Nav tabs */}
-          <div className="order-2 flex w-full items-center gap-0 flex-wrap sm:w-auto sm:grow">
-            {NAV_TABS.map(({ label, to }) => (
-              <NavLink
-                key={to}
-                to={demo ? '/demo' + to : to}
-                className={({ isActive }) =>
-                  [
-                    'inline-flex min-h-11 shrink-0 items-center whitespace-nowrap px-3 sm:px-4 border-b-2 font-body text-sm font-medium uppercase tracking-wider transition-colors',
-                    isActive || (to === '/student/decisions' && studentPath === '/student/review')
-                      ? 'border-primary text-deep-green dark:text-card'
-                      : 'border-transparent text-deep-green/70 dark:text-card/70 hover:text-deep-green dark:hover:text-card',
-                  ].join(' ')
-                }
-              >
-                {label}
-              </NavLink>
-            ))}
-          </div>
-
           {/* Right-side controls */}
           <div className="order-1 ml-auto flex items-center gap-3 sm:order-3">
             {/* Team name and round number from DevPreview context */}
@@ -74,9 +57,9 @@ export function StudentLayout() {
             {!demo && <SessionControls />}
             <DarkModeToggle />
           </div>
-        </nav>
+        </div>
       </header>
-      <div className={isDecisionPage ? 'min-h-0 flex-1 overflow-y-auto overscroll-contain' : 'flex-1'}>
+      <div data-decision-scroll={isDecisionPage ? '' : undefined} className={isDecisionPage ? 'min-h-0 flex-1 overflow-y-auto overscroll-contain' : 'flex-1'}>
         {!demo && !session && <DevPreviewBanner />}
         <main id="main-content" tabIndex={-1} className="max-w-6xl mx-auto w-full px-4 py-4 sm:py-5 focus:outline-none">
           <Outlet context={{ actionTarget }} />

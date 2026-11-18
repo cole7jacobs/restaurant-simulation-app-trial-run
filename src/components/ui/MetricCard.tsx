@@ -15,10 +15,10 @@ interface MetricCardProps {
  */
 export function MetricCard({ label, value, subtext, demo = false, ticker = false }: MetricCardProps) {
   return (
-    <div className="relative rounded-sm border border-primary border-t-4 border-t-primary bg-beige p-4 dark:bg-dark-card dark:border-card/10 dark:border-t-primary">
+    <div className="tile-entrance relative rounded-sm border border-primary border-t-4 border-t-primary bg-beige p-4 dark:bg-dark-card dark:border-card/10 dark:border-t-primary">
       {/* Demo data pill */}
       {demo && (
-        <span className="mb-1 inline-block font-body text-[10px] font-medium uppercase tracking-[0.15em] text-deep-green/70 dark:text-card/70">
+        <span className="mb-1 inline-block font-body text-[0.725rem] font-medium uppercase tracking-[0.15em] text-deep-green/70 dark:text-card/70">
           Demo data
         </span>
       )}

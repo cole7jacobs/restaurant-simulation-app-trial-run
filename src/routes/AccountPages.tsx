@@ -4,6 +4,7 @@ import { PageHeader } from '../components/ui/PageHeader'
 import { MetricCard } from '../components/ui/MetricCard'
 import { Button } from '../components/ui/Button'
 import { useAuth, useProtectedData } from '../context/AuthContext'
+import { DecisionSectionTiles } from './student/DecisionSectionTiles'
 
 export function StudentAccountHome({ demo = false }: { demo?: boolean }) {
   return demo ? <StudentHomeContent demo data={{ team: { TeamID: -1, TeamName: 'Demo Bistro', FirmNumber: 1 } }} /> : <StudentHomeLive />
@@ -42,18 +43,7 @@ function StudentHomeContent({ data, error, name, demo = false }: { data?: { team
         </Card>
       )}
 
-      <Card>
-        <h2 className="mb-3 font-heading text-xl font-extrabold">Decision sections</h2>
-        <nav aria-label="Decision sections" className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
-          {[
-            ['Menu selections', 'menu'],
-            ['Staffing & Compensation', 'staffing'],
-            ['Finance', 'finance'],
-            ['Amenities & Upkeep', 'amenities'],
-            ['Reports', 'reports'],
-          ].map(([label, id]) => <Link key={id} className="underline" to={prefix + '/student/decisions#' + id}>{label}</Link>)}
-        </nav>
-      </Card>
+      <DecisionSectionTiles prefix={prefix} />
 
       {/* Quick links */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -64,9 +54,7 @@ function StudentHomeContent({ data, error, name, demo = false }: { data?: { team
               Set your menu, staffing and finance choices for a round.
             </p>
           </div>
-          <Link to={prefix + "/student/decisions"}>
-            <Button variant="primary">Enter decisions</Button>
-          </Link>
+          <Button to={prefix + '/student/decisions'} variant="primary">Enter decisions</Button>
         </Card>
         <Card className="flex flex-col items-start gap-3">
           <div>
@@ -75,9 +63,7 @@ function StudentHomeContent({ data, error, name, demo = false }: { data?: { team
               See your imported results and charts by round.
             </p>
           </div>
-          <Link to={prefix + "/student/results"}>
-            <Button variant="outlined">View results</Button>
-          </Link>
+          <Button to={prefix + '/student/results'} variant="outlined">View results</Button>
         </Card>
       </div>
     </div>
@@ -92,23 +78,23 @@ type Submission = {
   SubmittedAt: string | null
 }
 
-export function ProfessorAccountPage({ title, teamOnly = false, demo = false }: { title: string; teamOnly?: boolean; demo?: boolean }) {
-  return demo ? <ProfessorAccountContent title={title} teamOnly={teamOnly} demo rows={[{ TeamID: -1, TeamName: 'Demo Bistro', FirmNumber: 1, RoundNumber: 5, SubmittedAt: null }]} /> : <ProfessorAccountLive title={title} teamOnly={teamOnly} />
+export function ProfessorAccountPage({ title, teamOnly = false, demo = false, embedded = false }: { title: string; teamOnly?: boolean; demo?: boolean; embedded?: boolean }) {
+  return demo ? <ProfessorAccountContent title={title} teamOnly={teamOnly} demo embedded={embedded} rows={[{ TeamID: -1, TeamName: 'Demo Bistro', FirmNumber: 1, RoundNumber: 5, SubmittedAt: null }]} /> : <ProfessorAccountLive title={title} teamOnly={teamOnly} embedded={embedded} />
 }
 
-function ProfessorAccountLive({ title, teamOnly }: { title: string; teamOnly: boolean }) {
+function ProfessorAccountLive({ title, teamOnly, embedded }: { title: string; teamOnly: boolean; embedded: boolean }) {
   const { teamId } = useParams()
   const { data, error } = useProtectedData<{ submissions: Submission[] }>('/professor/submissions')
   const rows = data?.submissions.filter((row) => !teamOnly || String(row.TeamID) === teamId)
 
-  return <ProfessorAccountContent title={title} teamOnly={teamOnly} rows={rows} error={error} />
+  return <ProfessorAccountContent title={title} teamOnly={teamOnly} rows={rows} error={error} embedded={embedded} />
 }
 
-function ProfessorAccountContent({ title, teamOnly, rows, error, demo = false }: { title: string; teamOnly: boolean; rows?: Submission[]; error?: string; demo?: boolean }) {
+function ProfessorAccountContent({ title, teamOnly, rows, error, demo = false, embedded = false }: { title: string; teamOnly: boolean; rows?: Submission[]; error?: string; demo?: boolean; embedded?: boolean }) {
   return (
     <div className="space-y-4">
-      <PageHeader title={title} />
-      <Card>
+      {!embedded && <PageHeader title={title} />}
+      <Card className={embedded ? 'professor-tile-inner' : ''}>
         {!rows ? <p role={error ? 'alert' : 'status'}>{error ?? 'Loading team submissions…'}</p>
           : rows.length === 0 ? <p>No teams found.</p> : (
             <div className="overflow-x-auto">
@@ -137,6 +123,7 @@ function ProfessorAccountContent({ title, teamOnly, rows, error, demo = false }:
             </div>
           )}
       </Card>
+      {teamOnly && <Button to="/professor/home#submissions" variant="outlined">Back to submissions</Button>}
     </div>
   )
 }

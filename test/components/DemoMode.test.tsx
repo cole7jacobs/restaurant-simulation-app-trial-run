@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, expect, it, vi } from 'vitest'
@@ -14,14 +14,29 @@ function openDemo(path = '/demo') {
 }
 afterEach(() => { cleanup(); sessionStorage.clear(); vi.unstubAllGlobals() })
 
+async function goToStudentPage(label: 'Decisions' | 'Results') {
+  await userEvent.click(screen.getByRole('button', { name: 'Open navigation menu' }))
+  await userEvent.click(within(screen.getByRole('navigation', { name: 'Student navigation' })).getByRole('link', { name: label }))
+}
+
+it('shows decision section tiles that open the matching editor section', async () => {
+  const fetchMock = openDemo('/demo/student/home')
+  const sections = screen.getByRole('navigation', { name: 'Decision sections' })
+  expect(within(sections).getAllByRole('link')).toHaveLength(5)
+  expect(within(sections).getByRole('link', { name: 'Menu selections' })).toHaveAttribute('href', '/demo/student/decisions#menu')
+  await userEvent.click(within(sections).getByRole('link', { name: 'Reports' }))
+  expect(await screen.findByRole('region', { name: 'Reports' })).toHaveFocus()
+  expect(fetchMock).not.toHaveBeenCalled()
+})
+
 it('opens public demo, displays Q5 results, and never calls protected APIs', async () => {
   const fetchMock = openDemo()
   expect(await screen.findByText('Demo Bistro · Q5')).toBeVisible()
   expect(screen.getByText('Demo Mode · Team 1: Demo Bistro')).toBeVisible()
-  expect(screen.getByText('Demo Mode · Team 1: Demo Bistro').compareDocumentPosition(screen.getByRole('navigation', { name: 'Student navigation' })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  expect(screen.getByText('Demo Mode · Team 1: Demo Bistro').compareDocumentPosition(screen.getByRole('button', { name: 'Open navigation menu' })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   expect(screen.getByRole('button', { name: 'Student View' })).toHaveAttribute('aria-pressed', 'true')
   expect(screen.getByRole('button', { name: 'Professor View' })).toHaveAttribute('aria-pressed', 'false')
-  await userEvent.click(screen.getByRole('link', { name: 'Results' }))
+  await goToStudentPage('Results')
   expect(await screen.findByRole('button', { name: 'Q5' })).toHaveAttribute('aria-pressed', 'true')
   expect(screen.getAllByText('$25,932')[1]).toBeVisible()
   expect(screen.getByRole('contentinfo')).toHaveTextContent('Changes stay in this browser and do not recalculate results; the FORTRAN simulation runs externally. Q5 results are sample data; Q7 results come from the file you import.')
@@ -37,7 +52,7 @@ it('saves edits only in demo session storage and resets them', async () => {
   await waitFor(() => expect(JSON.parse(sessionStorage.getItem(demoKey(5)) || '{}').values?.StaffPerDay).toBe(30), { timeout: 3000 })
   await user.click(screen.getByRole('button', { name: 'Reset Demo' }))
   expect(sessionStorage.getItem(demoKey(5))).toBeNull()
-  await user.click(screen.getByRole('link', { name: 'Decisions' }))
+  await goToStudentPage('Decisions')
   expect(await screen.findByLabelText('Staff FTEs per day')).toHaveValue(27)
   expect(fetchMock).not.toHaveBeenCalled()
 })
@@ -68,7 +83,12 @@ const synthetic = (period: number) => [
 async function importQ7(source: string) {
   const user = userEvent.setup()
   await user.click(await screen.findByRole('button', { name: 'Professor View' }))
-  await user.click(screen.getByRole('link', { name: 'FR.LST Import' }))
+  expect(await screen.findByText('Professor Dashboard')).toBeVisible()
+  expect(screen.getByRole('contentinfo')).toHaveTextContent('Changes stay in this browser and do not recalculate results')
+  expect(screen.getByText('Demo Mode · Team 1: Demo Bistro')).toBeVisible()
+  expect(screen.getByText('Demo Mode · Team 1: Demo Bistro').compareDocumentPosition(screen.getByRole('heading', { name: 'Professor Dashboard' })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  expect(screen.getByRole('button', { name: 'Professor View' })).toHaveAttribute('aria-pressed', 'true')
+  expect(screen.getByRole('button', { name: 'Student View' })).toHaveAttribute('aria-pressed', 'false')
   await user.upload(screen.getByLabelText('FR.LST file'), new File([source], 'sample.lst', { type: 'text/plain' }))
   await user.click(screen.getByRole('button', { name: 'Preview results' }))
   return user
@@ -89,14 +109,14 @@ it('imports Q7 into browser session, maps Firm 1, preserves Q5 and resets', asyn
   expect(await screen.findByText(/Q7 results imported for Demo Bistro/)).toBeVisible()
   expect(JSON.parse(sessionStorage.getItem(demoQ7Key)!).metrics).toEqual(firm.metrics)
   await user.click(screen.getByRole('button', { name: 'Student View' }))
-  await user.click(screen.getByRole('link', { name: 'Results' }))
+  await goToStudentPage('Results')
   expect(await screen.findByText('Q7 · Demo Bistro')).toBeVisible()
   expect(screen.getByRole('table', { name: 'Q7 income statement amounts' })).toHaveTextContent(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(firm.metrics.NetIncome))
   await user.click(screen.getByRole('button', { name: 'Q5' }))
   expect(screen.getAllByText('$25,932')[1]).toBeVisible()
   await user.click(screen.getByRole('button', { name: 'Reset Demo' }))
   expect(sessionStorage.getItem(demoQ7Key)).toBeNull()
-  await user.click(screen.getByRole('link', { name: 'Results' }))
+  await goToStudentPage('Results')
   await user.click(await screen.findByRole('button', { name: /Q7, no results/ }))
   expect(screen.getByText('No results available for Quarter 7. The professor has not imported the simulation results yet.')).toBeVisible()
   expect(fetchMock).not.toHaveBeenCalled()
@@ -105,8 +125,8 @@ it('imports Q7 into browser session, maps Firm 1, preserves Q5 and resets', asyn
 it('shows all quarters but blocks unsupported demo imports', async () => {
   const fetchMock = openDemo('/demo/professor/import')
   const user = userEvent.setup()
-  const select = screen.getByLabelText('Simulation round')
-  for (let round = 1; round <= 7; round++) expect(screen.getByRole('option', { name: `Q${round}` })).toBeInTheDocument()
+  const select = screen.getByLabelText('Import simulation round')
+  for (let round = 1; round <= 7; round++) expect(within(select).getByRole('option', { name: `Q${round}` })).toBeInTheDocument()
   await user.selectOptions(select, '5')
   await user.upload(screen.getByLabelText('FR.LST file'), new File([synthetic(7)], 'sample.lst'))
   await user.click(screen.getByRole('button', { name: 'Preview results' }))
@@ -147,7 +167,6 @@ it('allows adding and removing menu selections and generates a local sample RFI'
   await user.click(screen.getByRole('button', { name: 'Remove selection 2' }))
   expect(screen.queryByText('Selection 2')).not.toBeInTheDocument()
   await user.click(screen.getByRole('button', { name: 'Professor View' }))
-  await user.click(screen.getByRole('link', { name: 'RFI Generation' }))
   const createObjectURL = vi.fn(() => 'blob:demo')
   vi.stubGlobal('URL', Object.assign(URL, { createObjectURL, revokeObjectURL: vi.fn() }))
   const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
