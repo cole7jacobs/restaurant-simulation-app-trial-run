@@ -33,6 +33,19 @@ export function StudentAccountHome() {
         </Card>
       )}
 
+      <Card>
+        <h2 className="mb-3 font-heading text-xl font-extrabold">Decision sections</h2>
+        <nav aria-label="Decision sections" className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+          {[
+            ['Menu selections', 'menu'],
+            ['Staffing & Compensation', 'staffing'],
+            ['Finance', 'finance'],
+            ['Amenities & Upkeep', 'amenities'],
+            ['Reports', 'reports'],
+          ].map(([label, id]) => <Link key={id} className="underline" to={'/student/decisions#' + id}>{label}</Link>)}
+        </nav>
+      </Card>
+
       {/* Quick links */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Card className="flex flex-col items-start gap-3">

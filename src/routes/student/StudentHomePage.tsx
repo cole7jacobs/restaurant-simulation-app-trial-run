@@ -7,10 +7,11 @@ import { Button } from '../../components/ui/Button'
 import { useDevPreview } from '../../context/DevPreviewContext'
 
 const DECISION_SECTIONS = [
-  { label: 'Menu', to: '/student/decisions' },
-  { label: 'Staffing', to: '/student/decisions' },
-  { label: 'Amenities & Upkeep', to: '/student/decisions' },
-  { label: 'Management & Finance', to: '/student/decisions' },
+  { label: 'Menu', to: '/student/decisions#menu' },
+  { label: 'Staffing & Compensation', to: '/student/decisions#staffing' },
+  { label: 'Finance', to: '/student/decisions#finance' },
+  { label: 'Amenities & Upkeep', to: '/student/decisions#amenities' },
+  { label: 'Reports', to: '/student/decisions#reports' },
 ] as const
 
 /**
