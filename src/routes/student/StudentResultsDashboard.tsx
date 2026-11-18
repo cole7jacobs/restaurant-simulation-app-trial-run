@@ -294,7 +294,7 @@ export function StudentResultsDashboard({ demo = false }: { demo?: boolean }) {
             <Card>
               <EmptyState
                 title={`No results for Q${round}`}
-                description={demo && round === 7 ? 'No results imported yet.' : 'Results for this round have not been imported yet.'}
+                description={demo && round === 7 ? 'No results available for Quarter 7. The professor has not imported the simulation results yet.' : 'Results for this round have not been imported yet.'}
               />
             </Card>
           )}
