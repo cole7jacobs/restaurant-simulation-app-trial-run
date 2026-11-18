@@ -74,10 +74,11 @@ export function ProfessorLayout() {
             <DarkModeToggle />
           </div>
         </nav>
+        {demo && <DemoControls />}
       </header>
 
       {/* Dev preview banner — hidden when not in preview mode */}
-      {demo ? <DemoControls /> : !session && <DevPreviewBanner />}
+      {!demo && !session && <DevPreviewBanner />}
 
       {/* Page content */}
       <main id="main-content" tabIndex={-1} className="flex-1 max-w-6xl mx-auto w-full px-4 py-4 sm:py-5 focus:outline-none">

@@ -74,9 +74,8 @@ export function StudentLayout() {
             <DarkModeToggle />
           </div>
         </nav>
+        {demo && <DemoControls />}
       </header>
-
-      {demo && <DemoControls />}
       <div className={isDecisionPage ? 'min-h-0 flex-1 overflow-y-auto overscroll-contain' : 'flex-1'}>
         {!demo && !session && <DevPreviewBanner />}
         <main id="main-content" tabIndex={-1} className="max-w-6xl mx-auto w-full px-4 py-4 sm:py-5 focus:outline-none">
