@@ -105,6 +105,8 @@ export function LoginPage() {
             </Button>
           </form>
 
+          <Button to="/demo" variant="outlined" className="w-full">Try Demo Mode</Button>
+
           {import.meta.env.DEV && (
             <div className="border-t border-deep-green/20 dark:border-card/10 pt-4 text-center space-y-1">
               <p className="font-body text-xs text-deep-green/70 dark:text-card/70">

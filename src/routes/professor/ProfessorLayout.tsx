@@ -1,3 +1,4 @@
+import { DemoControls, DemoFooter } from '../../components/ui/DemoControls'
 import { Link, Outlet, useLocation, useMatch } from 'react-router-dom'
 import { SkipLink } from '../../components/ui/SkipLink'
 import { usePageTitle } from '../../components/ui/usePageTitle'
@@ -16,14 +17,16 @@ const NAV_TABS = [
 export function ProfessorLayout() {
   const { session } = useAuth()
   const { pathname } = useLocation()
+  const demo = pathname.startsWith('/demo/')
   const teamReview = useMatch('/professor/team-review/:teamId')
-  usePageTitle(teamReview ? 'Team Review' : NAV_TABS.find((t) => t.to === pathname.toLowerCase().replace(/\/+$/, ''))?.label ?? 'Professor')
+  usePageTitle(teamReview ? 'Team Review' : NAV_TABS.find((t) => t.to === pathname.toLowerCase().replace(/^\/demo/, '').replace(/\/+$/, ''))?.label ?? 'Professor')
 
   return (
     <div className="min-h-screen bg-card dark:bg-dark-bg flex flex-col">
       <SkipLink />
       {/* Top navigation bar */}
       <header className="sticky top-0 z-10 border-b border-deep-green/20 bg-card/90 backdrop-blur dark:border-card/10 dark:bg-dark-bg/90">
+        {demo && <DemoControls />}
         <nav
           className="max-w-6xl mx-auto flex flex-wrap items-center gap-x-4 gap-y-0 px-4 py-1"
           aria-label="Professor navigation"
@@ -41,13 +44,13 @@ export function ProfessorLayout() {
           {/* Nav tabs */}
           <div className="order-2 flex w-full items-center gap-0 flex-wrap sm:w-auto sm:grow">
             {NAV_TABS.map(({ label, to }) => {
-              const isCurrent = pathname.toLowerCase().replace(/\/+$/, '') === to
+              const isCurrent = pathname.toLowerCase().replace(/^\/demo/, '').replace(/\/+$/, '') === to
               const isSection = Boolean(teamReview) && label === 'Submissions'
 
               return (
                 <Link
                   key={to}
-                  to={to}
+                  to={demo ? '/demo' + to : to}
                   aria-current={isCurrent ? 'page' : isSection ? 'location' : undefined}
                   className={[
                     'inline-flex min-h-11 shrink-0 items-center whitespace-nowrap px-3 sm:px-4 border-b-2 font-body text-sm font-medium uppercase tracking-wider transition-colors',
@@ -68,19 +71,20 @@ export function ProfessorLayout() {
             <span className="font-body text-sm text-deep-green dark:text-card hidden sm:block">
               {session?.account.name ?? 'Professor'}
             </span>
-            <SessionControls />
+            {!demo && <SessionControls />}
             <DarkModeToggle />
           </div>
         </nav>
       </header>
 
       {/* Dev preview banner — hidden when not in preview mode */}
-      {!session && <DevPreviewBanner />}
+      {!demo && !session && <DevPreviewBanner />}
 
       {/* Page content */}
       <main id="main-content" tabIndex={-1} className="flex-1 max-w-6xl mx-auto w-full px-4 py-4 sm:py-5 focus:outline-none">
         <Outlet />
       </main>
+      {demo && <DemoFooter />}
     </div>
   )
 }

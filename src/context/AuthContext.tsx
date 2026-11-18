@@ -123,3 +123,10 @@ export function useProtectedData<T>(path: string) {
   }, [path, expire])
   return result
 }
+
+// Demo routes never acquire a real session or contact protected APIs.
+export function DemoAuthProvider({ children }: { children: ReactNode }) {
+  const unavailable = async (): Promise<never> => { throw new Error('Authentication is unavailable in demo mode.') }
+  const noop = async () => {}
+  return <AuthContext.Provider value={{ session: null, ready: true, expired: false, unavailable: false, login: unavailable, logout: noop, refresh: noop, expire: () => {} }}>{children}</AuthContext.Provider>
+}

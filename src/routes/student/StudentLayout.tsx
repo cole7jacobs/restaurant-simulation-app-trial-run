@@ -1,3 +1,4 @@
+import { DemoControls, DemoFooter } from '../../components/ui/DemoControls'
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { SkipLink } from '../../components/ui/SkipLink'
@@ -18,7 +19,8 @@ export function StudentLayout() {
   const { teamName, roundNumber } = useDevPreview()
   const { session } = useAuth()
   const { pathname } = useLocation()
-  const studentPath = pathname.replace(/\/+$/, '').toLowerCase()
+  const demo = pathname.startsWith('/demo/')
+  const studentPath = pathname.replace(/^\/demo/, '').replace(/\/+$/, '').toLowerCase()
   const isDecisionPage = studentPath === '/student/decisions' || studentPath === '/student/review'
   const [actionTarget, setActionTarget] = useState<HTMLDivElement | null>(null)
   usePageTitle(isDecisionPage ? 'Decisions' : NAV_TABS.find((tab) => studentPath.startsWith(tab.to))?.label ?? 'Student')
@@ -28,6 +30,7 @@ export function StudentLayout() {
       <SkipLink />
       {/* Top navigation bar */}
       <header className="sticky top-0 z-10 shrink-0 border-b border-deep-green/20 bg-card/90 backdrop-blur dark:border-card/10 dark:bg-dark-bg/90">
+        {demo && <DemoControls />}
         <nav
           className="max-w-6xl mx-auto flex flex-wrap items-center gap-x-4 gap-y-0 px-4 py-1"
           aria-label="Student navigation"
@@ -47,7 +50,7 @@ export function StudentLayout() {
             {NAV_TABS.map(({ label, to }) => (
               <NavLink
                 key={to}
-                to={to}
+                to={demo ? '/demo' + to : to}
                 className={({ isActive }) =>
                   [
                     'inline-flex min-h-11 shrink-0 items-center whitespace-nowrap px-3 sm:px-4 border-b-2 font-body text-sm font-medium uppercase tracking-wider transition-colors',
@@ -66,19 +69,19 @@ export function StudentLayout() {
           <div className="order-1 ml-auto flex items-center gap-3 sm:order-3">
             {/* Team name and round number from DevPreview context */}
             <span className="font-body text-sm text-deep-green dark:text-card hidden sm:block">
-              {session ? session.account.teamName : `${teamName} · Round ${roundNumber}`}
+              {demo ? 'Demo Bistro · Round 5' : session ? session.account.teamName : `${teamName} · Round ${roundNumber}`}
             </span>
-            <SessionControls />
+            {!demo && <SessionControls />}
             <DarkModeToggle />
           </div>
         </nav>
       </header>
-
       <div className={isDecisionPage ? 'min-h-0 flex-1 overflow-y-auto overscroll-contain' : 'flex-1'}>
-        {!session && <DevPreviewBanner />}
+        {!demo && !session && <DevPreviewBanner />}
         <main id="main-content" tabIndex={-1} className="max-w-6xl mx-auto w-full px-4 py-4 sm:py-5 focus:outline-none">
           <Outlet context={{ actionTarget }} />
         </main>
+        {demo && <DemoFooter />}
       </div>
       {isDecisionPage && <div ref={setActionTarget} className="shrink-0" />}
     </div>
