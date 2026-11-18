@@ -1,7 +1,7 @@
 import { ProfessorImportPage } from './routes/professor/ProfessorImportPage'
 import { StudentDecisionForm } from './routes/student/StudentDecisionForm'
 import type { ReactElement } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { DevPreviewProvider, useDevPreview } from './context/DevPreviewContext'
 import { LoginPage } from './routes/LoginPage'
 import { NotFoundPage } from './routes/NotFoundPage'
@@ -16,7 +16,7 @@ import { TeamReviewPage } from './routes/professor/TeamReviewPage'
 import { ProfessorRFIPage, RFIPage } from './routes/professor/RFIPage'
 import { ImportPage } from './routes/professor/ImportPage'
 import { DevPreviewSelector } from './routes/DevPreviewSelector'
-import { AuthProvider, useAuth } from './context/AuthContext'
+import { AuthProvider, DemoAuthProvider, useAuth } from './context/AuthContext'
 import { ProfessorAccountPage, StudentAccountHome } from './routes/AccountPages'
 import { Button } from './components/ui/Button'
 
@@ -60,6 +60,22 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       {import.meta.env.DEV && <Route path="/dev" element={<DevPreviewSelector />} />}
 
+      <Route path="/demo" element={<Navigate to="/demo/student/home" replace />} />
+      <Route path="/demo/student" element={<StudentLayout />}>
+        <Route index element={<Navigate to="home" replace />} />
+        <Route path="home" element={<StudentAccountHome demo />} />
+        <Route path="decisions" element={<StudentDecisionForm />} />
+        <Route path="review" element={<StudentDecisionForm review />} />
+        <Route path="results" element={<StudentResultsDashboard demo />} />
+      </Route>
+      <Route path="/demo/professor" element={<ProfessorLayout />}>
+        <Route index element={<Navigate to="home" replace />} />
+        <Route path="home" element={<ProfessorAccountPage title="Professor Dashboard" demo />} />
+        <Route path="submissions" element={<ProfessorAccountPage title="Team Submissions" demo />} />
+        <Route path="rfi" element={<ProfessorRFIPage demo />} />
+        <Route path="import" element={<ProfessorImportPage demo />} />
+      </Route>
+
       <Route path="/student" element={<RoleLayout role="student"><StudentLayout /></RoleLayout>}>
         <Route index element={<Navigate to="home" replace />} />
         <Route path="home" element={<RolePage preview={<StudentHomePage />} signedIn={<StudentAccountHome />} />} />
@@ -83,11 +99,13 @@ function AppRoutes() {
 }
 
 export function App() {
+  const { pathname } = useLocation()
+  const Provider = pathname === '/demo' || pathname.startsWith('/demo/') ? DemoAuthProvider : AuthProvider
   return (
-    <AuthProvider>
+    <Provider>
       <DevPreviewProvider>
         <AppRoutes />
       </DevPreviewProvider>
-    </AuthProvider>
+    </Provider>
   )
 }

@@ -5,7 +5,11 @@ import { MetricCard } from '../components/ui/MetricCard'
 import { Button } from '../components/ui/Button'
 import { useAuth, useProtectedData } from '../context/AuthContext'
 
-export function StudentAccountHome() {
+export function StudentAccountHome({ demo = false }: { demo?: boolean }) {
+  return demo ? <StudentHomeContent demo data={{ team: { TeamID: -1, TeamName: 'Demo Bistro', FirmNumber: 1 } }} /> : <StudentHomeLive />
+}
+
+function StudentHomeLive() {
   const { session } = useAuth()
   const { data, error } = useProtectedData<{ team: {
     TeamID: number
@@ -13,9 +17,14 @@ export function StudentAccountHome() {
     FirmNumber: number | null
   } }>('/student/team')
 
+  return <StudentHomeContent data={data} error={error} name={session?.account.name} />
+}
+
+function StudentHomeContent({ data, error, name, demo = false }: { data?: { team: { TeamID: number; TeamName: string; FirmNumber: number | null } }; error?: string; name?: string; demo?: boolean }) {
+  const prefix = demo ? '/demo' : ''
   return (
     <div className="space-y-4">
-      <PageHeader title="Welcome back" subtitle={session?.account.name} />
+      <PageHeader title="Welcome back" subtitle={demo ? 'Demo Bistro · Q5' : name} />
 
       {/* Team stat cards */}
       {data ? (
@@ -42,7 +51,7 @@ export function StudentAccountHome() {
             ['Finance', 'finance'],
             ['Amenities & Upkeep', 'amenities'],
             ['Reports', 'reports'],
-          ].map(([label, id]) => <Link key={id} className="underline" to={'/student/decisions#' + id}>{label}</Link>)}
+          ].map(([label, id]) => <Link key={id} className="underline" to={prefix + '/student/decisions#' + id}>{label}</Link>)}
         </nav>
       </Card>
 
@@ -55,7 +64,7 @@ export function StudentAccountHome() {
               Set your menu, staffing and finance choices for a round.
             </p>
           </div>
-          <Link to="/student/decisions">
+          <Link to={prefix + "/student/decisions"}>
             <Button variant="primary">Enter decisions</Button>
           </Link>
         </Card>
@@ -66,7 +75,7 @@ export function StudentAccountHome() {
               See your imported results and charts by round.
             </p>
           </div>
-          <Link to="/student/results">
+          <Link to={prefix + "/student/results"}>
             <Button variant="outlined">View results</Button>
           </Link>
         </Card>
@@ -83,11 +92,19 @@ type Submission = {
   SubmittedAt: string | null
 }
 
-export function ProfessorAccountPage({ title, teamOnly = false }: { title: string; teamOnly?: boolean }) {
+export function ProfessorAccountPage({ title, teamOnly = false, demo = false }: { title: string; teamOnly?: boolean; demo?: boolean }) {
+  return demo ? <ProfessorAccountContent title={title} teamOnly={teamOnly} demo rows={[{ TeamID: -1, TeamName: 'Demo Bistro', FirmNumber: 1, RoundNumber: 5, SubmittedAt: null }]} /> : <ProfessorAccountLive title={title} teamOnly={teamOnly} />
+}
+
+function ProfessorAccountLive({ title, teamOnly }: { title: string; teamOnly: boolean }) {
   const { teamId } = useParams()
   const { data, error } = useProtectedData<{ submissions: Submission[] }>('/professor/submissions')
   const rows = data?.submissions.filter((row) => !teamOnly || String(row.TeamID) === teamId)
 
+  return <ProfessorAccountContent title={title} teamOnly={teamOnly} rows={rows} error={error} />
+}
+
+function ProfessorAccountContent({ title, teamOnly, rows, error, demo = false }: { title: string; teamOnly: boolean; rows?: Submission[]; error?: string; demo?: boolean }) {
   return (
     <div className="space-y-4">
       <PageHeader title={title} />
@@ -105,7 +122,7 @@ export function ProfessorAccountPage({ title, teamOnly = false }: { title: strin
                 <tbody className="divide-y divide-deep-green/20 dark:divide-card/10">
                   {rows.map((row) => (
                     <tr key={`${row.TeamID}:${row.RoundNumber}`}>
-                      <td className="p-2">{teamOnly ? row.TeamName : (
+                      <td className="p-2">{teamOnly || demo ? row.TeamName : (
                         <Link className="underline" to={`/professor/team-review/${row.TeamID}`}>{row.TeamName}</Link>
                       )}</td>
                       <td className="p-2">{row.FirmNumber ?? 'Unassigned'}</td>

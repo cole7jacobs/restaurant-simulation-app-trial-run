@@ -1,3 +1,5 @@
+import { generateRfi } from '../../../worker/rfi'
+import { loadPreviewDecision } from '../../lib/preview-decisions'
 import { useState } from 'react'
 import { useAuth, useProtectedData } from '../../context/AuthContext'
 import { decisionRounds } from '../../../shared/decisions'
@@ -134,18 +136,34 @@ function RoundExports({ round }: { round: number }) {
   )
 }
 
-export function ProfessorRFIPage() {
-  const [round, setRound] = useState(decisionRounds[0])
+function DemoExports() {
+  const [message, setMessage] = useState('')
+  function download() {
+    try {
+      const draft = loadPreviewDecision(5, true)
+      const menu = draft.menu.map(({ MenuItemID, ...row }) => ({ ...row, ItemName: draft.catalog.find((item) => item.MenuItemID === MenuItemID)?.ItemName ?? '' }))
+      const file = generateRfi(1, draft.values, menu)
+      const url = URL.createObjectURL(new Blob([file.content], { type: 'text/plain' }))
+      const link = document.createElement('a'); link.href = url; link.download = file.filename; link.click()
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+      setMessage('Sample RFI download started. No data was sent to the server.')
+    } catch (error) { setMessage(error instanceof Error ? error.message : 'Unable to generate sample RFI.') }
+  }
+  return <Card><div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr><th className="p-2">Team</th><th className="p-2">Firm</th><th className="p-2">Submission status</th><th className="p-2">Download</th></tr></thead><tbody><tr><td className="p-2">Demo Bistro</td><td className="p-2">1</td><td className="p-2">Sample</td><td className="p-2"><Button size="sm" onClick={download}>Generate RFI</Button></td></tr></tbody></table></div>{message && <p role="status">{message}</p>}</Card>
+}
+
+export function ProfessorRFIPage({ demo = false }: { demo?: boolean }) {
+  const [round, setRound] = useState(demo ? 5 : decisionRounds[0])
   return (
     <div className="space-y-4">
       <PageHeader title="RFI File Generation" />
       <label className="inline-grid gap-1 text-sm font-medium">Simulation round
         <select className="rounded border border-deep-green/30 bg-card/50 px-2 py-2 dark:border-card/30 dark:bg-dark-card"
           value={round} onChange={(event) => setRound(Number(event.target.value))}>
-          {decisionRounds.map((period) => <option key={period} value={period}>Q{period}</option>)}
+          {(demo ? [5] : decisionRounds).map((period) => <option key={period} value={period}>Q{period}</option>)}
         </select>
       </label>
-      <RoundExports key={round} round={round} />
+      {demo ? <DemoExports /> : <RoundExports key={round} round={round} />}
     </div>
   )
 }

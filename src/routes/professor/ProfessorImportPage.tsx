@@ -1,3 +1,4 @@
+import { demoResults } from '../../lib/demo'
 import { useState, type FormEvent } from 'react'
 import { Button } from '../../components/ui/Button'
 import { Card } from '../../components/ui/Card'
@@ -8,9 +9,9 @@ import { importRounds, maxListingSize, type ImportPreview } from '../../../share
 
 const amount = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 })
 
-export function ProfessorImportPage() {
+export function ProfessorImportPage({ demo = false }: { demo?: boolean }) {
   const { expire } = useAuth()
-  const [round, setRound] = useState('')
+  const [round, setRound] = useState(demo ? '5' : '')
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<ImportPreview | null>(null)
   const [replace, setReplace] = useState(false)
@@ -26,6 +27,14 @@ export function ProfessorImportPage() {
   }
 
   async function send(action: 'preview' | 'confirm') {
+    if (demo) {
+      if (action === 'confirm') { setMessage('Sample import confirmed locally. No file or results were saved.'); return }
+      setPreview({ round: 5, token: 'demo', alreadyImported: false, replacesResults: false,
+        warnings: ['Fictional sample figures; no real simulation file was imported.'],
+        teams: [{ TeamID: -1, TeamName: 'Demo Bistro', FirmNumber: 1, metrics: demoResults.metrics,
+          menu: [{ ItemName: 'STEAK', PrepLevel: 3, OrderSize: 170, OrderSizeUnit: 'Gm.', InternalPromotion: 1750, SalesPrice: 24.95, CostOfGoodsSoldPct: 28.7, OrdersSold: 5291, TotalSales: 132010, DecisionSlot: null }] }] })
+      setMessage(''); return
+    }
     if (!file || !round || busy) return
     setError('')
     setMessage('')
@@ -82,18 +91,18 @@ export function ProfessorImportPage() {
               <select className="rounded border border-deep-green/30 bg-card/50 px-2 py-2 dark:bg-dark-card"
                 required value={round} onChange={(event) => { resetPreview(); setRound(event.target.value) }}>
                 <option value="">Choose round</option>
-                {importRounds.map((period) => <option key={period} value={period}>Q{period}</option>)}
+                {(demo ? [5] : importRounds).map((period) => <option key={period} value={period}>Q{period}</option>)}
               </select>
             </label>
-            <label className="grid gap-1 text-sm font-medium">FR.LST file
+            {!demo && <label className="grid gap-1 text-sm font-medium">FR.LST file
               <input type="file" accept=".lst" required onChange={(event) => {
                 resetPreview()
                 setFile(event.target.files?.[0] ?? null)
               }} />
-            </label>
-            <Button type="submit" disabled={busy || !round || !file}>Preview results</Button>
+            </label>}
+            <Button type="submit" disabled={busy || !round || (!demo && !file)}>Preview results</Button>
           </fieldset>
-          <p className="text-sm">The period printed in the file must match the selected round.</p>
+          <p className="text-sm">{demo ? 'Preview fictional sample results without uploading a file.' : 'The period printed in the file must match the selected round.'}</p>
         </form>
       </Card>
       {busy && <p role="status">Processing FR.LST…</p>}

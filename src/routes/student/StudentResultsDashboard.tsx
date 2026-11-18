@@ -5,6 +5,7 @@ import { EmptyState } from '../../components/ui/EmptyState'
 import { MetricCard } from '../../components/ui/MetricCard'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuth } from '../../context/AuthContext'
+import { demoResults } from '../../lib/demo'
 import { menuPreparations } from '../../../shared/decisions'
 import { importRounds, type StudentResults, type TeamResults } from '../../../shared/results'
 
@@ -27,12 +28,13 @@ type Loaded = Map<number, StudentResults>
 type LoadState = { status: 'loading' } | { status: 'error' } | { status: 'ready'; rounds: Loaded }
 
 /** Loads Q1–Q7 for the signed-in team. A 404 means that round has not been imported. */
-function useAllRounds() {
+function useAllRounds(demo: boolean) {
   const { expire } = useAuth()
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState<LoadState>({ status: 'loading' })
 
   useEffect(() => {
+    if (demo) { setState({ status: 'ready', rounds: new Map([[5, demoResults]]) }); return }
     const controller = new AbortController()
     setState({ status: 'loading' })
     async function load() {
@@ -57,7 +59,7 @@ function useAllRounds() {
     }
     void load()
     return () => controller.abort()
-  }, [attempt, expire])
+  }, [attempt, demo, expire])
 
   return { state, retry: () => setAttempt((value) => value + 1) }
 }
@@ -221,9 +223,9 @@ function Trends({ rounds }: { rounds: Loaded }) {
 }
 
 /** Authenticated results dashboard for the signed-in student's assigned team. */
-export function StudentResultsDashboard() {
+export function StudentResultsDashboard({ demo = false }: { demo?: boolean }) {
   const { session } = useAuth()
-  const { state, retry } = useAllRounds()
+  const { state, retry } = useAllRounds(demo)
   const [selected, setSelected] = useState<number | null>(null)
   const rounds = state.status === 'ready' ? state.rounds : null
   // Default to the most recent round that has imported results.
@@ -234,7 +236,7 @@ export function StudentResultsDashboard() {
     <div className="space-y-4">
       <PageHeader
         title="Results"
-        subtitle={[round === null ? null : `Q${round}`, session?.account.teamName].filter(Boolean).join(' · ')}
+        subtitle={[round === null ? null : `Q${round}`, demo ? 'Demo Bistro' : session?.account.teamName].filter(Boolean).join(' · ')}
       />
 
       {state.status === 'loading' && <Card><p role="status">Loading results…</p></Card>}

@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuth, useProtectedData } from '../../context/AuthContext'
 import { useDevPreview } from '../../context/DevPreviewContext'
+import { isDemoPath } from '../../lib/demo'
 import { loadPreviewDecision, savePreviewDecision } from '../../lib/preview-decisions'
 import {
   decisionFields, decisionRounds, financeFields, menuPreparations, menuSlots, reportFields,
@@ -29,7 +30,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
 }) {
   const { expire } = useAuth()
   const { actionTarget } = useOutletContext<{ actionTarget: HTMLDivElement | null }>()
-  const { hash } = useLocation()
+  const { hash, pathname } = useLocation()
   const [values, setValues] = useState<Record<string, string>>(() => Object.fromEntries(
     Object.entries(initial.values).map(([key, value]) => [key, value === null ? '' : String(value)]),
   ))
@@ -89,7 +90,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
     try {
       let result: { revision: string; submittedAt: string | null }
       if (preview) {
-        result = savePreviewDecision(round, payload)
+        result = savePreviewDecision(round, payload, isDemoPath(pathname))
       } else {
         const response = await fetch('/api/student/decisions/' + round, {
           method: 'POST',
@@ -118,7 +119,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
       savingRef.current = false
       setSaving(null)
     }
-  }, [expire, incompleteMenu, menu, preview, revision, round, submittedAt, values])
+  }, [expire, incompleteMenu, menu, pathname, preview, revision, round, submittedAt, values])
 
   useEffect(() => {
     if (!dirty || incompleteMenu || saving || autoBlocked || readOnly) return
@@ -293,9 +294,10 @@ function SignedInEditor({ round, initialReview, onRoundChange }: {
 function PreviewEditor({ round, initialReview, onRoundChange }: {
   round: number; initialReview: boolean; onRoundChange: (round: string) => void
 }) {
+  const { pathname } = useLocation()
   const [result] = useState(() => {
     try {
-      return { data: loadPreviewDecision(round), error: '' }
+      return { data: loadPreviewDecision(round, isDemoPath(pathname)), error: '' }
     } catch {
       return { data: null, error: 'Unable to load the demo draft from browser storage. Check storage access and reload.' }
     }
@@ -306,10 +308,12 @@ function PreviewEditor({ round, initialReview, onRoundChange }: {
 
 export function StudentDecisionForm({ review = false }: { review?: boolean }) {
   const { session } = useAuth()
+  const { pathname } = useLocation()
+  const demo = isDemoPath(pathname)
   const { roundNumber } = useDevPreview()
   const [search, setSearch] = useSearchParams()
   const requested = Number(search.get('round'))
-  const fallback = session ? decisionRounds[0] : roundNumber
+  const fallback = demo ? 5 : session ? decisionRounds[0] : roundNumber
   const round = decisionRounds.includes(requested) ? requested : fallback
   const props = {
     round,
@@ -320,7 +324,7 @@ export function StudentDecisionForm({ review = false }: { review?: boolean }) {
       return updated
     }),
   }
-  return session
+  return session && !demo
     ? <SignedInEditor key={round + ':' + review} {...props} />
     : <PreviewEditor key={round + ':' + review} {...props} />
 }
