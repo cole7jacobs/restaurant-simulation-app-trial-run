@@ -5,7 +5,7 @@ import { EmptyState } from '../../components/ui/EmptyState'
 import { MetricCard } from '../../components/ui/MetricCard'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuth } from '../../context/AuthContext'
-import { demoResults, readDemoQ7 } from '../../lib/demo'
+import { demoRounds, readDemoQ7 } from '../../lib/demo'
 import { menuPreparations } from '../../../shared/decisions'
 import { importRounds, type StudentResults, type TeamResults } from '../../../shared/results'
 
@@ -35,7 +35,7 @@ function useAllRounds(demo: boolean) {
 
   useEffect(() => {
     if (demo) {
-      const rounds: Loaded = new Map([[5, demoResults]])
+      const rounds: Loaded = new Map(demoRounds.map((r) => [r.round, r]))
       const q7 = readDemoQ7()
       if (q7) rounds.set(7, q7)
       setState({ status: 'ready', rounds }); return

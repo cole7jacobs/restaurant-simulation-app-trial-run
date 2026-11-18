@@ -24,7 +24,7 @@ function StudentHomeContent({ data, error, name, demo = false }: { data?: { team
   const prefix = demo ? '/demo' : ''
   return (
     <div className="space-y-4">
-      <PageHeader title="Welcome back" subtitle={demo ? 'Demo Bistro · Q5' : name} />
+      <PageHeader title="Welcome back" subtitle={demo ? 'Demo Bistro · Q6' : name} />
 
       {/* Team stat cards */}
       {data ? (
