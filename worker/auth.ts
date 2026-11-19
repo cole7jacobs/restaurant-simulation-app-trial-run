@@ -51,7 +51,7 @@ function nowSeconds() {
   return Math.floor(Date.now() / 1000)
 }
 
-const requireSession: MiddlewareHandler<AuthEnv> = async (c, next) => {
+export const requireSession: MiddlewareHandler<AuthEnv> = async (c, next) => {
   const { name } = cookies(new URL(c.req.url))
   const token = getCookie(c, name)
   if (!token || !/^[a-f0-9]{64}$/.test(token)) return c.json({ error: 'Sign in required.' }, 401)
@@ -67,7 +67,7 @@ const requireSession: MiddlewareHandler<AuthEnv> = async (c, next) => {
   await next()
 }
 
-function requireRole(role: Account['role']): MiddlewareHandler<AuthEnv> {
+export function requireRole(role: Account['role']): MiddlewareHandler<AuthEnv> {
   return async (c, next) => {
     if (c.get('account').role !== role) return c.json({ error: 'Access denied.' }, 403)
     await next()

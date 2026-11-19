@@ -38,7 +38,7 @@ unset account_password
 In separate terminals, start the Worker and Vite. Keep their host and port consistent for login and POST origin checks.
 
 ```bash
-npx wrangler dev --local --port 8787 --persist-to .wrangler/presentation-demo-day
+npx wrangler dev --local --port 8787 --config wrangler.presentation.jsonc --persist-to .wrangler/presentation-demo-day
 ```
 
 ```bash
@@ -52,3 +52,7 @@ Sign out and sign in as the presentation professor. Open **RFI Generation**, cho
 Open **FR.LST Import**, select Q2, and choose `input-output/01_Q2-decisions/output-of-simulation/FR.LST`. Preview, verify all five firm mappings, and confirm the import. Sign back in as the student and open **Results → Q2**; Q1 remains available. The Q2 file is an output from a prior simulation run: its results do **not** reflect the newly edited decision, and the application does not run FORTRAN or recalculate results.
 
 If port 8787 is in use, stop the other local process or configure the Vite proxy and Worker together to use a free port. Keep passwords private; never put them in files or Git. If the presentation must be hosted instead of local, plan a separate isolated Cloudflare database and Worker with the owner before making any hosted changes.
+
+## Local reset button
+
+For the existing `presentation-demo-day` state, install the validated reset snapshot once with `node scripts/install-presentation-snapshot.mjs`, then start the local Worker using the command above. The snapshot installer refuses to overwrite an existing snapshot and does not replace existing accounts or results. The Reset Presentation button appears on the authenticated Professor Home page only when this local-only Worker and snapshot are available. Confirm the dialog to restore Q1 results and Q2 decisions and clear Q2 results; accounts and sessions are preserved. The normal and staging Worker entry points do not register this reset endpoint.
