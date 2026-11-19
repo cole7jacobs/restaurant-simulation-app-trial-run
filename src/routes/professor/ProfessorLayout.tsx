@@ -12,6 +12,7 @@ const NAV_TABS = [
   { label: 'Submissions', to: '/professor/submissions' },
   { label: 'RFI Generation', to: '/professor/rfi' },
   { label: 'FR.LST Import', to: '/professor/import' },
+  { label: 'Leaderboard', to: '/professor/leaderboard' },
 ] as const
 
 export function ProfessorLayout() {
@@ -43,7 +44,7 @@ export function ProfessorLayout() {
 
           {/* Nav tabs */}
           <div className="order-2 flex w-full items-center gap-0 flex-wrap sm:w-auto sm:grow">
-            {NAV_TABS.map(({ label, to }) => {
+            {NAV_TABS.filter(({ label }) => (session && !demo) || label !== 'Leaderboard').map(({ label, to }) => {
               const isCurrent = pathname.toLowerCase().replace(/^\/demo/, '').replace(/\/+$/, '') === to
               const isSection = Boolean(teamReview) && label === 'Submissions'
 
