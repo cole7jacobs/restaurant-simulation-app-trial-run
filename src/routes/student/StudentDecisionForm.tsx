@@ -31,6 +31,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
   const { expire } = useAuth()
   const { actionTarget } = useOutletContext<{ actionTarget: HTMLDivElement | null }>()
   const { hash, pathname } = useLocation()
+  const demo = isDemoPath(pathname)
   const [values, setValues] = useState<Record<string, string>>(() => Object.fromEntries(
     Object.entries(initial.values).map(([key, value]) => [key, value === null ? '' : String(value)]),
   ))
@@ -77,6 +78,31 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
       return
     }
 
+    if (demo) {
+      for (const { key, label } of decisionFields) {
+        const value = values[key] ?? ''
+        if (!/^[+-]?\d+(?:\.\d+)?$/.test(value)) {
+          setError(`${label} is required. Enter a number without letters or scientific notation.`)
+          setAutoBlocked(true)
+          return
+        }
+        if (!financeKeys.includes(key) && Number(value) < 0) {
+          setError(`${label} cannot be negative. Enter zero or a positive number.`)
+          setAutoBlocked(true)
+          return
+        }
+      }
+      for (const [index, row] of menu.entries()) {
+        for (const key of ['OrderSize', 'InternalPromotion', 'SalesPrice'] as const) {
+          if (!/^\d+(?:\.\d+)?$/.test(row[key])) {
+            setError(`Menu selection ${index + 1}: enter nonnegative numbers without letters or scientific notation.`)
+            setAutoBlocked(true)
+            return
+          }
+        }
+      }
+    }
+
     const version = editVersion.current
     const payload = {
       revision,
@@ -119,7 +145,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
       savingRef.current = false
       setSaving(null)
     }
-  }, [expire, incompleteMenu, menu, pathname, preview, revision, round, submittedAt, values])
+  }, [demo, expire, incompleteMenu, menu, pathname, preview, revision, round, submittedAt, values])
 
   useEffect(() => {
     if (!dirty || incompleteMenu || saving || autoBlocked || readOnly) return
@@ -139,7 +165,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
         <div className="grid gap-3 sm:grid-cols-2">
           {decisionFields.filter(({ key }) => keys.includes(key)).map(({ key, label, decimals }) => (
             <label key={key} className="text-sm font-medium">{label}
-              <input className={inputClass} type="number" readOnly={readOnly || lockedForReviewSave}
+              <input className={inputClass} type={demo ? 'text' : 'number'} inputMode={demo ? (decimals || financeKeys.includes(key) ? 'decimal' : 'numeric') : undefined} readOnly={readOnly || lockedForReviewSave}
                 step={10 ** -decimals} min={financeKeys.includes(key) ? undefined : 0} value={values[key] ?? ''}
                 onChange={(event) => {
                   changed()
@@ -172,8 +198,8 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
               </>
             ) : (
               <>
-                <Button type="button" variant="outlined" disabled={Boolean(saving)} onClick={() => void save('manual')}>Save Draft</Button>
-                <Button type="button" disabled={Boolean(saving)} onClick={() => void save('review')}>Review &amp; Submit</Button>
+                <Button type="button" variant="outlined" disabled={Boolean(saving)} onClick={() => void save('manual')}>{demo ? 'Save Demo Draft' : 'Save Draft'}</Button>
+                {!demo && <Button type="button" disabled={Boolean(saving)} onClick={() => void save('review')}>Review &amp; Submit</Button>}
               </>
             )}
           </div>
@@ -186,12 +212,12 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
     <div className="space-y-4">
       <PageHeader
         title={readOnly ? 'Review Decisions' : 'Enter Decisions'}
-        subtitle={preview ? 'Development preview · Demo drafts stay in this browser' : undefined}
+        subtitle={demo ? 'Q5 demo drafts stay in this browser and do not recalculate results.' : preview ? 'Development preview · Demo drafts stay in this browser' : undefined}
       >
         <label className="grid gap-1 text-sm font-medium">Decision round
           <select className={inputClass} value={round} disabled={roundLocked} onChange={(event) => onRoundChange(event.target.value)}
             aria-describedby={roundLocked ? 'round-change-help' : undefined}>
-            {decisionRounds.map((period) => <option key={period} value={period}>Q{period}</option>)}
+            {(demo ? [5] : decisionRounds).map((period) => <option key={period} value={period}>Q{period}</option>)}
           </select>
         </label>
       </PageHeader>
@@ -233,7 +259,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
                       ['SalesPrice', 'Price ($)', '0.01'],
                     ] as const).map(([key, label, step]) => (
                       <label key={key} className="text-sm font-medium">{label}
-                        <input className={inputClass} type="number" min="0" step={step} value={row[key]} readOnly={readOnly}
+                        <input className={inputClass} type={demo ? 'text' : 'number'} inputMode={demo ? (step === '1' ? 'numeric' : 'decimal') : undefined} min="0" step={step} value={row[key]} readOnly={readOnly}
                           onChange={(event) => updateMenu(index, key, event.target.value)} />
                       </label>
                     ))}
@@ -314,7 +340,7 @@ export function StudentDecisionForm({ review = false }: { review?: boolean }) {
   const [search, setSearch] = useSearchParams()
   const requested = Number(search.get('round'))
   const fallback = demo ? 5 : session ? decisionRounds[0] : roundNumber
-  const round = decisionRounds.includes(requested) ? requested : fallback
+  const round = demo ? 5 : decisionRounds.includes(requested) ? requested : fallback
   const props = {
     round,
     initialReview: review,

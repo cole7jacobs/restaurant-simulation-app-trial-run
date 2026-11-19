@@ -45,7 +45,8 @@ export function loadPreviewDecision(round: number, demo = false): DecisionRespon
 }
 
 export function savePreviewDecision(round: number, input: DecisionWrite, demo = false): { revision: string; submittedAt: string | null } {
-  const error = validateDecision(input, catalog, input.submit)
+  if (demo && input.submit) throw new Error('Demo decisions cannot be submitted.')
+  const error = validateDecision(input, catalog, demo || input.submit)
   if (error) throw new Error(error)
   const current = loadPreviewDecision(round, demo)
   if (current.revision !== input.revision || current.submittedAt) {

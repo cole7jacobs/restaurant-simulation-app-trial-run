@@ -1,10 +1,10 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, expect, it, vi } from 'vitest'
 import { App } from '../../src/App'
+import { demoArchive, demoKey } from '../../src/lib/demo'
 import { parseListing } from '../../worker/fr-lst'
-import { demoKey, demoQ7Key } from '../../src/lib/demo'
 
 function openDemo(path = '/demo') {
   const fetchMock = vi.fn(() => { throw new Error('Demo must not call the API') })
@@ -14,146 +14,141 @@ function openDemo(path = '/demo') {
 }
 afterEach(() => { cleanup(); sessionStorage.clear(); vi.unstubAllGlobals() })
 
-it('opens public demo, displays Q5 results, and never calls protected APIs', async () => {
+const originals = import.meta.glob<string>('../../input-output/*/output-of-simulation/FR.LST', { eager: true, query: '?raw', import: 'default' })
+it.skipIf(!Object.keys(originals).length)('matches the Q1–Q5 reference listings for all firms and menu results', () => {
+  expect(demoArchive).toHaveLength(5)
+  for (const period of demoArchive) {
+    const source = Object.values(originals).find((text) => parseListing(text).round === period.round)!
+    const actual = parseListing(source)
+    expect(period.firms).toHaveLength(5)
+    for (const firm of period.firms) {
+      const expected = actual.firms.find((item) => item.firm === firm.firm)!
+      expect(firm.metrics).toEqual(expected.metrics)
+      expect(firm.menu).toEqual(expected.menu.map((row, index) => ({ ItemName: row.ItemName, PrepLevel: row.PrepLevel,
+        CostOfGoodsSoldPct: row.CostOfGoodsSoldPct, OrdersSold: row.OrdersSold, TotalSales: row.TotalSales,
+        ResultSlot: index + 1, DecisionSlot: null })))
+    }
+  }
+})
+
+it('opens directly to Q5 results with no login, API access, or professor controls', async () => {
   const fetchMock = openDemo()
-  expect(await screen.findByText('Demo Bistro · Q5')).toBeVisible()
-  expect(screen.getByText('Demo Mode · Team 1: Demo Bistro')).toBeVisible()
-  expect(screen.getByText('Demo Mode · Team 1: Demo Bistro').compareDocumentPosition(screen.getByRole('navigation', { name: 'Student navigation' })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-  expect(screen.getByRole('button', { name: 'Student View' })).toHaveAttribute('aria-pressed', 'true')
-  expect(screen.getByRole('button', { name: 'Professor View' })).toHaveAttribute('aria-pressed', 'false')
-  await userEvent.click(screen.getByRole('link', { name: 'Results' }))
   expect(await screen.findByRole('button', { name: 'Q5' })).toHaveAttribute('aria-pressed', 'true')
-  expect(screen.getAllByText('$25,932')[1]).toBeVisible()
-  expect(screen.getByRole('contentinfo')).toHaveTextContent('Changes stay in this browser and do not recalculate results; the FORTRAN simulation runs externally. Q5 results are sample data; Q7 results come from the file you import.')
+  expect(screen.getByText('Q5 · Demo Bistro')).toBeVisible()
+  expect(screen.queryByRole('button', { name: /Professor View/ })).not.toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: /FR.LST Import|RFI Generation/ })).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: /Q6|Q7/ })).not.toBeInTheDocument()
   expect(fetchMock).not.toHaveBeenCalled()
 })
 
-it('saves edits only in demo session storage and resets them', async () => {
-  const fetchMock = openDemo('/demo/student/decisions')
-  const user = userEvent.setup()
+it('denies direct demo professor URLs', async () => {
+  const fetchMock = openDemo('/demo/professor/import')
+  expect(await screen.findByText(/this page does not exist/i)).toBeVisible()
+  expect(fetchMock).not.toHaveBeenCalled()
+})
+
+it('shows authentic Q1–Q5 results and preserves selected quarter across navigation', async () => {
+  const fetchMock = openDemo(), user = userEvent.setup()
+  for (const period of demoArchive) {
+    await user.click(await screen.findByRole('button', { name: `Q${period.round}` }))
+    const table = screen.getByRole('table', { name: `Q${period.round} income statement amounts` })
+    const expected = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(period.firms[0].metrics.NetIncome)
+    expect(within(table).getByRole('row', { name: /Net income/i })).toHaveTextContent(expected)
+  }
+  await user.click(screen.getByRole('button', { name: 'Q2' }))
+  await user.click(screen.getByRole('link', { name: 'Leaderboard' }))
+  await user.click(screen.getByRole('link', { name: 'Results' }))
+  expect(await screen.findByRole('button', { name: 'Q2' })).toHaveAttribute('aria-pressed', 'true')
+  expect(fetchMock).not.toHaveBeenCalled()
+})
+
+it('shows all five real firms and matching metrics for Q1–Q5 and preserves leaderboard choices', async () => {
+  const fetchMock = openDemo(), user = userEvent.setup()
+  await user.click(await screen.findByRole('link', { name: 'Leaderboard' }))
+  expect(await screen.findByRole('table', { name: 'Quarter 5 team leaderboard' })).toBeVisible()
+  for (const period of demoArchive) {
+    await user.selectOptions(screen.getByLabelText('Simulation quarter'), String(period.round))
+    const table = await screen.findByRole('table', { name: `Quarter ${period.round} team leaderboard` })
+    expect(within(table).getAllByRole('row')).toHaveLength(6)
+    const expected = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(period.firms[0].metrics.NetIncome)
+    expect(within(table).getByRole('row', { name: /Demo Bistro \(You\)/ })).toHaveTextContent(expected)
+  }
+  await user.selectOptions(screen.getByLabelText('Simulation quarter'), '2')
+  await user.selectOptions(screen.getByLabelText('Ranking metric'), 'revenue')
+  await user.click(screen.getByRole('link', { name: 'Results' }))
+  await user.click(screen.getByRole('link', { name: 'Leaderboard' }))
+  expect(await screen.findByRole('table', { name: 'Quarter 2 team leaderboard' })).toBeVisible()
+  expect(screen.getByLabelText('Ranking metric')).toHaveValue('revenue')
+  expect(fetchMock).not.toHaveBeenCalled()
+})
+
+it('validates and saves Q5 drafts locally, keeps results fixed, and resets', async () => {
+  const fetchMock = openDemo('/demo/student/decisions'), user = userEvent.setup()
   const field = await screen.findByLabelText('Staff FTEs per day')
-  expect(field).toHaveValue(27)
+  expect(field).toHaveValue('27')
+  expect(screen.getByText('Selection 1')).toBeVisible()
+  expect(screen.queryByRole('button', { name: /submit/i })).not.toBeInTheDocument()
+  await user.clear(field); await user.type(field, '-1')
+  await user.click(screen.getByRole('button', { name: 'Save Demo Draft' }))
+  expect(await screen.findByRole('alert')).toBeVisible()
   await user.clear(field); await user.type(field, '30')
-  await waitFor(() => expect(JSON.parse(sessionStorage.getItem(demoKey(5)) || '{}').values?.StaffPerDay).toBe(30), { timeout: 3000 })
+  await user.click(screen.getByRole('button', { name: 'Save Demo Draft' }))
+  await waitFor(() => expect(JSON.parse(sessionStorage.getItem(demoKey(5)) || '{}').values?.StaffPerDay).toBe(30))
+  await user.click(screen.getByRole('link', { name: 'Results' }))
+  const table = await screen.findByRole('table', { name: 'Q5 income statement amounts' })
+  expect(within(table).getByRole('row', { name: /Net income/i })).toHaveTextContent('$25,932')
   await user.click(screen.getByRole('button', { name: 'Reset Demo' }))
   expect(sessionStorage.getItem(demoKey(5))).toBeNull()
   await user.click(screen.getByRole('link', { name: 'Decisions' }))
-  expect(await screen.findByLabelText('Staff FTEs per day')).toHaveValue(27)
+  expect(await screen.findByLabelText('Staff FTEs per day')).toHaveValue('27')
   expect(fetchMock).not.toHaveBeenCalled()
 })
 
-const archived = import.meta.glob<string>('../../input-output/06_Q7-decisions/output-of-simulation/FR.LST', { eager: true, query: '?raw', import: 'default' })
-it.skipIf(!Object.keys(archived).length)('parses the authentic local Q7 listing for all five firms', () => {
-  const listing = parseListing(Object.values(archived)[0])
-  expect(listing.round).toBe(7)
-  expect(listing.firms.map(({ firm }) => firm)).toEqual([1, 2, 3, 4, 5])
-})
-
-const synthetic = (period: number) => [
-  `Administrator's Summary; Example Period ${period}`,
-  ...[1, 2, 3, 4, 5].flatMap((firm) => [
-    `Firm ${firm} Example Period ${period}`, 'SALES * ASSETS',
-    'Food Sales 786013. 78.62', 'Beverage Sales 213763. 21.38',
-    'Food Cost 232756. 29.61', 'Beverage cost 44493. 20.81',
-    'OPERATING PROFIT 141579. 14.16', 'NET INCOME or LOSS 25932. 2.59',
-    'per Day & Training/Hr. per Order Orders per Order per Order Customer Count',
-    '27.0 16.50 1.50 36100. 21.77 5.92 407.',
-    'Selection Sales Purchase Order Internal Cost per Cost of Orders Total',
-    'Price & Prep. Size Promotion unit of purchase Goods Sold Sold Sales',
-    '     STEAK            24.95    Filet      170.0 Gm.        1750.       20.09 Kg.         28.7 %      5291.    132010.', '',
-  ]),
-  'Market Area   Affiliation', ...[1, 2, 3, 4, 5].map((firm) => `Firm ${firm} ME Example B1`),
-].join('\r\n')
-
-async function importQ7(source: string) {
-  const user = userEvent.setup()
-  await user.click(await screen.findByRole('button', { name: 'Professor View' }))
-  await user.click(screen.getByRole('link', { name: 'FR.LST Import' }))
-  await user.upload(screen.getByLabelText('FR.LST file'), new File([source], 'sample.lst', { type: 'text/plain' }))
-  await user.click(screen.getByRole('button', { name: 'Preview results' }))
-  return user
-}
-
-it('imports Q7 into browser session, maps Firm 1, preserves Q5 and resets', async () => {
-  const source = Object.values(archived)[0] ?? synthetic(7)
-  const firm = parseListing(source).firms.find((item) => item.firm === 1)!
-  const fetchMock = openDemo('/demo/student/results')
-  const user = userEvent.setup()
-  await user.click(await screen.findByRole('button', { name: /Q7, no results/ }))
-  expect(screen.getByText('No results available for Quarter 7. The professor has not imported the simulation results yet.')).toBeVisible()
-  await importQ7(source)
-  expect(await screen.findByText('Firm 1 · Demo Bistro')).toBeVisible()
-  expect(screen.getByText('Q7 results for 5 teams')).toBeVisible()
-  expect(sessionStorage.getItem(demoQ7Key)).toBeNull()
-  await user.click(screen.getByRole('button', { name: 'Confirm import' }))
-  expect(await screen.findByText(/Q7 results imported for Demo Bistro/)).toBeVisible()
-  expect(JSON.parse(sessionStorage.getItem(demoQ7Key)!).metrics).toEqual(firm.metrics)
-  await user.click(screen.getByRole('button', { name: 'Student View' }))
-  await user.click(screen.getByRole('link', { name: 'Results' }))
-  expect(await screen.findByText('Q7 · Demo Bistro')).toBeVisible()
-  expect(screen.getByRole('table', { name: 'Q7 income statement amounts' })).toHaveTextContent(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(firm.metrics.NetIncome))
-  await user.click(screen.getByRole('button', { name: 'Q5' }))
-  expect(screen.getAllByText('$25,932')[1]).toBeVisible()
-  await user.click(screen.getByRole('button', { name: 'Reset Demo' }))
-  expect(sessionStorage.getItem(demoQ7Key)).toBeNull()
-  await user.click(screen.getByRole('link', { name: 'Results' }))
-  await user.click(await screen.findByRole('button', { name: /Q7, no results/ }))
-  expect(screen.getByText('No results available for Quarter 7. The professor has not imported the simulation results yet.')).toBeVisible()
-  expect(fetchMock).not.toHaveBeenCalled()
-})
-
-it('shows all quarters but blocks unsupported demo imports', async () => {
-  const fetchMock = openDemo('/demo/professor/import')
-  const user = userEvent.setup()
-  const select = screen.getByLabelText('Simulation round')
-  for (let round = 1; round <= 7; round++) expect(screen.getByRole('option', { name: `Q${round}` })).toBeInTheDocument()
-  await user.selectOptions(select, '5')
-  await user.upload(screen.getByLabelText('FR.LST file'), new File([synthetic(7)], 'sample.lst'))
-  await user.click(screen.getByRole('button', { name: 'Preview results' }))
-  expect(screen.getByRole('alert')).toHaveTextContent('supports imports for Q7 only')
-  expect(sessionStorage.getItem(demoQ7Key)).toBeNull()
-  expect(fetchMock).not.toHaveBeenCalled()
-})
-
-it('clears imported Q7 when leaving demo mode', async () => {
-  sessionStorage.setItem(demoQ7Key, JSON.stringify({ round: 7, metrics: {}, menu: [] }))
-  openDemo()
-  await userEvent.click(await screen.findByRole('button', { name: 'Exit Demo' }))
-  expect(sessionStorage.getItem(demoQ7Key)).toBeNull()
-})
-
-it('accepts a dropped Q7 file without uploading it', async () => {
-  const fetchMock = openDemo('/demo/professor/import')
-  const file = new File([synthetic(7)], 'FR.LST', { type: 'text/plain' })
-  fireEvent.drop(screen.getByLabelText('FR.LST file').closest('label')!, { dataTransfer: { files: [file] } })
-  await userEvent.click(screen.getByRole('button', { name: 'Preview results' }))
-  expect(await screen.findByText('Firm 1 · Demo Bistro')).toBeVisible()
-  expect(fetchMock).not.toHaveBeenCalled()
-})
-
-it.each([['invalid', 'invalid listing'], ['wrong period', synthetic(5)]])('rejects %s Q7 uploads without saving', async (_label, source) => {
-  const fetchMock = openDemo()
-  await importQ7(source)
-  expect(await screen.findByRole('alert')).toBeVisible()
-  expect(sessionStorage.getItem(demoQ7Key)).toBeNull()
-  expect(fetchMock).not.toHaveBeenCalled()
-})
-
-it('allows adding and removing menu selections and generates a local sample RFI', async () => {
+it('rejects malformed, missing, out-of-range and imprecise demo inputs without losing edits', async () => {
   const fetchMock = openDemo('/demo/student/decisions')
-  const user = userEvent.setup()
-  await user.click(await screen.findByRole('button', { name: 'Add selection' }))
-  expect(screen.getByText('Selection 2')).toBeVisible()
-  await user.click(screen.getByRole('button', { name: 'Remove selection 2' }))
-  expect(screen.queryByText('Selection 2')).not.toBeInTheDocument()
-  await user.click(screen.getByRole('button', { name: 'Professor View' }))
-  await user.click(screen.getByRole('link', { name: 'RFI Generation' }))
-  const createObjectURL = vi.fn(() => 'blob:demo')
-  vi.stubGlobal('URL', Object.assign(URL, { createObjectURL, revokeObjectURL: vi.fn() }))
-  const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
-  await user.click(screen.getByRole('button', { name: 'Generate RFI' }))
-  expect(await screen.findByText(/Sample RFI download started/)).toBeVisible()
-  expect(createObjectURL).toHaveBeenCalledOnce()
-  click.mockRestore()
+  const staff = await screen.findByLabelText('Staff FTEs per day')
+  const save = screen.getByRole('button', { name: 'Save Demo Draft' })
+  expect(staff).toHaveAttribute('inputmode', 'decimal')
+  for (const value of ['abc', '1e2', '-1', '2.55', '1000', '']) {
+    fireEvent.change(staff, { target: { value } })
+    fireEvent.click(save)
+    expect(await screen.findByRole('alert')).toBeVisible()
+    expect(staff).toHaveValue(value)
+    expect(sessionStorage.getItem(demoKey(5))).toBeNull()
+  }
+  fireEvent.change(staff, { target: { value: '999.9' } })
+  const budget = screen.getByLabelText('Entertainment budget ($)')
+  fireEvent.change(budget, { target: { value: '1.5' } })
+  fireEvent.click(save)
+  expect(await screen.findByRole('alert')).toHaveTextContent('Entertainment budget')
+  expect(sessionStorage.getItem(demoKey(5))).toBeNull()
+  fireEvent.change(budget, { target: { value: '500' } })
+  fireEvent.change(screen.getByLabelText('Time deposit change ($)'), { target: { value: '-100' } })
+  fireEvent.click(save)
+  await waitFor(() => expect(JSON.parse(sessionStorage.getItem(demoKey(5)) || '{}').values?.TimeDepositChange).toBe(-100))
   expect(fetchMock).not.toHaveBeenCalled()
+})
+
+it('keeps a compact toolbar on demo pages and updates the selected quarter', async () => {
+  openDemo()
+  const user = userEvent.setup()
+  const toolbar = screen.getByRole('region', { name: 'Demo controls' })
+  expect(toolbar).toHaveClass('fixed')
+  expect(toolbar).toHaveTextContent('Demo Mode · Team 1: Demo Bistro · Q5')
+  await user.click(await screen.findByRole('button', { name: 'Q2' }))
+  expect(toolbar).toHaveTextContent('Q2')
+  await user.click(screen.getByRole('link', { name: 'Decisions' }))
+  expect(toolbar).toHaveTextContent('Q5')
+  expect(within(toolbar).getByRole('button', { name: 'Exit Demo' })).toBeVisible()
+})
+
+it('temporarily hides the toolbar when a mobile numeric input has focus', async () => {
+  vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
+  openDemo('/demo/student/decisions')
+  const field = await screen.findByLabelText('Staff FTEs per day')
+  const toolbar = screen.getByRole('region', { name: 'Demo controls' })
+  fireEvent.focusIn(field)
+  expect(toolbar).not.toBeVisible()
+  fireEvent.focusOut(field)
+  expect(toolbar).toBeVisible()
 })

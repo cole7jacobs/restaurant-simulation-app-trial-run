@@ -1,0 +1,1896 @@
+[
+  {
+    "round": 1,
+    "firms": [
+      {
+        "firm": 1,
+        "metrics": {
+          "FoodSales": 791227,
+          "BeverageSales": 191902,
+          "FoodCost": 233299,
+          "BeverageCost": 42201,
+          "OperatingProfit": 167234,
+          "NetIncome": 40126,
+          "FoodOrders": 38340,
+          "AvgDailyCustomerCount": 396
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 30.3,
+            "OrdersSold": 9701,
+            "TotalSales": 213422,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 29.3,
+            "OrdersSold": 10253,
+            "TotalSales": 215313,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 27.1,
+            "OrdersSold": 10500,
+            "TotalSales": 189000,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 31.4,
+            "OrdersSold": 7886,
+            "TotalSales": 173492,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 28.4,
+            "OrdersSold": 14855,
+            "TotalSales": 111413,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 13.1,
+            "OrdersSold": 12383,
+            "TotalSales": 80490,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 2,
+        "metrics": {
+          "FoodSales": 745215,
+          "BeverageSales": 187086,
+          "FoodCost": 248342,
+          "BeverageCost": 52378,
+          "OperatingProfit": 150420,
+          "NetIncome": 29869,
+          "FoodOrders": 76554,
+          "AvgDailyCustomerCount": 679
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 35.4,
+            "OrdersSold": 16393,
+            "TotalSales": 204913,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.8,
+            "OrdersSold": 21064,
+            "TotalSales": 200108,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 31,
+            "OrdersSold": 21609,
+            "TotalSales": 183677,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 33.9,
+            "OrdersSold": 17488,
+            "TotalSales": 156518,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 35.5,
+            "OrdersSold": 17847,
+            "TotalSales": 107082,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 18,
+            "OrdersSold": 16843,
+            "TotalSales": 80004,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 3,
+        "metrics": {
+          "FoodSales": 745215,
+          "BeverageSales": 187086,
+          "FoodCost": 248342,
+          "BeverageCost": 52378,
+          "OperatingProfit": 150420,
+          "NetIncome": 29869,
+          "FoodOrders": 76554,
+          "AvgDailyCustomerCount": 679
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 35.4,
+            "OrdersSold": 16393,
+            "TotalSales": 204913,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.8,
+            "OrdersSold": 21064,
+            "TotalSales": 200108,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 31,
+            "OrdersSold": 21609,
+            "TotalSales": 183677,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 33.9,
+            "OrdersSold": 17488,
+            "TotalSales": 156518,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 35.5,
+            "OrdersSold": 17847,
+            "TotalSales": 107082,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 18,
+            "OrdersSold": 16843,
+            "TotalSales": 80004,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 4,
+        "metrics": {
+          "FoodSales": 752643,
+          "BeverageSales": 200737,
+          "FoodCost": 263056,
+          "BeverageCost": 46867,
+          "OperatingProfit": 155570,
+          "NetIncome": 33010,
+          "FoodOrders": 138681,
+          "AvgDailyCustomerCount": 892
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 34.4,
+            "OrdersSold": 32440,
+            "TotalSales": 194316,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 33.1,
+            "OrdersSold": 39432,
+            "TotalSales": 196766,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 32.2,
+            "OrdersSold": 37139,
+            "TotalSales": 183838,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 40.5,
+            "OrdersSold": 29670,
+            "TotalSales": 177723,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 22.1,
+            "OrdersSold": 39304,
+            "TotalSales": 106121,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 24.8,
+            "OrdersSold": 25231,
+            "TotalSales": 94616,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 5,
+        "metrics": {
+          "FoodSales": 745215,
+          "BeverageSales": 187086,
+          "FoodCost": 248342,
+          "BeverageCost": 52378,
+          "OperatingProfit": 150420,
+          "NetIncome": 29869,
+          "FoodOrders": 76554,
+          "AvgDailyCustomerCount": 679
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 35.4,
+            "OrdersSold": 16393,
+            "TotalSales": 204913,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.8,
+            "OrdersSold": 21064,
+            "TotalSales": 200108,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 31,
+            "OrdersSold": 21609,
+            "TotalSales": 183677,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 33.9,
+            "OrdersSold": 17488,
+            "TotalSales": 156518,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 35.5,
+            "OrdersSold": 17847,
+            "TotalSales": 107082,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 18,
+            "OrdersSold": 16843,
+            "TotalSales": 80004,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "round": 2,
+    "firms": [
+      {
+        "firm": 1,
+        "metrics": {
+          "FoodSales": 859189,
+          "BeverageSales": 215377,
+          "FoodCost": 255928,
+          "BeverageCost": 41228,
+          "OperatingProfit": 172477,
+          "NetIncome": 43678,
+          "FoodOrders": 40130,
+          "AvgDailyCustomerCount": 471
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 29.7,
+            "OrdersSold": 7284,
+            "TotalSales": 181736,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SALAD BOWL",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 26.1,
+            "OrdersSold": 8535,
+            "TotalSales": 149363,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 29.2,
+            "OrdersSold": 8552,
+            "TotalSales": 186006,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 27,
+            "OrdersSold": 8517,
+            "TotalSales": 161397,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 36,
+            "OrdersSold": 7242,
+            "TotalSales": 180688,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 27.8,
+            "OrdersSold": 7112,
+            "TotalSales": 85344,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 13.1,
+            "OrdersSold": 9481,
+            "TotalSales": 66367,
+            "ResultSlot": 7,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 13.9,
+            "OrdersSold": 7074,
+            "TotalSales": 63666,
+            "ResultSlot": 8,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 2,
+        "metrics": {
+          "FoodSales": 630581,
+          "BeverageSales": 163629,
+          "FoodCost": 184299,
+          "BeverageCost": 28294,
+          "OperatingProfit": 122491,
+          "NetIncome": 13187,
+          "FoodOrders": 65310,
+          "AvgDailyCustomerCount": 516
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 33,
+            "OrdersSold": 9366,
+            "TotalSales": 135807,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 27.5,
+            "OrdersSold": 12372,
+            "TotalSales": 111348,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 25.3,
+            "OrdersSold": 13893,
+            "TotalSales": 118091,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 31.4,
+            "OrdersSold": 16615,
+            "TotalSales": 141228,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PIZZA",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 27.9,
+            "OrdersSold": 13064,
+            "TotalSales": 124108,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 18.9,
+            "OrdersSold": 15721,
+            "TotalSales": 62884,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 17.1,
+            "OrdersSold": 10320,
+            "TotalSales": 51600,
+            "ResultSlot": 7,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 15.5,
+            "OrdersSold": 9829,
+            "TotalSales": 49145,
+            "ResultSlot": 8,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 3,
+        "metrics": {
+          "FoodSales": 690593,
+          "BeverageSales": 121130,
+          "FoodCost": 222497,
+          "BeverageCost": 17187,
+          "OperatingProfit": 110067,
+          "NetIncome": 5330,
+          "FoodOrders": 62718,
+          "AvgDailyCustomerCount": 548
+        },
+        "menu": [
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.7,
+            "OrdersSold": 15701,
+            "TotalSales": 157010,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "FIN FISH",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 37.5,
+            "OrdersSold": 9977,
+            "TotalSales": 149655,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.1,
+            "OrdersSold": 5277,
+            "TotalSales": 116094,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SALAD BOWL",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 31.1,
+            "OrdersSold": 18033,
+            "TotalSales": 144264,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PORK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 26.6,
+            "OrdersSold": 13730,
+            "TotalSales": 123570,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 3.8,
+            "OrdersSold": 4935,
+            "TotalSales": 49350,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 21.3,
+            "OrdersSold": 14356,
+            "TotalSales": 71780,
+            "ResultSlot": 7,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 4,
+        "metrics": {
+          "FoodSales": 661647,
+          "BeverageSales": 172433,
+          "FoodCost": 229169,
+          "BeverageCost": 40218,
+          "OperatingProfit": 155365,
+          "NetIncome": 33240,
+          "FoodOrders": 119840,
+          "AvgDailyCustomerCount": 766
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 33.8,
+            "OrdersSold": 28578,
+            "TotalSales": 171182,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 33.1,
+            "OrdersSold": 35109,
+            "TotalSales": 175194,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 32.2,
+            "OrdersSold": 32775,
+            "TotalSales": 163547,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 39.9,
+            "OrdersSold": 23378,
+            "TotalSales": 151723,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 22.1,
+            "OrdersSold": 34314,
+            "TotalSales": 92648,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 24.8,
+            "OrdersSold": 21276,
+            "TotalSales": 79785,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 5,
+        "metrics": {
+          "FoodSales": 858094,
+          "BeverageSales": 205720,
+          "FoodCost": 395925,
+          "BeverageCost": 57595,
+          "OperatingProfit": 81438,
+          "NetIncome": -16438,
+          "FoodOrders": 85301,
+          "AvgDailyCustomerCount": 800
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 36.3,
+            "OrdersSold": 16029,
+            "TotalSales": 200363,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 31.9,
+            "OrdersSold": 17937,
+            "TotalSales": 188339,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 30.1,
+            "OrdersSold": 18081,
+            "TotalSales": 171770,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 71.1,
+            "OrdersSold": 33254,
+            "TotalSales": 297623,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 35.5,
+            "OrdersSold": 19625,
+            "TotalSales": 117750,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 18,
+            "OrdersSold": 18520,
+            "TotalSales": 87970,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "round": 3,
+    "firms": [
+      {
+        "firm": 1,
+        "metrics": {
+          "FoodSales": 875133,
+          "BeverageSales": 206589,
+          "FoodCost": 253668,
+          "BeverageCost": 32502,
+          "OperatingProfit": 180994,
+          "NetIncome": 49240,
+          "FoodOrders": 39727,
+          "AvgDailyCustomerCount": 478
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 29.7,
+            "OrdersSold": 7089,
+            "TotalSales": 176941,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SALAD BOWL",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 26.3,
+            "OrdersSold": 8954,
+            "TotalSales": 156695,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 29.2,
+            "OrdersSold": 8764,
+            "TotalSales": 190617,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 27,
+            "OrdersSold": 8753,
+            "TotalSales": 165869,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "VEAL",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 32.1,
+            "OrdersSold": 6167,
+            "TotalSales": 185010,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 23.8,
+            "OrdersSold": 5964,
+            "TotalSales": 83496,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 10.8,
+            "OrdersSold": 8061,
+            "TotalSales": 68519,
+            "ResultSlot": 7,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 9.6,
+            "OrdersSold": 4198,
+            "TotalSales": 54574,
+            "ResultSlot": 8,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 2,
+        "metrics": {
+          "FoodSales": 696715,
+          "BeverageSales": 171691,
+          "FoodCost": 220634,
+          "BeverageCost": 29795,
+          "OperatingProfit": 140848,
+          "NetIncome": 24752,
+          "FoodOrders": 85207,
+          "AvgDailyCustomerCount": 663
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 32.7,
+            "OrdersSold": 20938,
+            "TotalSales": 136097,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 34.8,
+            "OrdersSold": 10531,
+            "TotalSales": 142063,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 28.6,
+            "OrdersSold": 19423,
+            "TotalSales": 135767,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.4,
+            "OrdersSold": 17222,
+            "TotalSales": 146215,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PIZZA",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 29.7,
+            "OrdersSold": 17093,
+            "TotalSales": 136573,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 16.8,
+            "OrdersSold": 20308,
+            "TotalSales": 91183,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 18,
+            "OrdersSold": 16949,
+            "TotalSales": 80508,
+            "ResultSlot": 7,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 3,
+        "metrics": {
+          "FoodSales": 692146,
+          "BeverageSales": 174372,
+          "FoodCost": 221033,
+          "BeverageCost": 42969,
+          "OperatingProfit": 130917,
+          "NetIncome": 18633,
+          "FoodOrders": 80743,
+          "AvgDailyCustomerCount": 632
+        },
+        "menu": [
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 33.2,
+            "OrdersSold": 19843,
+            "TotalSales": 198430,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 35.6,
+            "OrdersSold": 17216,
+            "TotalSales": 154944,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SALAD BOWL",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 31.3,
+            "OrdersSold": 22283,
+            "TotalSales": 178264,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PORK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 27.5,
+            "OrdersSold": 21401,
+            "TotalSales": 160508,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.8,
+            "OrdersSold": 15624,
+            "TotalSales": 101556,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 13.3,
+            "OrdersSold": 24272,
+            "TotalSales": 72816,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 4,
+        "metrics": {
+          "FoodSales": 704032,
+          "BeverageSales": 156587,
+          "FoodCost": 324381,
+          "BeverageCost": 33678,
+          "OperatingProfit": 109635,
+          "NetIncome": 5713,
+          "FoodOrders": 116722,
+          "AvgDailyCustomerCount": 783
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 34.7,
+            "OrdersSold": 26643,
+            "TotalSales": 159592,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 32.6,
+            "OrdersSold": 30116,
+            "TotalSales": 158109,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 31.5,
+            "OrdersSold": 28032,
+            "TotalSales": 147168,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 71.6,
+            "OrdersSold": 31931,
+            "TotalSales": 239163,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 19.9,
+            "OrdersSold": 27779,
+            "TotalSales": 83059,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 23.3,
+            "OrdersSold": 18428,
+            "TotalSales": 73528,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 5,
+        "metrics": {
+          "FoodSales": 805284,
+          "BeverageSales": 208778,
+          "FoodCost": 268713,
+          "BeverageCost": 57821,
+          "OperatingProfit": 138266,
+          "NetIncome": 25517,
+          "FoodOrders": 75222,
+          "AvgDailyCustomerCount": 671
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 35.3,
+            "OrdersSold": 16403,
+            "TotalSales": 221441,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.3,
+            "OrdersSold": 20397,
+            "TotalSales": 214169,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 29.8,
+            "OrdersSold": 19029,
+            "TotalSales": 190290,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 36.1,
+            "OrdersSold": 19393,
+            "TotalSales": 179385,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.8,
+            "OrdersSold": 17885,
+            "TotalSales": 116253,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 21.3,
+            "OrdersSold": 18505,
+            "TotalSales": 92525,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "round": 4,
+    "firms": [
+      {
+        "firm": 1,
+        "metrics": {
+          "FoodSales": 816115,
+          "BeverageSales": 218272,
+          "FoodCost": 240648,
+          "BeverageCost": 45752,
+          "OperatingProfit": 169851,
+          "NetIncome": 42824,
+          "FoodOrders": 36926,
+          "AvgDailyCustomerCount": 421
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 29.2,
+            "OrdersSold": 5593,
+            "TotalSales": 139545,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SALAD BOWL",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 25.9,
+            "OrdersSold": 6943,
+            "TotalSales": 118031,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 29.2,
+            "OrdersSold": 6703,
+            "TotalSales": 145790,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 26.1,
+            "OrdersSold": 6461,
+            "TotalSales": 122436,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "VEAL",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 32.9,
+            "OrdersSold": 5222,
+            "TotalSales": 146216,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "FIN FISH",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 32.3,
+            "OrdersSold": 6004,
+            "TotalSales": 144096,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 27.8,
+            "OrdersSold": 10021,
+            "TotalSales": 120252,
+            "ResultSlot": 7,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 12.6,
+            "OrdersSold": 13520,
+            "TotalSales": 98020,
+            "ResultSlot": 8,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 2,
+        "metrics": {
+          "FoodSales": 644254,
+          "BeverageSales": 166493,
+          "FoodCost": 207288,
+          "BeverageCost": 31494,
+          "OperatingProfit": 134685,
+          "NetIncome": 21372,
+          "FoodOrders": 60329,
+          "AvgDailyCustomerCount": 575
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 27.7,
+            "OrdersSold": 10747,
+            "TotalSales": 101989,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 34,
+            "OrdersSold": 8589,
+            "TotalSales": 124541,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 33.9,
+            "OrdersSold": 14532,
+            "TotalSales": 144593,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.5,
+            "OrdersSold": 14712,
+            "TotalSales": 132261,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PIZZA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 31.7,
+            "OrdersSold": 11749,
+            "TotalSales": 140871,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 18.9,
+            "OrdersSold": 22110,
+            "TotalSales": 88440,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 19,
+            "OrdersSold": 17345,
+            "TotalSales": 78053,
+            "ResultSlot": 7,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 3,
+        "metrics": {
+          "FoodSales": 667147,
+          "BeverageSales": 166667,
+          "FoodCost": 216188,
+          "BeverageCost": 54615,
+          "OperatingProfit": 118555,
+          "NetIncome": 10884,
+          "FoodOrders": 67344,
+          "AvgDailyCustomerCount": 598
+        },
+        "menu": [
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 35.2,
+            "OrdersSold": 15104,
+            "TotalSales": 151040,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 31.9,
+            "OrdersSold": 9260,
+            "TotalSales": 101860,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SALAD BOWL",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 31.6,
+            "OrdersSold": 15753,
+            "TotalSales": 133901,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PORK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 26.8,
+            "OrdersSold": 14721,
+            "TotalSales": 117768,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "ROAST BEEF",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 34.8,
+            "OrdersSold": 12506,
+            "TotalSales": 162578,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.8,
+            "OrdersSold": 25641,
+            "TotalSales": 166667,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 4,
+        "metrics": {
+          "FoodSales": 555249,
+          "BeverageSales": 146361,
+          "FoodCost": 174597,
+          "BeverageCost": 33467,
+          "OperatingProfit": 126061,
+          "NetIncome": 16112,
+          "FoodOrders": 96602,
+          "AvgDailyCustomerCount": 594
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 32.4,
+            "OrdersSold": 22981,
+            "TotalSales": 137656,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 33.2,
+            "OrdersSold": 28828,
+            "TotalSales": 148464,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 31.8,
+            "OrdersSold": 26912,
+            "TotalSales": 138597,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PORK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 28,
+            "OrdersSold": 17881,
+            "TotalSales": 130531,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 21.3,
+            "OrdersSold": 27437,
+            "TotalSales": 76549,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 24.5,
+            "OrdersSold": 18420,
+            "TotalSales": 69812,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 5,
+        "metrics": {
+          "FoodSales": 659445,
+          "BeverageSales": 169781,
+          "FoodCost": 216601,
+          "BeverageCost": 47021,
+          "OperatingProfit": 112641,
+          "NetIncome": 5845,
+          "FoodOrders": 66958,
+          "AvgDailyCustomerCount": 575
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 35.8,
+            "OrdersSold": 10921,
+            "TotalSales": 147434,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32,
+            "OrdersSold": 13031,
+            "TotalSales": 136826,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 29.5,
+            "OrdersSold": 12218,
+            "TotalSales": 122180,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 36.2,
+            "OrdersSold": 12626,
+            "TotalSales": 116791,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PIZZA",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 30.6,
+            "OrdersSold": 18162,
+            "TotalSales": 136215,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.8,
+            "OrdersSold": 14544,
+            "TotalSales": 94536,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 21.3,
+            "OrdersSold": 15049,
+            "TotalSales": 75245,
+            "ResultSlot": 7,
+            "DecisionSlot": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "round": 5,
+    "firms": [
+      {
+        "firm": 1,
+        "metrics": {
+          "FoodSales": 786013,
+          "BeverageSales": 213763,
+          "FoodCost": 232756,
+          "BeverageCost": 44493,
+          "OperatingProfit": 141579,
+          "NetIncome": 25932,
+          "FoodOrders": 36100,
+          "AvgDailyCustomerCount": 407
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 28.7,
+            "OrdersSold": 5291,
+            "TotalSales": 132010,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SALAD BOWL",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 26,
+            "OrdersSold": 6942,
+            "TotalSales": 114543,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 29.4,
+            "OrdersSold": 6663,
+            "TotalSales": 141589,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 26.3,
+            "OrdersSold": 6479,
+            "TotalSales": 119862,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "VEAL",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 33.2,
+            "OrdersSold": 4966,
+            "TotalSales": 139793,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "FIN FISH",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 33,
+            "OrdersSold": 5759,
+            "TotalSales": 138216,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 27.8,
+            "OrdersSold": 9641,
+            "TotalSales": 115692,
+            "ResultSlot": 7,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 12.6,
+            "OrdersSold": 13527,
+            "TotalSales": 98071,
+            "ResultSlot": 8,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 2,
+        "metrics": {
+          "FoodSales": 656760,
+          "BeverageSales": 167776,
+          "FoodCost": 211092,
+          "BeverageCost": 31737,
+          "OperatingProfit": 137398,
+          "NetIncome": 23419,
+          "FoodOrders": 60496,
+          "AvgDailyCustomerCount": 576
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 27.7,
+            "OrdersSold": 11158,
+            "TotalSales": 106559,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 33.6,
+            "OrdersSold": 8373,
+            "TotalSales": 125511,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 34.1,
+            "OrdersSold": 14293,
+            "TotalSales": 145789,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.6,
+            "OrdersSold": 14658,
+            "TotalSales": 134854,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PIZZA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 31.7,
+            "OrdersSold": 12014,
+            "TotalSales": 144048,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 18.9,
+            "OrdersSold": 22280,
+            "TotalSales": 89120,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 19,
+            "OrdersSold": 17479,
+            "TotalSales": 78656,
+            "ResultSlot": 7,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 3,
+        "metrics": {
+          "FoodSales": 791829,
+          "BeverageSales": 204580,
+          "FoodCost": 246065,
+          "BeverageCost": 68125,
+          "OperatingProfit": 143485,
+          "NetIncome": 27132,
+          "FoodOrders": 115109,
+          "AvgDailyCustomerCount": 675
+        },
+        "menu": [
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 32,
+            "OrdersSold": 18636,
+            "TotalSales": 167724,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 30.4,
+            "OrdersSold": 21487,
+            "TotalSales": 150409,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PIZZA",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 30.1,
+            "OrdersSold": 26556,
+            "TotalSales": 159336,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SALAD BOWL",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 31,
+            "OrdersSold": 24650,
+            "TotalSales": 147900,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PORK",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 31.8,
+            "OrdersSold": 23780,
+            "TotalSales": 166460,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 3,
+            "CostOfGoodsSoldPct": 33.3,
+            "OrdersSold": 20458,
+            "TotalSales": 204580,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 4,
+        "metrics": {
+          "FoodSales": 467831,
+          "BeverageSales": 146255,
+          "FoodCost": 129138,
+          "BeverageCost": 33229,
+          "OperatingProfit": 108177,
+          "NetIncome": 3103,
+          "FoodOrders": 79455,
+          "AvgDailyCustomerCount": 382
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 27.8,
+            "OrdersSold": 18494,
+            "TotalSales": 114108,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 27.8,
+            "OrdersSold": 22943,
+            "TotalSales": 119074,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 27.1,
+            "OrdersSold": 21498,
+            "TotalSales": 111575,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PORK",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 27.7,
+            "OrdersSold": 16520,
+            "TotalSales": 123074,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "BEER",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 21,
+            "OrdersSold": 26859,
+            "TotalSales": 76011,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 24.5,
+            "OrdersSold": 18534,
+            "TotalSales": 70244,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          }
+        ]
+      },
+      {
+        "firm": 5,
+        "metrics": {
+          "FoodSales": 568530,
+          "BeverageSales": 170200,
+          "FoodCost": 163738,
+          "BeverageCost": 47137,
+          "OperatingProfit": 77709,
+          "NetIncome": -23775,
+          "FoodOrders": 54621,
+          "AvgDailyCustomerCount": 418
+        },
+        "menu": [
+          {
+            "ItemName": "STEAK",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 27.8,
+            "OrdersSold": 10038,
+            "TotalSales": 115437,
+            "ResultSlot": 1,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "CHICKEN",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 23.8,
+            "OrdersSold": 8800,
+            "TotalSales": 101200,
+            "ResultSlot": 2,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PASTA",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 29.9,
+            "OrdersSold": 12454,
+            "TotalSales": 124540,
+            "ResultSlot": 3,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SHRIMP",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 35.5,
+            "OrdersSold": 11455,
+            "TotalSales": 114550,
+            "ResultSlot": 4,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "PIZZA",
+            "PrepLevel": 1,
+            "CostOfGoodsSoldPct": 26.3,
+            "OrdersSold": 11874,
+            "TotalSales": 112803,
+            "ResultSlot": 5,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "WINE",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 32.8,
+            "OrdersSold": 14580,
+            "TotalSales": 94770,
+            "ResultSlot": 6,
+            "DecisionSlot": null
+          },
+          {
+            "ItemName": "SPIRITS",
+            "PrepLevel": 2,
+            "CostOfGoodsSoldPct": 21.3,
+            "OrdersSold": 15086,
+            "TotalSales": 75430,
+            "ResultSlot": 7,
+            "DecisionSlot": null
+          }
+        ]
+      }
+    ]
+  }
+]

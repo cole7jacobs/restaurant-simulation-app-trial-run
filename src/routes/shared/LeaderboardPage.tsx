@@ -4,6 +4,7 @@ import { Card } from '../../components/ui/Card'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuth } from '../../context/AuthContext'
+import { demoArchive, demoLeaderboardPreference, demoRounds, demoTeamNames } from '../../lib/demo'
 import { importRounds } from '../../../shared/results'
 
 type Row = { teamId: number; teamName: string; firmNumber: number; netIncome: number; operatingProfit: number; foodSales: number; beverageSales: number }
@@ -12,28 +13,37 @@ type State = ({ status: 'loading' } | { status: 'unavailable' } | { status: 'err
 const metrics: Metric[] = ['netIncome', 'revenue', 'operatingProfit']
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
-export function LeaderboardPage({ role }: { role: 'student' | 'professor' }) {
+export function LeaderboardPage({ role, demo = false }: { role: 'student' | 'professor'; demo?: boolean }) {
   const { session, expire } = useAuth()
-  const preferenceKey = `sampleslice:leaderboard:${role}:${session?.account.userId ?? 'unknown'}`
+  const preferenceKey = demo ? demoLeaderboardPreference : `sampleslice:leaderboard:${role}:${session?.account.userId ?? 'unknown'}`
+  const periods = demo ? demoRounds : importRounds
   const [preferences] = useState(() => {
     try {
       const stored = JSON.parse(sessionStorage.getItem(preferenceKey) ?? 'null') as { round?: unknown; metric?: unknown } | null
       return {
-        round: typeof stored?.round === 'number' && importRounds.includes(stored.round) ? stored.round : null,
+        round: typeof stored?.round === 'number' && periods.includes(stored.round) ? stored.round : demo ? 5 : null,
         metric: typeof stored?.metric === 'string' && metrics.includes(stored.metric as Metric) ? stored.metric as Metric : 'netIncome' as Metric,
       }
-    } catch { return { round: null, metric: 'netIncome' as Metric } }
+    } catch { return { round: demo ? 5 : null, metric: 'netIncome' as Metric } }
   })
   const [round, setRound] = useState<number | null>(preferences.round)
   const [metric, setMetric] = useState<Metric>(preferences.metric)
   function savePreferences(nextRound: number | null, nextMetric: Metric) {
-    try { sessionStorage.setItem(preferenceKey, JSON.stringify({ round: nextRound, metric: nextMetric })) } catch { /* Preferences are optional. */ }
+    try { sessionStorage.setItem(preferenceKey, JSON.stringify({ round: nextRound, metric: nextMetric })); if (demo) window.dispatchEvent(new Event('demo-quarter-change')) } catch { /* Preferences are optional. */ }
   }
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState<State>({ status: 'loading', round: preferences.round })
 
   useEffect(() => {
     const controller = new AbortController()
+    if (demo) {
+      const listing = demoArchive.find((entry) => entry.round === round)
+      if (!listing) { setState({ status: 'unavailable', round }); return }
+      const teams: Row[] = listing.firms.map(({ firm, metrics: data }) => ({ teamId: firm, firmNumber: firm,
+        teamName: demoTeamNames[firm - 1], netIncome: data.NetIncome, operatingProfit: data.OperatingProfit,
+        foodSales: data.FoodSales, beverageSales: data.BeverageSales }))
+      setState({ status: 'ready', round, teams }); return
+    }
     setState({ status: 'loading', round })
     async function load() {
       try {
@@ -60,7 +70,7 @@ export function LeaderboardPage({ role }: { role: 'student' | 'professor' }) {
     }
     void load()
     return () => controller.abort()
-  }, [role, round, attempt, expire])
+  }, [demo, role, round, attempt, expire])
 
   const visible: State = state.round === round ? state : { status: 'loading', round }
   const value = (row: Row) => metric === 'revenue' ? row.foodSales + row.beverageSales : row[metric]
@@ -72,7 +82,7 @@ export function LeaderboardPage({ role }: { role: 'student' | 'professor' }) {
       <label className="grid gap-1 text-sm font-medium">Simulation quarter
         <select className="min-h-11 rounded border border-deep-green/30 bg-card/50 px-3 py-2 dark:bg-dark-card" value={round ?? ''} onChange={(event) => { const next = Number(event.target.value); setRound(next); savePreferences(next, metric) }}>
           {round === null && <option value="">Checking available quarters…</option>}
-          {importRounds.map((period) => <option key={period} value={period}>Quarter {period}</option>)}
+          {periods.map((period) => <option key={period} value={period}>Quarter {period}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm font-medium">Ranking metric
@@ -88,7 +98,7 @@ export function LeaderboardPage({ role }: { role: 'student' | 'professor' }) {
       <caption className="sr-only">Quarter {round} team leaderboard</caption>
       <thead><tr className="border-b border-deep-green/20 dark:border-card/10"><th scope="col" className="p-3">Rank</th><th scope="col" className="p-3">Restaurant / Team</th><th scope="col" className="p-3 text-right">Financial Performance</th></tr></thead>
       <tbody className="divide-y divide-deep-green/10 dark:divide-card/10">{sorted.map((row, index) => {
-        const own = role === 'student' && row.teamId === session?.account.teamId
+        const own = role === 'student' && row.teamId === (demo ? 1 : session?.account.teamId)
         return <tr key={row.teamId} className={own ? 'bg-primary/20 font-semibold' : ''}>
           <td className="p-3">{ordinal(index + 1)}</td><th scope="row" className="p-3 text-left">{row.teamName}{own ? ' (You)' : ''}</th><td className="p-3 text-right tabular-nums">{money.format(value(row))}</td>
         </tr>

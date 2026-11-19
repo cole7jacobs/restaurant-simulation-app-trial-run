@@ -55,28 +55,21 @@ function HomeRedirect() {
 }
 
 function AppRoutes() {
+  const location = useLocation()
   return (
     <Routes>
       <Route path="/" element={<HomeRedirect />} />
       <Route path="/login" element={<LoginPage />} />
       {import.meta.env.DEV && <Route path="/dev" element={<DevPreviewSelector />} />}
 
-      <Route path="/demo" element={<Navigate to="/demo/student/home" replace />} />
+      <Route path="/demo" element={<Navigate to="/demo/student/results" replace />} />
       <Route path="/demo/student" element={<StudentLayout />}>
         <Route index element={<Navigate to="home" replace />} />
         <Route path="home" element={<StudentAccountHome demo />} />
         <Route path="decisions" element={<StudentDecisionForm />} />
-        <Route path="review" element={<StudentDecisionForm review />} />
-        <Route path="results" element={<StudentResultsDashboard demo />} />
+        <Route path="results" element={<StudentResultsDashboard key={location.key} demo />} />
+        <Route path="leaderboard" element={<LeaderboardPage key={location.key} role="student" demo />} />
       </Route>
-      <Route path="/demo/professor" element={<ProfessorLayout />}>
-        <Route index element={<Navigate to="home" replace />} />
-        <Route path="home" element={<ProfessorAccountPage title="Professor Dashboard" demo />} />
-        <Route path="submissions" element={<ProfessorAccountPage title="Team Submissions" demo />} />
-        <Route path="rfi" element={<ProfessorRFIPage demo />} />
-        <Route path="import" element={<ProfessorImportPage demo />} />
-      </Route>
-
       <Route path="/student" element={<RoleLayout role="student"><StudentLayout /></RoleLayout>}>
         <Route index element={<Navigate to="home" replace />} />
         <Route path="home" element={<RolePage preview={<StudentHomePage />} signedIn={<StudentAccountHome />} />} />
