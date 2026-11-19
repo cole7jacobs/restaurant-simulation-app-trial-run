@@ -1,0 +1,12 @@
+{
+  // Do not deploy until the separate presentation D1 database is created and bound.
+  "name": "sampleslice-presentation",
+  "main": "worker/presentation-hosted.ts",
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "tsconfig": "tsconfig.worker.json",
+  "workers_dev": true,
+  "vars": { "PRESENTATION_HOST": "sampleslice-presentation.restaurant-sim-cole.workers.dev" },
+  "assets": { "directory": "./dist", "binding": "ASSETS", "not_found_handling": "single-page-application", "run_worker_first": true },
+  "d1_databases": [{ "binding": "DB", "database_name": "sampleslice-presentation-db", "database_id": "REPLACE_WITH_NEW_PRESENTATION_DATABASE_ID", "migrations_dir": "./db/migrations" }]
+}

@@ -5,7 +5,8 @@ import { join } from 'node:path'
 import { hashPassword } from '../worker/password.mjs'
 
 const staging = process.argv[2] === '--staging'
-const [role, rawEmail, name, rawTeam, ...extra] = process.argv.slice(staging ? 3 : 2)
+const presentation = process.argv[2] === '--presentation'
+const [role, rawEmail, name, rawTeam, ...extra] = process.argv.slice(staging || presentation ? 3 : 2)
 const email = rawEmail?.trim().toLowerCase()
 const team = Number(rawTeam)
 const student = role === 'student'
@@ -36,14 +37,14 @@ try {
   writeFileSync(file, `INSERT INTO User (Email, PasswordHash, Name, Role, TeamID)
     VALUES (${text(email)}, ${text(hash)}, ${text(name.trim())}, ${text(role)}, ${student ? team : 'NULL'});`,
   { mode: 0o600 })
-  const args = ['node_modules/wrangler/bin/wrangler.js', 'd1', 'execute', 'DB', ...(staging ? ['--remote', '--config', 'wrangler.staging.jsonc'] : ['--local']), '--file', file]
-  if (!staging && process.env.LOCAL_D1_STATE) args.push('--persist-to', process.env.LOCAL_D1_STATE)
+  const args = ['node_modules/wrangler/bin/wrangler.js', 'd1', 'execute', 'DB', ...(presentation ? ['--remote', '--config', 'wrangler.presentation-hosted.jsonc'] : staging ? ['--remote', '--config', 'wrangler.staging.jsonc'] : ['--local']), '--file', file]
+  if (!staging && !presentation && process.env.LOCAL_D1_STATE) args.push('--persist-to', process.env.LOCAL_D1_STATE)
   const result = spawnSync(process.execPath, args, { encoding: 'utf8', env: { ...process.env, WRANGLER_SEND_METRICS: 'false' } })
   if (result.status !== 0) {
     console.error('Account creation failed. Check that the database is migrated, the email is unused, and the student team exists.')
     process.exitCode = 1
   } else {
-    console.log(`${staging ? 'Staging' : 'Local'} account created.`)
+    console.log(`${presentation ? 'Presentation' : staging ? 'Staging' : 'Local'} account created.`)
   }
 } finally {
   rmSync(dir, { recursive: true, force: true })

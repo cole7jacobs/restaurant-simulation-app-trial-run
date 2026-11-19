@@ -16,7 +16,7 @@ export type Account = {
   teamName: string | null
 }
 
-export type AuthEnv = { Bindings: { DB: D1Database }; Variables: { account: Account; expiresAt: number } }
+export type AuthEnv = { Bindings: { DB: D1Database; PRESENTATION_HOST?: string }; Variables: { account: Account; expiresAt: number } }
 
 const SESSION_AGE = 8 * 60 * 60
 const LOGIN_WINDOW = 300
