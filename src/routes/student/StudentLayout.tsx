@@ -48,7 +48,7 @@ export function StudentLayout() {
 
           {/* Nav tabs */}
           <div className="order-2 flex w-full items-center gap-0 flex-wrap sm:w-auto sm:grow">
-            {NAV_TABS.filter(({ label }) => (session && !demo) || label !== 'Leaderboard').map(({ label, to }) => (
+            {NAV_TABS.filter(({ label }) => demo || session || label !== 'Leaderboard').map(({ label, to }) => (
               <NavLink
                 key={to}
                 to={demo ? '/demo' + to : to}

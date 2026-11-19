@@ -5,7 +5,7 @@ import { EmptyState } from '../../components/ui/EmptyState'
 import { MetricCard } from '../../components/ui/MetricCard'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuth } from '../../context/AuthContext'
-import { demoResults, readDemoQ7 } from '../../lib/demo'
+import { demoRounds, demoStudentResults, demoResultsPreference } from '../../lib/demo'
 import { menuPreparations } from '../../../shared/decisions'
 import { importRounds, type StudentResults, type TeamResults } from '../../../shared/results'
 
@@ -35,9 +35,11 @@ function useAllRounds(demo: boolean) {
 
   useEffect(() => {
     if (demo) {
-      const rounds: Loaded = new Map([[5, demoResults]])
-      const q7 = readDemoQ7()
-      if (q7) rounds.set(7, q7)
+      const rounds: Loaded = new Map()
+      for (const round of demoRounds) {
+        const result = demoStudentResults(round)
+        if (result) rounds.set(round, result)
+      }
       setState({ status: 'ready', rounds }); return
     }
     const controller = new AbortController()
@@ -231,7 +233,10 @@ function Trends({ rounds }: { rounds: Loaded }) {
 export function StudentResultsDashboard({ demo = false }: { demo?: boolean }) {
   const { session } = useAuth()
   const { state, retry } = useAllRounds(demo)
-  const [selected, setSelected] = useState<number | null>(null)
+  const [selected, setSelected] = useState<number | null>(() => {
+    if (!demo) return null
+    try { const value = Number(sessionStorage.getItem(demoResultsPreference)); return demoRounds.includes(value) ? value : null } catch { return null }
+  })
   const rounds = state.status === 'ready' ? state.rounds : null
   // Default to the most recent round that has imported results.
   const round = selected ?? (rounds?.size ? Math.max(...rounds.keys()) : null)
@@ -267,7 +272,7 @@ export function StudentResultsDashboard({ demo = false }: { demo?: boolean }) {
       {rounds && rounds.size > 0 && round !== null && (
         <>
           <div role="group" aria-label="Simulation round" className="flex items-center gap-2 flex-wrap">
-            {importRounds.map((value) => {
+            {(demo ? demoRounds : importRounds).map((value) => {
               const available = rounds.has(value)
               return (
                 <button
@@ -275,7 +280,7 @@ export function StudentResultsDashboard({ demo = false }: { demo?: boolean }) {
                   type="button"
                   aria-pressed={value === round}
                   aria-label={available ? `Q${value}` : `Q${value}, no results`}
-                  onClick={() => setSelected(value)}
+                  onClick={() => { setSelected(value); if (demo) { try { sessionStorage.setItem(demoResultsPreference, String(value)) } catch { /* Optional preference. */ } } }}
                   className={[
                     'inline-flex items-center justify-center rounded-sm px-4 py-1.5 font-body text-sm font-medium transition-colors',
                     value === round

@@ -31,6 +31,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
   const { expire } = useAuth()
   const { actionTarget } = useOutletContext<{ actionTarget: HTMLDivElement | null }>()
   const { hash, pathname } = useLocation()
+  const demo = isDemoPath(pathname)
   const [values, setValues] = useState<Record<string, string>>(() => Object.fromEntries(
     Object.entries(initial.values).map(([key, value]) => [key, value === null ? '' : String(value)]),
   ))
@@ -172,8 +173,8 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
               </>
             ) : (
               <>
-                <Button type="button" variant="outlined" disabled={Boolean(saving)} onClick={() => void save('manual')}>Save Draft</Button>
-                <Button type="button" disabled={Boolean(saving)} onClick={() => void save('review')}>Review &amp; Submit</Button>
+                <Button type="button" variant="outlined" disabled={Boolean(saving)} onClick={() => void save('manual')}>{demo ? 'Save Demo Draft' : 'Save Draft'}</Button>
+                {!demo && <Button type="button" disabled={Boolean(saving)} onClick={() => void save('review')}>Review &amp; Submit</Button>}
               </>
             )}
           </div>
@@ -186,12 +187,12 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
     <div className="space-y-4">
       <PageHeader
         title={readOnly ? 'Review Decisions' : 'Enter Decisions'}
-        subtitle={preview ? 'Development preview · Demo drafts stay in this browser' : undefined}
+        subtitle={demo ? 'Q5 demo drafts stay in this browser and do not recalculate results.' : preview ? 'Development preview · Demo drafts stay in this browser' : undefined}
       >
         <label className="grid gap-1 text-sm font-medium">Decision round
           <select className={inputClass} value={round} disabled={roundLocked} onChange={(event) => onRoundChange(event.target.value)}
             aria-describedby={roundLocked ? 'round-change-help' : undefined}>
-            {decisionRounds.map((period) => <option key={period} value={period}>Q{period}</option>)}
+            {(demo ? [5] : decisionRounds).map((period) => <option key={period} value={period}>Q{period}</option>)}
           </select>
         </label>
       </PageHeader>
@@ -314,7 +315,7 @@ export function StudentDecisionForm({ review = false }: { review?: boolean }) {
   const [search, setSearch] = useSearchParams()
   const requested = Number(search.get('round'))
   const fallback = demo ? 5 : session ? decisionRounds[0] : roundNumber
-  const round = decisionRounds.includes(requested) ? requested : fallback
+  const round = demo ? 5 : decisionRounds.includes(requested) ? requested : fallback
   const props = {
     round,
     initialReview: review,
