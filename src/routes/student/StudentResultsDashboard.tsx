@@ -280,7 +280,7 @@ export function StudentResultsDashboard({ demo = false }: { demo?: boolean }) {
                   type="button"
                   aria-pressed={value === round}
                   aria-label={available ? `Q${value}` : `Q${value}, no results`}
-                  onClick={() => { setSelected(value); if (demo) { try { sessionStorage.setItem(demoResultsPreference, String(value)) } catch { /* Optional preference. */ } } }}
+                  onClick={() => { setSelected(value); if (demo) { try { sessionStorage.setItem(demoResultsPreference, String(value)); window.dispatchEvent(new Event('demo-quarter-change')) } catch { /* Optional preference. */ } } }}
                   className={[
                     'inline-flex items-center justify-center rounded-sm px-4 py-1.5 font-body text-sm font-medium transition-colors',
                     value === round

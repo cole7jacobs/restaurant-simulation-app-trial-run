@@ -29,7 +29,7 @@ export function LeaderboardPage({ role, demo = false }: { role: 'student' | 'pro
   const [round, setRound] = useState<number | null>(preferences.round)
   const [metric, setMetric] = useState<Metric>(preferences.metric)
   function savePreferences(nextRound: number | null, nextMetric: Metric) {
-    try { sessionStorage.setItem(preferenceKey, JSON.stringify({ round: nextRound, metric: nextMetric })) } catch { /* Preferences are optional. */ }
+    try { sessionStorage.setItem(preferenceKey, JSON.stringify({ round: nextRound, metric: nextMetric })); if (demo) window.dispatchEvent(new Event('demo-quarter-change')) } catch { /* Preferences are optional. */ }
   }
   const [attempt, setAttempt] = useState(0)
   const [state, setState] = useState<State>({ status: 'loading', round: preferences.round })

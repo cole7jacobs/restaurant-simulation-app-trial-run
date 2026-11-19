@@ -78,6 +78,31 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
       return
     }
 
+    if (demo) {
+      for (const { key, label } of decisionFields) {
+        const value = values[key] ?? ''
+        if (!/^[+-]?\d+(?:\.\d+)?$/.test(value)) {
+          setError(`${label} is required. Enter a number without letters or scientific notation.`)
+          setAutoBlocked(true)
+          return
+        }
+        if (!financeKeys.includes(key) && Number(value) < 0) {
+          setError(`${label} cannot be negative. Enter zero or a positive number.`)
+          setAutoBlocked(true)
+          return
+        }
+      }
+      for (const [index, row] of menu.entries()) {
+        for (const key of ['OrderSize', 'InternalPromotion', 'SalesPrice'] as const) {
+          if (!/^\d+(?:\.\d+)?$/.test(row[key])) {
+            setError(`Menu selection ${index + 1}: enter nonnegative numbers without letters or scientific notation.`)
+            setAutoBlocked(true)
+            return
+          }
+        }
+      }
+    }
+
     const version = editVersion.current
     const payload = {
       revision,
@@ -120,7 +145,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
       savingRef.current = false
       setSaving(null)
     }
-  }, [expire, incompleteMenu, menu, pathname, preview, revision, round, submittedAt, values])
+  }, [demo, expire, incompleteMenu, menu, pathname, preview, revision, round, submittedAt, values])
 
   useEffect(() => {
     if (!dirty || incompleteMenu || saving || autoBlocked || readOnly) return
@@ -140,7 +165,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
         <div className="grid gap-3 sm:grid-cols-2">
           {decisionFields.filter(({ key }) => keys.includes(key)).map(({ key, label, decimals }) => (
             <label key={key} className="text-sm font-medium">{label}
-              <input className={inputClass} type="number" readOnly={readOnly || lockedForReviewSave}
+              <input className={inputClass} type={demo ? 'text' : 'number'} inputMode={demo ? (decimals || financeKeys.includes(key) ? 'decimal' : 'numeric') : undefined} readOnly={readOnly || lockedForReviewSave}
                 step={10 ** -decimals} min={financeKeys.includes(key) ? undefined : 0} value={values[key] ?? ''}
                 onChange={(event) => {
                   changed()
@@ -234,7 +259,7 @@ function Editor({ initial, round, initialReview, preview, onRoundChange }: {
                       ['SalesPrice', 'Price ($)', '0.01'],
                     ] as const).map(([key, label, step]) => (
                       <label key={key} className="text-sm font-medium">{label}
-                        <input className={inputClass} type="number" min="0" step={step} value={row[key]} readOnly={readOnly}
+                        <input className={inputClass} type={demo ? 'text' : 'number'} inputMode={demo ? (step === '1' ? 'numeric' : 'decimal') : undefined} min="0" step={step} value={row[key]} readOnly={readOnly}
                           onChange={(event) => updateMenu(index, key, event.target.value)} />
                       </label>
                     ))}

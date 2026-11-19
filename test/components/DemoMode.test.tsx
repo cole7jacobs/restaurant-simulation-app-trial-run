@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, expect, it, vi } from 'vitest'
@@ -85,7 +85,7 @@ it('shows all five real firms and matching metrics for Q1–Q5 and preserves lea
 it('validates and saves Q5 drafts locally, keeps results fixed, and resets', async () => {
   const fetchMock = openDemo('/demo/student/decisions'), user = userEvent.setup()
   const field = await screen.findByLabelText('Staff FTEs per day')
-  expect(field).toHaveValue(27)
+  expect(field).toHaveValue('27')
   expect(screen.getByText('Selection 1')).toBeVisible()
   expect(screen.queryByRole('button', { name: /submit/i })).not.toBeInTheDocument()
   await user.clear(field); await user.type(field, '-1')
@@ -100,6 +100,55 @@ it('validates and saves Q5 drafts locally, keeps results fixed, and resets', asy
   await user.click(screen.getByRole('button', { name: 'Reset Demo' }))
   expect(sessionStorage.getItem(demoKey(5))).toBeNull()
   await user.click(screen.getByRole('link', { name: 'Decisions' }))
-  expect(await screen.findByLabelText('Staff FTEs per day')).toHaveValue(27)
+  expect(await screen.findByLabelText('Staff FTEs per day')).toHaveValue('27')
   expect(fetchMock).not.toHaveBeenCalled()
+})
+
+it('rejects malformed, missing, out-of-range and imprecise demo inputs without losing edits', async () => {
+  const fetchMock = openDemo('/demo/student/decisions')
+  const staff = await screen.findByLabelText('Staff FTEs per day')
+  const save = screen.getByRole('button', { name: 'Save Demo Draft' })
+  expect(staff).toHaveAttribute('inputmode', 'decimal')
+  for (const value of ['abc', '1e2', '-1', '2.55', '1000', '']) {
+    fireEvent.change(staff, { target: { value } })
+    fireEvent.click(save)
+    expect(await screen.findByRole('alert')).toBeVisible()
+    expect(staff).toHaveValue(value)
+    expect(sessionStorage.getItem(demoKey(5))).toBeNull()
+  }
+  fireEvent.change(staff, { target: { value: '999.9' } })
+  const budget = screen.getByLabelText('Entertainment budget ($)')
+  fireEvent.change(budget, { target: { value: '1.5' } })
+  fireEvent.click(save)
+  expect(await screen.findByRole('alert')).toHaveTextContent('Entertainment budget')
+  expect(sessionStorage.getItem(demoKey(5))).toBeNull()
+  fireEvent.change(budget, { target: { value: '500' } })
+  fireEvent.change(screen.getByLabelText('Time deposit change ($)'), { target: { value: '-100' } })
+  fireEvent.click(save)
+  await waitFor(() => expect(JSON.parse(sessionStorage.getItem(demoKey(5)) || '{}').values?.TimeDepositChange).toBe(-100))
+  expect(fetchMock).not.toHaveBeenCalled()
+})
+
+it('keeps a compact toolbar on demo pages and updates the selected quarter', async () => {
+  openDemo()
+  const user = userEvent.setup()
+  const toolbar = screen.getByRole('region', { name: 'Demo controls' })
+  expect(toolbar).toHaveClass('fixed')
+  expect(toolbar).toHaveTextContent('Demo Mode · Team 1: Demo Bistro · Q5')
+  await user.click(await screen.findByRole('button', { name: 'Q2' }))
+  expect(toolbar).toHaveTextContent('Q2')
+  await user.click(screen.getByRole('link', { name: 'Decisions' }))
+  expect(toolbar).toHaveTextContent('Q5')
+  expect(within(toolbar).getByRole('button', { name: 'Exit Demo' })).toBeVisible()
+})
+
+it('temporarily hides the toolbar when a mobile numeric input has focus', async () => {
+  vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
+  openDemo('/demo/student/decisions')
+  const field = await screen.findByLabelText('Staff FTEs per day')
+  const toolbar = screen.getByRole('region', { name: 'Demo controls' })
+  fireEvent.focusIn(field)
+  expect(toolbar).not.toBeVisible()
+  fireEvent.focusOut(field)
+  expect(toolbar).toBeVisible()
 })
