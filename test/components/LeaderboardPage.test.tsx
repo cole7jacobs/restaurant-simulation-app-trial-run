@@ -16,10 +16,10 @@ const account = { userId: 1, name: 'Student', role: 'student', teamId: 1, teamNa
 const entry = (TeamName: string, FirmNumber: number, RoundNumber: number, NetIncome: number, Revenue: number, OperatingProfit: number, IsOwn = false): LeaderboardEntry =>
   ({ TeamName, FirmNumber, IsOwn, RoundNumber, NetIncome, Revenue, OperatingProfit })
 
-function renderLeaderboard(path: string, rows: LeaderboardEntry[] = []) {
+function renderLeaderboard(path: string, rows: LeaderboardEntry[] = [], leaderboard?: () => Promise<Response>) {
   const fetchMock = vi.fn(async (url: string) => {
     if (url === '/api/auth/session') return Response.json({ account, expiresAt: Math.floor(Date.now() / 1000) + 3600 })
-    if (url === '/api/student/leaderboard') return Response.json({ rows })
+    if (url === '/api/student/leaderboard') return leaderboard ? leaderboard() : Response.json({ rows })
     throw new Error(`Unexpected request to ${url}`)
   })
   vi.stubGlobal('fetch', fetchMock)
@@ -71,6 +71,19 @@ it('shows an empty state with no buttons before anything is imported', async () 
   renderLeaderboard('/student/leaderboard', [])
   expect(await screen.findByText('No results have been imported yet.')).toBeVisible()
   expect(screen.queryByRole('button', { name: 'Game to date' })).not.toBeInTheDocument()
+})
+
+it('shows a loading line while the fetch is pending, not the empty message', async () => {
+  renderLeaderboard('/student/leaderboard', [], () => new Promise<Response>(() => {}))
+  expect(await screen.findByText('Loading leaderboard...')).toBeVisible()
+  expect(screen.queryByText('No results have been imported yet.')).not.toBeInTheDocument()
+})
+
+it('shows an error line instead of the empty message when the fetch fails', async () => {
+  renderLeaderboard('/student/leaderboard', [], async () => Response.json({}, { status: 500 }))
+  expect(await screen.findByText('Could not load the leaderboard.')).toBeVisible()
+  expect(screen.queryByText('No results have been imported yet.')).not.toBeInTheDocument()
+  expect(screen.queryByText('Loading leaderboard...')).not.toBeInTheDocument()
 })
 
 it('shows the sample leaderboard for Q1 to Q6 in demo mode, with Q7 empty, and never calls the API', async () => {

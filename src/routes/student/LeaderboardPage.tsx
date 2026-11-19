@@ -179,6 +179,8 @@ function Leaderboard({ sample }: { sample?: LeaderboardEntry[] }) {
   const { expire } = useAuth()
   const [rows, setRows] = useState<LeaderboardEntry[] | null>(sample ?? null)
 
+  const [failed, setFailed] = useState(false)
+
   useEffect(() => {
     if (sample) return
     const controller = new AbortController()
@@ -186,12 +188,15 @@ function Leaderboard({ sample }: { sample?: LeaderboardEntry[] }) {
       .then(async (response) => {
         if (response.status === 401) expire()
         else if (response.ok) setRows(((await response.json()) as LeaderboardData).rows)
+        else setFailed(true)
       })
-      .catch(() => {})
+      .catch(() => { if (!controller.signal.aborted) setFailed(true) })
     return () => controller.abort()
   }, [expire, sample])
 
-  if (!rows?.length) return <p className={noteClass}>No results have been imported yet.</p>
+  if (failed) return <p className={noteClass}>Could not load the leaderboard.</p>
+  if (rows === null) return <p className={noteClass}>Loading leaderboard...</p>
+  if (!rows.length) return <p className={noteClass}>No results have been imported yet.</p>
   return <LeaderboardView rows={rows} sample={Boolean(sample)} />
 }
 
