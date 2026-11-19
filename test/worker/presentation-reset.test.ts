@@ -4,6 +4,7 @@ import { afterAll, beforeAll, expect, it } from 'vitest'
 import { unstable_splitSqlQuery } from 'wrangler'
 import local from '../../worker/presentation-local'
 import deployed from '../../worker/index'
+import hosted from '../../worker/presentation-hosted'
 
 const migrations = import.meta.glob<string>('../../db/migrations/*.sql', { eager: true, query: '?raw', import: 'default' })
 let runtime: Miniflare
@@ -48,4 +49,20 @@ it('requires local professor authentication and explicit confirmation, then rest
   expect(await db.prepare('SELECT COUNT(*) AS n FROM TeamMetrics WHERE RoundNumber=2').first('n')).toBe(0)
   expect(await db.prepare('SELECT COUNT(*) AS n FROM AuthSession').first('n')).toBe(2)
   expect(await db.prepare('SELECT COUNT(*) AS n FROM User').first('n')).toBe(2)
+})
+
+
+it('enables hosted reset only on the configured HTTPS presentation host for professors', async () => {
+  const host = 'sampleslice-presentation.restaurant-sim-cole.workers.dev'
+  const origin = `https://${host}`
+  const send = (token: string, url = origin, headerOrigin = url) => hosted.fetch(new Request(url + '/api/professor/presentation/reset', {
+    method: 'POST', headers: { Origin: headerOrigin, 'Content-Type': 'application/json', Cookie: `__Host-restaurant-session=${token}` },
+    body: JSON.stringify({ confirm: 'reset-presentation' }),
+  }), { DB: db, PRESENTATION_HOST: host } as never)
+  expect((await send(student)).status).toBe(403)
+  expect((await send(professor, 'https://other.example')).status).toBe(404)
+  expect((await send(professor, origin, 'https://other.example')).status).toBe(404)
+  await db.prepare("UPDATE TeamDecision SET StaffPerDay=32.5 WHERE TeamID=1 AND RoundNumber=2").run()
+  expect((await send(professor)).status).toBe(200)
+  expect(await db.prepare('SELECT StaffPerDay FROM TeamDecision WHERE TeamID=1 AND RoundNumber=2').first('StaffPerDay')).toBe(29)
 })

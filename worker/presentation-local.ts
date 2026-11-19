@@ -1,13 +1,16 @@
-// This entry point is used only by wrangler.presentation.jsonc and local development.
+// Reset routes are registered only by dedicated presentation entry points.
 import { Hono } from 'hono'
 import app from './index'
 import { requireRole, requireSession, type AuthEnv } from './auth'
 
+export function createPresentationApp(mode: 'local' | 'hosted') {
 const local = new Hono<AuthEnv>()
 local.use('*', async (c, next) => {
   const url = new URL(c.req.url)
-  if (url.protocol !== 'http:' || !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname) ||
-      (c.req.method === 'POST' && c.req.header('Origin') !== url.origin)) return c.notFound()
+  const allowed = mode === 'local'
+    ? url.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)
+    : url.protocol === 'https:' && Boolean(c.env.PRESENTATION_HOST) && url.hostname === c.env.PRESENTATION_HOST
+  if (!allowed || (c.req.method === 'POST' && c.req.header('Origin') !== url.origin)) return c.notFound()
   await next()
 })
 local.use('*', requireSession, requireRole('professor'))
@@ -45,4 +48,7 @@ local.post('/presentation/reset', async (c) => {
 const presentation = new Hono<AuthEnv>()
 presentation.route('/api/professor', local)
 presentation.all('*', (c) => app.fetch(c.req.raw, c.env, c.executionCtx))
-export default presentation
+return presentation
+}
+
+export default createPresentationApp('local')
