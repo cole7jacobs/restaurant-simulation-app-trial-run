@@ -1,3 +1,4 @@
+import { LeaderboardPage } from './routes/shared/LeaderboardPage'
 import { ProfessorImportPage } from './routes/professor/ProfessorImportPage'
 import { StudentDecisionForm } from './routes/student/StudentDecisionForm'
 import type { ReactElement } from 'react'
@@ -82,12 +83,14 @@ function AppRoutes() {
         <Route path="decisions" element={<StudentDecisionForm />} />
         <Route path="review" element={<StudentDecisionForm review />} />
         <Route path="results" element={<RolePage preview={<ResultsPage />} signedIn={<StudentResultsDashboard />} />} />
+        <Route path="leaderboard" element={<LeaderboardPage role="student" />} />
       </Route>
 
       <Route path="/professor" element={<RoleLayout role="professor"><ProfessorLayout /></RoleLayout>}>
         <Route index element={<Navigate to="home" replace />} />
         <Route path="home" element={<RolePage preview={<ProfessorHomePage />} signedIn={<ProfessorAccountPage title="Professor Dashboard" />} />} />
         <Route path="submissions" element={<RolePage preview={<SubmissionsPage />} signedIn={<ProfessorAccountPage title="Team Submissions" />} />} />
+        <Route path="leaderboard" element={<LeaderboardPage role="professor" />} />
         <Route path="team-review/:teamId" element={<RolePage preview={<TeamReviewPage />} signedIn={<ProfessorAccountPage title="Team Decision Review" teamOnly />} />} />
         <Route path="rfi" element={<RolePage preview={<RFIPage />} signedIn={<ProfessorRFIPage />} />} />
         <Route path="import" element={<RolePage preview={<ImportPage />} signedIn={<ProfessorImportPage />} />} />

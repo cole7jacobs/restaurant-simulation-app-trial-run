@@ -1,3 +1,4 @@
+import { leaderboard } from './leaderboard'
 import { professorImport } from './professor-import'
 import { importRounds } from '../shared/results'
 import { professorRfi } from './professor-rfi'
@@ -157,6 +158,7 @@ authRoutes.get('/auth/session', requireSession, (c) => c.json({ account: c.get('
 
 authRoutes.use('/student/*', requireSession, requireRole('student'))
 authRoutes.route('/student', studentDecisions)
+authRoutes.route('/student/leaderboard', leaderboard)
 authRoutes.get('/student/team/:teamId?', async (c) => {
   const { teamId } = c.get('account')
   const requested = c.req.param('teamId')
@@ -185,6 +187,7 @@ authRoutes.get('/student/results/:round', async (c) => {
 })
 
 authRoutes.use('/professor/*', requireSession, requireRole('professor'))
+authRoutes.route('/professor/leaderboard', leaderboard)
 authRoutes.route('/professor', professorRfi)
 authRoutes.route('/professor', professorImport)
 authRoutes.get('/professor/submissions', async (c) => {

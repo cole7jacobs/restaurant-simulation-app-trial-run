@@ -13,6 +13,7 @@ const NAV_TABS = [
   { label: 'Home', to: '/student/home' },
   { label: 'Decisions', to: '/student/decisions' },
   { label: 'Results', to: '/student/results' },
+  { label: 'Leaderboard', to: '/student/leaderboard' },
 ] as const
 
 export function StudentLayout() {
@@ -47,7 +48,7 @@ export function StudentLayout() {
 
           {/* Nav tabs */}
           <div className="order-2 flex w-full items-center gap-0 flex-wrap sm:w-auto sm:grow">
-            {NAV_TABS.map(({ label, to }) => (
+            {NAV_TABS.filter(({ label }) => (session && !demo) || label !== 'Leaderboard').map(({ label, to }) => (
               <NavLink
                 key={to}
                 to={demo ? '/demo' + to : to}
