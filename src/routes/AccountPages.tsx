@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Card } from '../components/ui/Card'
 import { PageHeader } from '../components/ui/PageHeader'
@@ -96,12 +97,36 @@ export function ProfessorAccountPage({ title, teamOnly = false, demo = false }: 
   return demo ? <ProfessorAccountContent title={title} teamOnly={teamOnly} demo rows={[{ TeamID: -1, TeamName: 'Demo Bistro', FirmNumber: 1, RoundNumber: 5, SubmittedAt: null }]} /> : <ProfessorAccountLive title={title} teamOnly={teamOnly} />
 }
 
+function PresentationReset() {
+  const [available, setAvailable] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState('')
+  useEffect(() => {
+    const controller = new AbortController()
+    fetch('/api/professor/presentation/status', { signal: controller.signal, cache: 'no-store' })
+      .then((response) => { if (response.ok) setAvailable(true) }).catch(() => {})
+    return () => controller.abort()
+  }, [])
+  if (!available) return null
+  async function reset() {
+    if (!window.confirm('Reset the presentation to its initial Q1-complete and Q2-pending state? Q2 decisions and results will be restored. Accounts and sessions will be preserved.')) return
+    setBusy(true); setMessage('')
+    try {
+      const response = await fetch('/api/professor/presentation/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirm: 'reset-presentation' }) })
+      if (!response.ok) throw new Error()
+      setMessage('Presentation reset. Q1 results and original Q2 decisions are ready; Q2 results have been cleared.')
+    } catch { setMessage('Unable to confirm the reset. Refresh and check the presentation state.') }
+    finally { setBusy(false) }
+  }
+  return <Card><Button type="button" variant="outlined" disabled={busy} onClick={() => void reset()}>Reset Presentation</Button>{message && <p role="status" className="mt-3 text-sm">{message}</p>}</Card>
+}
+
 function ProfessorAccountLive({ title, teamOnly }: { title: string; teamOnly: boolean }) {
   const { teamId } = useParams()
   const { data, error } = useProtectedData<{ submissions: Submission[] }>('/professor/submissions')
   const rows = data?.submissions.filter((row) => !teamOnly || String(row.TeamID) === teamId)
 
-  return <ProfessorAccountContent title={title} teamOnly={teamOnly} rows={rows} error={error} />
+  return <><ProfessorAccountContent title={title} teamOnly={teamOnly} rows={rows} error={error} />{title === 'Professor Dashboard' && <div className="mt-4"><PresentationReset /></div>}</>
 }
 
 function ProfessorAccountContent({ title, teamOnly, rows, error, demo = false }: { title: string; teamOnly: boolean; rows?: Submission[]; error?: string; demo?: boolean }) {

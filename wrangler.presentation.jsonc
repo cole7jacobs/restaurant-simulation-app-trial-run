@@ -1,0 +1,11 @@
+{
+  // LOCAL ONLY. Start with --local and the fixed .wrangler/presentation-demo-day state.
+  "name": "restaurant-simulation-presentation-local",
+  "main": "worker/presentation-local.ts",
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "tsconfig": "tsconfig.worker.json",
+  "workers_dev": false,
+  "assets": { "directory": "./dist", "binding": "ASSETS", "not_found_handling": "single-page-application" },
+  "d1_databases": [{ "binding": "DB", "database_name": "restaurant-simulation-db", "database_id": "00000000-0000-4000-8000-000000000001", "migrations_dir": "./db/migrations" }]
+}
