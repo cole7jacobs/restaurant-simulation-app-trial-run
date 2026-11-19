@@ -11,18 +11,22 @@ const teams = [
   { teamId: 4, teamName: 'Kitchen', firmNumber: 4, netIncome: 0, operatingProfit: 30, foodSales: 70, beverageSales: 10 },
   { teamId: 5, teamName: 'Tavern', firmNumber: 5, netIncome: 20, operatingProfit: 40, foodSales: 90, beverageSales: 10 },
 ]
-function setup(role: 'student' | 'professor') {
+function setup(role: 'student' | 'professor', q2Available = () => false) {
   const fetchMock = vi.fn(async (url: string) => {
     if (url === '/api/auth/session') return Response.json({ account: { userId: 1, name: 'User', role, teamId: role === 'student' ? 1 : null, teamName: role === 'student' ? 'Bistro' : null }, expiresAt: Math.floor(Date.now() / 1000) + 3600 })
     if (url === `/api/${role}/leaderboard/1`) return Response.json({ round: 1, teams })
-    if (url === `/api/${role}/leaderboard/2`) return Response.json({ error: 'Not imported' }, { status: 404 })
+    if (url === `/api/${role}/leaderboard/2`) return q2Available() ? Response.json({ round: 2, teams }) : Response.json({ error: 'Not imported' }, { status: 404 })
+    if (url.startsWith(`/api/${role}/leaderboard/`)) return Response.json({ error: 'Not imported' }, { status: 404 })
+    if (url === '/api/student/team') return Response.json({ team: { TeamID: 1, TeamName: 'Bistro', FirmNumber: 1 } })
+    if (url === '/api/professor/submissions') return Response.json({ submissions: [] })
+    if (url === '/api/professor/presentation/status') return Response.json({}, { status: 404 })
     throw Error(`Unexpected ${url}`)
   })
   vi.stubGlobal('fetch', fetchMock)
   render(<MemoryRouter initialEntries={[`/${role}/leaderboard`]} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><App /></MemoryRouter>)
   return fetchMock
 }
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); sessionStorage.clear(); vi.unstubAllGlobals() })
 function order() { return within(screen.getByRole('table', { name: 'Quarter 1 team leaderboard' })).getAllByRole('row').slice(1).map((row) => within(row).getByRole('rowheader').textContent) }
 
 it('sorts each metric, breaks ties by firm, highlights the student, and hides unimported Q2', async () => {
@@ -49,4 +53,33 @@ it('uses the shared leaderboard for professors without marking a team as their o
   expect(order()).toContain('Bistro')
   expect(screen.queryByText(/\(You\)/)).not.toBeInTheDocument()
   expect(screen.getByRole('link', { name: 'Leaderboard' })).toHaveAttribute('aria-current', 'page')
+})
+
+
+it('defaults to the latest available quarter and restores both selections after navigation with fresh data', async () => {
+  let available = true
+  const request = setup('student', () => available), user = userEvent.setup()
+  expect(await screen.findByRole('table', { name: 'Quarter 2 team leaderboard' })).toBeVisible()
+  await user.selectOptions(screen.getByLabelText('Ranking metric'), 'operatingProfit')
+  await user.click(screen.getByRole('link', { name: 'Home' }))
+  await user.click(screen.getByRole('link', { name: 'Leaderboard' }))
+  expect(await screen.findByRole('table', { name: 'Quarter 2 team leaderboard' })).toBeVisible()
+  expect(screen.getByLabelText('Simulation quarter')).toHaveValue('2')
+  expect(screen.getByLabelText('Ranking metric')).toHaveValue('operatingProfit')
+  const before = request.mock.calls.filter(([url]) => url === '/api/student/leaderboard/2').length
+  available = false
+  await user.click(screen.getByRole('link', { name: 'Home' }))
+  await user.click(screen.getByRole('link', { name: 'Leaderboard' }))
+  expect(await screen.findByText('Results for Quarter 2 have not been released yet.')).toBeVisible()
+  expect(screen.getByLabelText('Simulation quarter')).toHaveValue('2')
+  expect(screen.getByLabelText('Ranking metric')).toHaveValue('operatingProfit')
+  expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  expect(request.mock.calls.filter(([url]) => url === '/api/student/leaderboard/2').length).toBeGreaterThan(before)
+})
+
+it('keeps preferences independent for student and professor accounts', async () => {
+  sessionStorage.setItem('sampleslice:leaderboard:professor:1', JSON.stringify({ round: 2, metric: 'revenue' }))
+  setup('student')
+  expect(await screen.findByRole('table', { name: 'Quarter 1 team leaderboard' })).toBeVisible()
+  expect(screen.getByLabelText('Ranking metric')).toHaveValue('netIncome')
 })

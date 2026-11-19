@@ -8,21 +8,45 @@ import { importRounds } from '../../../shared/results'
 
 type Row = { teamId: number; teamName: string; firmNumber: number; netIncome: number; operatingProfit: number; foodSales: number; beverageSales: number }
 type Metric = 'netIncome' | 'revenue' | 'operatingProfit'
-type State = ({ status: 'loading' } | { status: 'unavailable' } | { status: 'error' } | { status: 'ready'; teams: Row[] }) & { round: number }
+type State = ({ status: 'loading' } | { status: 'unavailable' } | { status: 'error' } | { status: 'ready'; teams: Row[] }) & { round: number | null }
+const metrics: Metric[] = ['netIncome', 'revenue', 'operatingProfit']
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
 
 export function LeaderboardPage({ role }: { role: 'student' | 'professor' }) {
   const { session, expire } = useAuth()
-  const [round, setRound] = useState(1)
-  const [metric, setMetric] = useState<Metric>('netIncome')
+  const preferenceKey = `sampleslice:leaderboard:${role}:${session?.account.userId ?? 'unknown'}`
+  const [preferences] = useState(() => {
+    try {
+      const stored = JSON.parse(sessionStorage.getItem(preferenceKey) ?? 'null') as { round?: unknown; metric?: unknown } | null
+      return {
+        round: typeof stored?.round === 'number' && importRounds.includes(stored.round) ? stored.round : null,
+        metric: typeof stored?.metric === 'string' && metrics.includes(stored.metric as Metric) ? stored.metric as Metric : 'netIncome' as Metric,
+      }
+    } catch { return { round: null, metric: 'netIncome' as Metric } }
+  })
+  const [round, setRound] = useState<number | null>(preferences.round)
+  const [metric, setMetric] = useState<Metric>(preferences.metric)
+  function savePreferences(nextRound: number | null, nextMetric: Metric) {
+    try { sessionStorage.setItem(preferenceKey, JSON.stringify({ round: nextRound, metric: nextMetric })) } catch { /* Preferences are optional. */ }
+  }
   const [attempt, setAttempt] = useState(0)
-  const [state, setState] = useState<State>({ status: 'loading', round: 1 })
+  const [state, setState] = useState<State>({ status: 'loading', round: preferences.round })
 
   useEffect(() => {
     const controller = new AbortController()
     setState({ status: 'loading', round })
     async function load() {
       try {
+        if (round === null) {
+          const responses = await Promise.all(importRounds.map((period) =>
+            fetch(`/api/${role}/leaderboard/${period}`, { signal: controller.signal, cache: 'no-store' })))
+          if (controller.signal.aborted) return
+          if (responses.some((response) => response.status === 401)) { expire(); return }
+          if (responses.some((response) => !response.ok && response.status !== 404)) throw new Error()
+          const available = importRounds.filter((_, index) => responses[index].ok)
+          setRound(available.length ? Math.max(...available) : 1)
+          return
+        }
         const response = await fetch(`/api/${role}/leaderboard/${round}`, { signal: controller.signal, cache: 'no-store' })
         if (controller.signal.aborted) return
         if (response.status === 401) { expire(); return }
@@ -46,12 +70,13 @@ export function LeaderboardPage({ role }: { role: 'student' | 'professor' }) {
     <PageHeader title="Team Leaderboard" />
     <Card><div className="flex flex-wrap items-end gap-4">
       <label className="grid gap-1 text-sm font-medium">Simulation quarter
-        <select className="min-h-11 rounded border border-deep-green/30 bg-card/50 px-3 py-2 dark:bg-dark-card" value={round} onChange={(event) => setRound(Number(event.target.value))}>
+        <select className="min-h-11 rounded border border-deep-green/30 bg-card/50 px-3 py-2 dark:bg-dark-card" value={round ?? ''} onChange={(event) => { const next = Number(event.target.value); setRound(next); savePreferences(next, metric) }}>
+          {round === null && <option value="">Checking available quarters…</option>}
           {importRounds.map((period) => <option key={period} value={period}>Quarter {period}</option>)}
         </select>
       </label>
       <label className="grid gap-1 text-sm font-medium">Ranking metric
-        <select className="min-h-11 rounded border border-deep-green/30 bg-card/50 px-3 py-2 dark:bg-dark-card" value={metric} onChange={(event) => setMetric(event.target.value as Metric)}>
+        <select className="min-h-11 rounded border border-deep-green/30 bg-card/50 px-3 py-2 dark:bg-dark-card" value={metric} onChange={(event) => { const next = event.target.value as Metric; setMetric(next); savePreferences(round, next) }}>
           <option value="netIncome">Net Income</option><option value="revenue">Total Sales / Revenue</option><option value="operatingProfit">Operating Profit</option>
         </select>
       </label>
