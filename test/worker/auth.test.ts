@@ -329,6 +329,40 @@ describe('Worker authentication with local D1', () => {
       .toEqual({ SalesPrice: 24.95, OrdersSold: null })
   })
 
+  it('serves per-round leaderboard rows from imported rounds only, with no other fields', async () => {
+    const studentCookie = cookie(await login(student))
+    const professorCookie = cookie(await login(professor))
+    await db.batch([
+      // Round 6 is imported for teams 1 and 2 only; team 3's row there is not in the mapping.
+      db.prepare("INSERT INTO SimulationResultImport VALUES (6, 'hash', '[[1,1],[2,2]]', '2026-11-18T00:00:00Z', 'w')"),
+      db.prepare('INSERT INTO TeamMetrics VALUES (1, 6, 10, 5, 0, 0, 100, 1000, 7, 7)'),
+      db.prepare('INSERT INTO TeamMetrics VALUES (2, 6, 20, 5, 0, 0, 200, 50000, 7, 7)'),
+      db.prepare('INSERT INTO TeamMetrics VALUES (3, 6, 1, 1, 0, 0, 1, 999999, 7, 7)'),
+    ])
+    const response = await request('/student/leaderboard', { headers: { Cookie: studentCookie } })
+    expect(response.status).toBe(200)
+    // Round 4 (team 1, net income 0) has metrics but no import record, so it is not returned.
+    // Round 5 comes from the import above (the real archive when present); round 6 is added here.
+    // Rows are per round and carry only the agreed fields; the client adds them up.
+    const round6: Record<number, [netIncome: number, revenue: number, profit: number]> = { 1: [1000, 15, 100], 2: [50000, 25, 200] }
+    const { results: round5 } = await db.prepare(`SELECT t.TeamID, t.TeamName, t.FirmNumber, m.NetIncome,
+      m.FoodSales + m.BeverageSales AS Revenue, m.OperatingProfit FROM TeamMetrics m JOIN Team t USING (TeamID)
+      WHERE m.RoundNumber = 5`).all<{ TeamID: number; TeamName: string; FirmNumber: number; NetIncome: number; Revenue: number; OperatingProfit: number }>()
+    const row = (roundNumber: number, team: { TeamID: number; TeamName: string; FirmNumber: number }, netIncome: number, revenue: number, profit: number) =>
+      ({ TeamName: team.TeamName, FirmNumber: team.FirmNumber, IsOwn: team.TeamID === 1, RoundNumber: roundNumber, NetIncome: netIncome, Revenue: revenue, OperatingProfit: profit })
+    const expected = [
+      ...round5.map((team) => row(5, team, team.NetIncome, team.Revenue, team.OperatingProfit)),
+      ...round5.filter((team) => round6[team.TeamID]).map((team) => {
+        const [netIncome, revenue, profit] = round6[team.TeamID]
+        return row(6, team, netIncome, revenue, profit)
+      }),
+    ].sort((a, b) => a.RoundNumber - b.RoundNumber || a.FirmNumber - b.FirmNumber || a.TeamName.localeCompare(b.TeamName))
+    expect(round5).toHaveLength(5)
+    expect(await response.json()).toEqual({ rows: expected })
+    expect((await request('/student/leaderboard', { headers: { Cookie: professorCookie } })).status).toBe(403)
+    expect((await request('/student/leaderboard')).status).toBe(401)
+  })
+
   it('rate limits repeated attempts before password verification', async () => {
     await db.prepare('UPDATE LoginRateLimit SET Attempts = 8').run()
     const response = await login(student)

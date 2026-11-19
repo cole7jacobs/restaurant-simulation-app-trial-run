@@ -13,6 +13,7 @@ const NAV_TABS = [
   { label: 'Home', to: '/student/home' },
   { label: 'Decisions', to: '/student/decisions' },
   { label: 'Results', to: '/student/results' },
+  { label: 'Leaderboard', to: '/student/leaderboard' },
 ] as const
 
 export function StudentLayout() {

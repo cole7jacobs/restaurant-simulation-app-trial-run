@@ -47,7 +47,9 @@ export function ProfessorImportPage({ demo = false }: { demo?: boolean }) {
         if (!firm) { setError('Firm 1 is missing from the preview.'); return }
         try {
           sessionStorage.setItem(demoQ7Key, JSON.stringify({ round: 7, metrics: firm.metrics,
-            menu: firm.menu.map((row, index) => ({ ...row, ResultSlot: index + 1, DecisionSlot: null })) }))
+            menu: firm.menu.map((row, index) => ({ ...row, ResultSlot: index + 1, DecisionSlot: null })),
+            // All firms are kept so the demo leaderboard can include Q7; the Results page reads only the fields above.
+            firms: preview.teams.map(({ FirmNumber, metrics }) => ({ firm: FirmNumber, metrics })) }))
           setPreview({ ...preview, alreadyImported: true })
           setMessage('Q7 results imported for Demo Bistro in this browser session. Switch to Student View and open Results.')
         } catch { setError('Unable to save the results in this browser session.') }

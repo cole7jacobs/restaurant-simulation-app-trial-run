@@ -1,5 +1,5 @@
 import { professorImport } from './professor-import'
-import { importRounds } from '../shared/results'
+import { importRounds, type LeaderboardEntry } from '../shared/results'
 import { professorRfi } from './professor-rfi'
 import type { D1Database } from '@cloudflare/workers-types'
 import { Hono, type MiddlewareHandler } from 'hono'
@@ -182,6 +182,19 @@ authRoutes.get('/student/results/:round', async (c) => {
   ])
   if (!metrics.results.length) return c.json({ error: 'No imported results for this round.' }, 404)
   return c.json({ round, metrics: metrics.results[0], menu: menu.results })
+})
+
+// One row per team per imported round (imported rounds only). Exposes just the agreed fields, never whole TeamMetrics rows.
+authRoutes.get('/student/leaderboard', async (c) => {
+  const { results } = await c.env.DB.prepare(`
+    SELECT t.TeamName, t.FirmNumber, t.TeamID = ? AS IsOwn, m.RoundNumber, m.NetIncome,
+      m.FoodSales + m.BeverageSales AS Revenue, m.OperatingProfit
+    FROM TeamMetrics m JOIN SimulationResultImport USING (RoundNumber) JOIN Team t USING (TeamID)
+    WHERE EXISTS (SELECT 1 FROM json_each(TeamMapping) WHERE json_extract(value, '$[1]') = m.TeamID)
+    ORDER BY m.RoundNumber, t.FirmNumber, t.TeamName
+  `).bind(c.get('account').teamId).all<Omit<LeaderboardEntry, 'IsOwn'> & { IsOwn: number }>()
+  const rows: LeaderboardEntry[] = results.map((row) => ({ ...row, IsOwn: row.IsOwn === 1 }))
+  return c.json({ rows })
 })
 
 authRoutes.use('/professor/*', requireSession, requireRole('professor'))

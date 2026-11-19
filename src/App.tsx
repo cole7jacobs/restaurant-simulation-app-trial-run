@@ -9,6 +9,7 @@ import { StudentLayout } from './routes/student/StudentLayout'
 import { StudentHomePage } from './routes/student/StudentHomePage'
 import { ResultsPage } from './routes/student/ResultsPage'
 import { StudentResultsDashboard } from './routes/student/StudentResultsDashboard'
+import { LeaderboardPage } from './routes/student/LeaderboardPage'
 import { ProfessorLayout } from './routes/professor/ProfessorLayout'
 import { ProfessorHomePage } from './routes/professor/ProfessorHomePage'
 import { SubmissionsPage } from './routes/professor/SubmissionsPage'
@@ -67,6 +68,7 @@ function AppRoutes() {
         <Route path="decisions" element={<StudentDecisionForm />} />
         <Route path="review" element={<StudentDecisionForm review />} />
         <Route path="results" element={<StudentResultsDashboard demo />} />
+        <Route path="leaderboard" element={<LeaderboardPage demo />} />
       </Route>
       <Route path="/demo/professor" element={<ProfessorLayout />}>
         <Route index element={<Navigate to="home" replace />} />
@@ -82,6 +84,7 @@ function AppRoutes() {
         <Route path="decisions" element={<StudentDecisionForm />} />
         <Route path="review" element={<StudentDecisionForm review />} />
         <Route path="results" element={<RolePage preview={<ResultsPage />} signedIn={<StudentResultsDashboard />} />} />
+        <Route path="leaderboard" element={<RolePage preview={<LeaderboardPage demo />} signedIn={<LeaderboardPage />} />} />
       </Route>
 
       <Route path="/professor" element={<RoleLayout role="professor"><ProfessorLayout /></RoleLayout>}>
